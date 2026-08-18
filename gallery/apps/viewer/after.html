@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Clause 7.3</title>
+<style>/*@include _base.css*/</style>
+<style>
+  .excerpt { border-left:3px solid var(--accent); background:var(--wash);
+             padding:10px 12px; border-radius:0 8px 8px 0; font-size:13px; line-height:1.5; }
+  mark { background:var(--warm-soft); color:var(--ink); padding:0 2px; border-radius:3px; }
+  .nav { display:flex; gap:6px; margin-top:10px; align-items:center; }
+  .nav .small { color:var(--muted); }
+</style></head>
+<body>
+<div class="card">
+  <div class="row spread">
+    <h1 id="title">&nbsp;</h1>
+    <span class="pill flat" id="loc">&nbsp;</span>
+  </div>
+  <div class="excerpt" id="excerpt"></div>
+  <div class="nav">
+    <button class="ghost" id="prev">Previous match</button>
+    <button class="ghost" id="next">Next match</button>
+    <span class="small grow" id="count"></span>
+    <button class="quiet" id="open">Open full document</button>
+  </div>
+  <div class="origin"><span>You asked about termination rights, so this is the clause that governs them.</span></div>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  var app = new App({ name: "Clause viewer", version: "1.0.0" });
+  var matches = [], at = 0, url = "";
+
+  function show() {
+    var m = matches[at];
+    if (!m) return;
+    document.getElementById("title").textContent = m.heading;
+    document.getElementById("loc").textContent = "page " + m.page;
+    document.getElementById("excerpt").innerHTML = m.html;
+    document.getElementById("count").textContent =
+      "Match " + (at + 1) + " of " + matches.length + " in an 84 page contract.";
+    document.getElementById("prev").disabled = at === 0;
+    document.getElementById("next").disabled = at === matches.length - 1;
+    app.setContext(
+      "Showing " + m.heading + " on page " + m.page + ": " + m.plain,
+      { page: m.page, heading: m.heading, excerpt: m.plain }
+    );
+    app.reportSize();
+  }
+
+  document.getElementById("prev").onclick = function () { at = Math.max(0, at - 1); show(); };
+  document.getElementById("next").onclick = function () { at = Math.min(matches.length - 1, at + 1); show(); };
+  document.getElementById("open").onclick = function () { if (url) app.openLink(url); };
+
+  app.ontoolresult = function (result) {
+    var d = result.structuredContent || {};
+    matches = d.matches || [];
+    url = d.documentUrl || "";
+    at = 0;
+    show();
+  };
+  app.connect();
+</script>
+</body></html>

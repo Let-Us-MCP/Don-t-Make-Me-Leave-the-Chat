@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8. Navigation in Someone Else&#x27;s House &middot; Don&#x27;t Make Me Leave the Chat</title>
+<meta name="description" content="No URLs, no tabs, no back button, and what actually replaces each of them.">
+<meta property="og:title" content="8. Navigation in Someone Else&#x27;s House">
+<meta property="og:description" content="No URLs, no tabs, no back button, and what actually replaces each of them.">
+<style>
+:root{
+  --ink:#15181D; --muted:#5B6472; --rule:#D8DDE4; --wash:#F5F6F8;
+  --paper:#FFFFFF; --accent:#0F5C8C; --accent-soft:#E7F0F6;
+  --warm:#B4531A; --warm-soft:#FBF0E7; --good:#2C6E49; --good-soft:#E9F2EC;
+  --danger:#9B2226; --danger-soft:#FAECEC;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#E7EAEE; --muted:#98A2B0; --rule:#2C333D; --wash:#171B21;
+    --paper:#0F1216; --accent:#63AEDC; --accent-soft:#14232E;
+    --warm:#E08B4F; --warm-soft:#2A1D13; --good:#6FBF8E; --good-soft:#13221A;
+    --danger:#E4796F; --danger-soft:#291516;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:18px;line-height:1.62;
+  -webkit-text-size-adjust:100%}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);
+  max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 20px 60px;
+  border-right:1px solid var(--rule);font-family:var(--sans);font-size:14px}
+nav.toc .brand{display:block;font-weight:700;font-size:16px;color:var(--ink);
+  text-decoration:none;line-height:1.3;margin-bottom:4px}
+nav.toc .tagline{color:var(--muted);font-size:12.5px;margin:0 0 18px;line-height:1.45}
+nav.toc .part{margin:18px 0 6px;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:700}
+nav.toc a{display:block;padding:4px 8px;margin-left:-8px;border-radius:5px;
+  color:var(--muted);text-decoration:none}
+nav.toc a:hover{background:var(--wash);color:var(--ink)}
+nav.toc a.current{background:var(--accent-soft);color:var(--accent);font-weight:600}
+main{padding:44px 52px 120px;min-width:0;max-width:78ch}
+h1,h2,h3,h4{font-family:var(--sans);line-height:1.25;color:var(--ink)}
+h1{font-size:2.05em;margin:0 0 .2em;letter-spacing:-.015em}
+h2{font-size:1.42em;margin:2em 0 .5em;padding-top:.35em}
+h3{font-size:1.14em;margin:1.7em 0 .4em}
+p{margin:0 0 1.05em}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 .5em;font-weight:700}
+.summary{font-family:var(--sans);font-size:15px;color:var(--muted);
+  margin:0 0 2.2em;line-height:1.5}
+code{font-family:var(--mono);font-size:.855em;background:var(--wash);
+  padding:.12em .36em;border-radius:4px;word-break:break-word}
+pre{background:var(--wash);border-left:3px solid var(--rule);
+  border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
+  font-size:13.5px;line-height:1.5;margin:1.3em 0}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
+  padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
+aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.4em}
+aside.law p{margin:0;font-family:var(--sans);font-size:1.16em;font-weight:700;
+  line-height:1.35}
+blockquote{border-left:3px solid var(--warm);background:var(--warm-soft);
+  margin:1.5em 0;padding:12px 18px;border-radius:0 6px 6px 0;font-size:.98em}
+blockquote p:last-child{margin-bottom:0}
+figure{margin:2.2em 0;text-align:center}
+figure img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}
+@media (prefers-color-scheme: dark){
+  figure img{background:#fff;padding:8px}
+}
+figcaption{font-family:var(--sans);font-size:13.5px;color:var(--muted);
+  margin-top:.7em;text-align:left;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:1.5em 0}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);
+  vertical-align:top}
+thead th{border-bottom:2px solid var(--rule);font-weight:700}
+ul,ol{padding-left:1.35em;margin:0 0 1.05em}
+li{margin-bottom:.32em}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:4em;
+  padding-top:1.4em;border-top:1px solid var(--rule);font-family:var(--sans);
+  font-size:14px}
+.pager a{text-decoration:none;max-width:46%}
+.pager .dir{display:block;font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted)}
+.hero{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;
+  align-items:start;margin-bottom:2.4em}
+.hero img{width:100%;border-radius:10px;border:1px solid var(--rule)}
+.hero h1{margin-bottom:.15em}
+.hero .sub{font-family:var(--sans);color:var(--muted);font-size:16px;
+  margin:0 0 1em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;margin:1.6em 0}
+.cards a{display:block;border:1px solid var(--rule);border-radius:9px;
+  padding:12px 14px;text-decoration:none;color:var(--ink);font-family:var(--sans)}
+.cards a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.cards .n{font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700}
+.cards .t{font-weight:600;font-size:15px;margin:.15em 0 .25em}
+.cards .s{font-size:12.5px;color:var(--muted);line-height:1.45}
+.menu{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  main{padding:28px 20px 80px}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero img{max-width:220px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><a class="brand" href="index.html">Don&#x27;t Make Me Leave the Chat</a>
+<p class="tagline">A common sense approach to MCP Apps</p>
+<div class="part">Front matter</div>
+<a href="preface.html">Preface</a>
+<a href="how-to-read.html">How to Read This Book</a>
+<div class="part">Part 1 - Guiding Principles</div>
+<a href="ch01.html">1. Don&#x27;t Make Me Leave the Chat</a>
+<a href="ch02.html">2. Your App Has Two Users</a>
+<a href="ch03.html">3. How People Actually Use Apps in Chat</a>
+<a href="ch04.html">4. Never Ask What the Conversation Already Knows</a>
+<a href="ch05.html">5. Omit Needless Widgets</a>
+<div class="part">Part 2 - Things You Need to Get Right</div>
+<a href="ch06.html">6. The Machinery, Briefly</a>
+<a href="ch07.html">7. State, or Knowledge in the World versus in the Head</a>
+<a href="ch08.html" class="current">8. Navigation in Someone Else&#x27;s House</a>
+<a href="ch09.html">9. Forms and Actions</a>
+<a href="ch10.html">10. Trust, Courtesy, and the Sandbox</a>
+<div class="part">Part 3 - Making Sure You Got It Right</div>
+<a href="ch11.html">11. Testing on Ten Prompts a Day</a>
+<a href="ch12.html">12. Hosts Are the New Browsers</a>
+<div class="part">Part 4 - Larger Concerns</div>
+<a href="ch13.html">13. Distribution, or Your Server Is Your Storefront</a>
+<div class="part">Appendices</div>
+<a href="appendix-a.html">Appendix A. The Laws, on One Page</a>
+<a href="appendix-b.html">Appendix B. The Host Capability Matrix, Generated</a>
+<a href="appendix-c.html">Appendix C. The Ten-Prompt Test Kit</a>
+<a href="appendix-d.html">Appendix D. Gallery Repository Map</a>
+<div class="part">End matter</div>
+<a href="about.html">About</a>
+<div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
+</nav>
+<main>
+<p class="eyebrow">Chapter 8</p><h1>Navigation in Someone Else&#x27;s House</h1><p class="summary">No URLs, no tabs, no back button, and what actually replaces each of them.</p><p>Krug’s chapters on navigation are about a simple, unglamorous need: users have to know where they are, what else is here, and how to get back.</p>
+<p>The web solved that with an enormous amount of shared infrastructure. The URL names the place. The back button undoes the move. Tabs hold parallel places. Bookmarks make a place durable. Breadcrumbs show the hierarchy. Every user knows all of it, because every site has it, which is why site-specific navigation schemes always lose to browser affordances.</p>
+<p>You get none of it.</p>
+<figure>
+<img src="figures/xkcd-navigation.png" alt="The affordances you do not get, and the ones that replace them." />
+<figcaption aria-hidden="true">The affordances you do not get, and the ones that replace them.</figcaption>
+</figure>
+<h2 id="what-replaces-each-thing">What replaces each thing</h2>
+<p><strong>The URL is replaced by the sentence.</strong></p>
+<p>The user does not navigate to your app; they say something and the model picks it. So the addressing scheme for your application is natural language, resolved by the model against your tool descriptions and schemas.</p>
+<p>That has a direct implication most teams never act on: <strong>your tool description and input schema are your URL structure.</strong> They are how the user gets to a specific state of your app. A tool with an empty schema has exactly one address. A tool with <code>horizonYears</code>, <code>origin</code>, <code>destination</code>, and <code>date</code> has as many addresses as those values allow, and the user can reach any of them by saying so.</p>
+<p>Naming matters for the same reason it mattered in URLs. <code>compare_rates</code> is guessable. <code>loan_analytics_suite_v3</code> is not, and the model’s guess is the only thing standing between the user and your app.</p>
+<p><strong>The back button is replaced by saying so.</strong></p>
+<p>“No, go back to the five-year view.” This works, and it works well, but only under the condition from Chapter 7: the tool must accept the parameter, and the model must know the value.</p>
+<p>Do not build your own back button. A back arrow inside a widget is one of the most reliable ways to confuse people in this medium, because it looks like the browser’s back button and does something else. If it undoes a step in your flow, label it with the step: <code>Back to dates</code>, not <code>&lt;</code>.</p>
+<p><strong>Tabs are replaced by separate renders.</strong></p>
+<p>Two things the user might want to look at are two messages, not two tabs. The transcript is a perfectly good container for parallel things, and it has one enormous advantage over tabs: both are visible at once if you scroll, and both are addressable by asking.</p>
+<p>Tabs inside a 380 pixel widget are almost always a sign that two archetypes are fighting. Figure 1-2 has four of them.</p>
+<p><strong>Bookmarks are replaced by the transcript itself.</strong></p>
+<p>The conversation is durable, searchable, and shareable. A render that happened is still there. This is a better bookmark than a bookmark, with one condition: the render must be <em>re-summonable</em>, which is again the Chapter 7 contract.</p>
+<p><strong>Breadcrumbs are replaced by saying where you are.</strong></p>
+<p>One line of text at the top of the widget. <em>SFO to JFK, one passenger, economy.</em> <em>Clause 7.3, page 41 of 84.</em> <em>Comparing over 5 years.</em> That line is doing the work of a breadcrumb trail, a page title, and an orientation cue, and it costs one row.</p>
+<h2 id="multi-step-flows">Multi-step flows</h2>
+<p>The hard case. The user has to do three things in order. Where do the steps go?</p>
+<p>There are three shapes, and each breaks in a different place.</p>
+<h3 id="the-wizard-inside-one-widget">The wizard inside one widget</h3>
+<p>Step 1, next, step 2, next, step 3, done. One render, internal state.</p>
+<p>Works when: the steps are genuinely sequential, short, and meaningless separately. Choosing a seat then choosing a meal.</p>
+<p>Breaks when: the user wants to go back and the back is yours to implement. Breaks worse when the conversation moves on mid-wizard and the widget is now a half-finished form nobody will return to. Breaks worst for the second user, which sees one tool call and one result and has no idea the human is on step two of three, unless you say so on every step.</p>
+<p>If you build a wizard, write back at every step. Not at the end. The end may not arrive.</p>
+<h3 id="multiple-renders-one-per-step">Multiple renders, one per step</h3>
+<p>The tool is called three times. Three widgets appear in the transcript, in order.</p>
+<p>Works when: each step is meaningful on its own, and the model has something to do between them. Pick a flight, then confirm the fare, then choose a seat. It reads naturally as a conversation, because it is one.</p>
+<p>Breaks when: the steps are trivial. Three renders for one logical action is three consent prompts and a lot of scrolling. Nobody wants a widget that says “click next” three times.</p>
+<p>Also breaks when the earlier renders go stale, which they will, because they are still on screen. A picker that has already been used should say so. The gallery’s picker replaces itself with a confirmation on selection, for exactly this reason.</p>
+<h3 id="one-card-with-progressive-disclosure">One card with progressive disclosure</h3>
+<p>Everything on one card. The secondary parts are collapsed. Nothing is sequential; the user opens what they care about.</p>
+<p>Works when: the steps are not really steps. Most “three-step flows” are one decision plus two defaults somebody was afraid to assume.</p>
+<p>Breaks when: there genuinely is an order, and a required step is hidden inside a disclosure the user never opened.</p>
+<h3 id="which-to-choose">Which to choose</h3>
+<p>The test: <strong>can the user do them in any order?</strong></p>
+<p>Yes: one card, progressive disclosure. No, and each step matters on its own: multiple renders. No, and the steps are meaningless separately: one widget, and write back at every step.</p>
+<p>The gallery’s expense confirmation is the first shape. What looked like a nine field form is one decision, four assumptions shown as facts, and a disclosure for corrections. It was never a flow. It was a form pretending to be one.</p>
+<h2 id="teardown-getting-to-a-clause">Teardown: getting to a clause</h2>
+<p>The task: “what does the contract say about getting out of it early?”</p>
+<figure>
+<img src="figures/fig-8-1.png" alt="Figure 8-1. open_document. A browser, rebuilt inside a paragraph." />
+<figcaption aria-hidden="true">Figure 8-1. <code>open_document</code>. A browser, rebuilt inside a paragraph.</figcaption>
+</figure>
+<p>Ten controls: page back, page forward, a page number field, zoom out, zoom level, zoom in, rotate, search, print, download. A thumbnail strip. And page 1 of 84.</p>
+<p>Every one of those controls exists because a document viewer on the desktop needs it. In a chat, they are answers to questions the user did not ask. The user asked about termination. That is on page 41.</p>
+<p>The navigation model here is: the user reads the toolbar, finds search, types the word they already said out loud, reads the result list, clicks one, and arrives. Five interactions to reach a place the model could have gone directly.</p>
+<p>There is a second failure worth naming. The model cannot see the pixels. After this renders, if the user asks “so what is the notice period?”, the model has <code>pageText</code> for page 1 and nothing else. It will answer from the wrong page or not at all.</p>
+<figure>
+<img src="figures/fig-8-2.png" alt="Figure 8-2. find_clause. Navigation resolved before the render." />
+<figcaption aria-hidden="true">Figure 8-2. <code>find_clause</code>. Navigation resolved before the render.</figcaption>
+</figure>
+<p>The topic became an argument: <code>find_clause({ topic: "early termination" })</code>. The server did the finding. The render arrives already at the answer, with the governing words marked, and the location stated as a breadcrumb: <em>page 41</em>.</p>
+<p>Two controls remain, and they earn it. Previous and next match, because there are three clauses and comparing them is the actual task. And one escape hatch, <em>Open full document</em>, clearly labelled, for the case where the user really does want all 84 pages.</p>
+<p>Every match is written back with <code>setContext</code>, so the follow-up question is answerable in text without another render. The user can also navigate by talking: “what about the one on page 58?”</p>
+<p>The lesson generalises past documents. <strong>Navigation is usually a search problem, and search is the model’s job.</strong> Every step of navigation you put in your widget is a step you took away from the interface that is better at it.</p>
+<h2 id="deep-linking-by-asking">Deep linking, by asking</h2>
+<p>One consequence worth stating on its own, because it is a genuinely nice property of this medium.</p>
+<p>If your tool’s arguments describe the interesting states of your app, then every one of those states is reachable by a sentence, from any point in any conversation, without a link, a route table, or a router.</p>
+<p>“Show me the clause about confidentiality.” “Compare those at three years.” “Pull up the deploy for 2026.8.12.”</p>
+<p>That is deep linking, and you got it for the price of writing a decent input schema. It is the compensation for losing the URL, and it is a better deal than it sounds, as long as you hold up your end.</p>
+<h2 id="what-to-remember">What to remember</h2>
+<p>No URLs, no back button, no tabs, no bookmarks. The sentence is the address, the schema is the address space, the transcript is the history, and one line of text is the breadcrumb. Multi-step flows have three shapes and the choice is decided by whether order matters. Navigation inside your widget is usually search done badly, and search belongs to the model.</p>
+<p>Next chapter: the widget that does something, and what it owes both users when it does.</p>
+
+<div class="pager"><a href="ch07.html"><span class="dir">Previous</span>7. State, or Knowledge in the World versus in the Head</a><a href="ch09.html" style="text-align:right"><span class="dir">Next</span>9. Forms and Actions</a></div>
+</main>
+</div>
+</body>
+</html>

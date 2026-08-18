@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Figure camera</title>
+<style>
+:root{
+  --ink:#15181D; --muted:#5B6472; --rule:#D8DDE4; --wash:#F5F6F8; --paper:#FFFFFF;
+  --accent:#0F5C8C; --accent-soft:#E7F0F6; --good:#2C6E49; --warm:#B4531A; --danger:#9B2226;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font-family:var(--sans);font-size:14px}
+#shot{display:inline-block;padding:18px;background:#fff}
+.stage{display:flex;gap:0;align-items:flex-start}
+.phone{width:404px;flex:0 0 404px;background:var(--wash);border:1px solid var(--rule);
+  border-radius:16px;padding:14px 12px}
+.chat .bubble{border-radius:14px;padding:9px 13px;margin:0 0 11px;line-height:1.5;
+  white-space:pre-wrap}
+.chat .bubble.user{background:var(--accent);color:#fff;margin-left:auto;width:fit-content;
+  max-width:82%;border-bottom-right-radius:5px}
+.chat .bubble.assistant{background:var(--paper);border:1px solid var(--rule)}
+.chat .bubble.app{background:transparent;padding:0;border:0}
+.chat .bubble:last-child{margin-bottom:0}
+.applabel{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);
+  margin:0 0 5px 2px}
+.applabel .from{margin-left:auto;font-size:10px}
+.dotmark{width:7px;height:7px;border-radius:50%;background:var(--good)}
+iframe{width:100%;border:1px solid var(--rule);border-radius:12px;background:var(--paper);
+  display:block}
+/* Annotations. Krug drew on printouts; we draw on the DOM so the marks
+   regenerate with the figure. */
+.gutter{position:relative;width:300px;flex:0 0 300px;margin-left:14px;align-self:stretch}
+.callout{position:absolute;font-size:12px;line-height:1.35;color:var(--ink);
+  background:#FFF6DA;border:1px solid #E4C766;border-radius:7px;padding:5px 8px;
+  width:270px}
+.callout.good{background:#EAF3EE;border-color:#9CC7AE}
+.callout b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);margin-bottom:1px}
+svg.leads{position:absolute;inset:0;overflow:visible;pointer-events:none}
+.ctxpane{width:300px;flex:0 0 300px;margin-left:14px;border:1px solid var(--rule);
+  border-radius:10px;padding:10px 12px;background:var(--paper);align-self:flex-start}
+.ctxpane h2{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
+  margin:0 0 7px}
+.ctxpane .entry{font-family:var(--mono);font-size:10.5px;line-height:1.45;
+  border-left:2px solid var(--good);padding:2px 0 2px 7px;margin-bottom:7px;
+  white-space:pre-wrap;word-break:break-word}
+.ctxpane .entry.tool{border-left-color:var(--accent)}
+.ctxpane .entry .k{display:block;font-family:var(--sans);font-size:9px;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--muted)}
+.ctxpane .empty{font-size:11.5px;color:var(--danger);font-style:italic}
+</style>
+</head>
+<body>
+<div id="shot">
+  <div class="stage">
+    <div class="phone"><div class="chat" id="chat"></div></div>
+    <div class="gutter" id="gutter"><svg class="leads" id="leads"></svg></div>
+  </div>
+</div>
+
+<script type="module">
+import { MiniHost } from "./host.js";
+import { SCENES } from "./scenes.js";
+
+const params = new URLSearchParams(location.search);
+const scene = SCENES.find((s) => s.id === params.get("scene"));
+const chat = document.getElementById("chat");
+const gutter = document.getElementById("gutter");
+const seen = [];
+
+const host = new MiniHost({ transcript: chat, onContext: (e) => seen.push(e) });
+
+function contextPane() {
+  const pane = document.createElement("div");
+  pane.className = "ctxpane";
+  pane.innerHTML = "<h2>What the model sees</h2>";
+  if (!seen.length) {
+    pane.innerHTML += '<div class="empty">Nothing. The user is on their own in there.</div>';
+  }
+  for (const e of seen.slice(0, 4)) {
+    const d = document.createElement("div");
+    d.className = "entry " + (e.kind === "tool" ? "tool" : "");
+    d.innerHTML = '<span class="k">' + (e.kind === "tool" ? "tools/call " + e.tool : "ui/set-context") + "</span>";
+    d.appendChild(document.createTextNode(
+      e.text + (e.structured ? "\n" + JSON.stringify(e.structured) : "")
+    ));
+    pane.appendChild(d);
+  }
+  return pane;
+}
+
+async function measure(frame, selector) {
+  return new Promise((resolve) => {
+    const id = "m" + Math.random();
+    const onMsg = (ev) => {
+      if (ev.data && ev.data.id === id) {
+        window.removeEventListener("message", onMsg);
+        resolve(ev.data.result);
+      }
+    };
+    window.addEventListener("message", onMsg);
+    frame.contentWindow.postMessage(
+      { jsonrpc: "2.0", id, method: "ui/measure", params: { selector } }, "*"
+    );
+    setTimeout(() => resolve(null), 900);
+  });
+}
+
+async function run() {
+  let lastFrame = null;
+  for (const step of scene.steps) {
+    if (step.user) host.say("user", step.user);
+    else if (step.assistant) host.say("assistant", step.assistant);
+    else if (step.call) {
+      const out = await host.render(step.call, step.args || {}, { height: step.height });
+      lastFrame = out.frame || null;
+    }
+  }
+
+  if (scene.simulate) {
+    for (const s of scene.simulate) {
+      lastFrame.contentWindow.postMessage(s, "*");
+    }
+    await new Promise((r) => setTimeout(r, 300));
+  }
+
+  await new Promise((r) => setTimeout(r, 260));
+
+  if (scene.showContext) {
+    document.querySelector(".stage").appendChild(contextPane());
+  }
+
+  const notes = scene.annotations || [];
+  if (!notes.length) {
+    gutter.remove();
+  } else {
+    const svg = document.getElementById("leads");
+    const gRect = gutter.getBoundingClientRect();
+    let cursor = 0;
+    for (const note of notes) {
+      const box = document.createElement("div");
+      box.className = "callout" + (note.good ? " good" : "");
+      box.innerHTML = "<b>" + (note.good ? "works" : "violation") + "</b>" + note.text;
+      gutter.appendChild(box);
+
+      /* The lead starts at the edge of the phone, never across the app's own
+       * pixels. Krug's rule: the annotation points at the thing, it does not
+       * scribble on it. */
+      let anchor = null;
+      if (note.sel && lastFrame) {
+        const r = await measure(lastFrame, note.sel);
+        const f = lastFrame.getBoundingClientRect();
+        const phone = document.querySelector(".phone").getBoundingClientRect();
+        if (r) anchor = { x: phone.right, y: f.top + r.y + Math.min(r.height / 2, 16) };
+      }
+      const top = Math.max(cursor, anchor ? anchor.y - gRect.top - 14 : cursor);
+      box.style.top = top + "px";
+      cursor = top + box.offsetHeight + 9;
+
+      if (anchor) {
+        const y = top + Math.min(box.offsetHeight / 2, 16);
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const x0 = anchor.x - gRect.left;
+        const y0 = anchor.y - gRect.top;
+        line.setAttribute("d", `M ${x0} ${y0} C ${x0 + 10} ${y0}, ${-14} ${y}, 0 ${y}`);
+        line.setAttribute("fill", "none");
+        line.setAttribute("stroke", note.good ? "#2C6E49" : "#B4531A");
+        line.setAttribute("stroke-width", "1.4");
+        svg.appendChild(line);
+        const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        dot.setAttribute("cx", x0); dot.setAttribute("cy", y0); dot.setAttribute("r", "3");
+        dot.setAttribute("fill", note.good ? "#2C6E49" : "#B4531A");
+        svg.appendChild(dot);
+      }
+    }
+    gutter.style.height = cursor + "px";
+  }
+
+  await new Promise((r) => setTimeout(r, 120));
+  window.__ready = true;
+}
+
+if (scene) run();
+else window.__ready = true;
+</script>
+</body>
+</html>

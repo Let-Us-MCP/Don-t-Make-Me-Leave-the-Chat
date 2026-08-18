@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11. Testing on Ten Prompts a Day &middot; Don&#x27;t Make Me Leave the Chat</title>
+<meta name="description" content="Five humans and an afternoon, plus the half that is new: does the model use your app correctly.">
+<meta property="og:title" content="11. Testing on Ten Prompts a Day">
+<meta property="og:description" content="Five humans and an afternoon, plus the half that is new: does the model use your app correctly.">
+<style>
+:root{
+  --ink:#15181D; --muted:#5B6472; --rule:#D8DDE4; --wash:#F5F6F8;
+  --paper:#FFFFFF; --accent:#0F5C8C; --accent-soft:#E7F0F6;
+  --warm:#B4531A; --warm-soft:#FBF0E7; --good:#2C6E49; --good-soft:#E9F2EC;
+  --danger:#9B2226; --danger-soft:#FAECEC;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#E7EAEE; --muted:#98A2B0; --rule:#2C333D; --wash:#171B21;
+    --paper:#0F1216; --accent:#63AEDC; --accent-soft:#14232E;
+    --warm:#E08B4F; --warm-soft:#2A1D13; --good:#6FBF8E; --good-soft:#13221A;
+    --danger:#E4796F; --danger-soft:#291516;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:18px;line-height:1.62;
+  -webkit-text-size-adjust:100%}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);
+  max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 20px 60px;
+  border-right:1px solid var(--rule);font-family:var(--sans);font-size:14px}
+nav.toc .brand{display:block;font-weight:700;font-size:16px;color:var(--ink);
+  text-decoration:none;line-height:1.3;margin-bottom:4px}
+nav.toc .tagline{color:var(--muted);font-size:12.5px;margin:0 0 18px;line-height:1.45}
+nav.toc .part{margin:18px 0 6px;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:700}
+nav.toc a{display:block;padding:4px 8px;margin-left:-8px;border-radius:5px;
+  color:var(--muted);text-decoration:none}
+nav.toc a:hover{background:var(--wash);color:var(--ink)}
+nav.toc a.current{background:var(--accent-soft);color:var(--accent);font-weight:600}
+main{padding:44px 52px 120px;min-width:0;max-width:78ch}
+h1,h2,h3,h4{font-family:var(--sans);line-height:1.25;color:var(--ink)}
+h1{font-size:2.05em;margin:0 0 .2em;letter-spacing:-.015em}
+h2{font-size:1.42em;margin:2em 0 .5em;padding-top:.35em}
+h3{font-size:1.14em;margin:1.7em 0 .4em}
+p{margin:0 0 1.05em}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 .5em;font-weight:700}
+.summary{font-family:var(--sans);font-size:15px;color:var(--muted);
+  margin:0 0 2.2em;line-height:1.5}
+code{font-family:var(--mono);font-size:.855em;background:var(--wash);
+  padding:.12em .36em;border-radius:4px;word-break:break-word}
+pre{background:var(--wash);border-left:3px solid var(--rule);
+  border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
+  font-size:13.5px;line-height:1.5;margin:1.3em 0}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
+  padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
+aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.4em}
+aside.law p{margin:0;font-family:var(--sans);font-size:1.16em;font-weight:700;
+  line-height:1.35}
+blockquote{border-left:3px solid var(--warm);background:var(--warm-soft);
+  margin:1.5em 0;padding:12px 18px;border-radius:0 6px 6px 0;font-size:.98em}
+blockquote p:last-child{margin-bottom:0}
+figure{margin:2.2em 0;text-align:center}
+figure img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}
+@media (prefers-color-scheme: dark){
+  figure img{background:#fff;padding:8px}
+}
+figcaption{font-family:var(--sans);font-size:13.5px;color:var(--muted);
+  margin-top:.7em;text-align:left;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:1.5em 0}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);
+  vertical-align:top}
+thead th{border-bottom:2px solid var(--rule);font-weight:700}
+ul,ol{padding-left:1.35em;margin:0 0 1.05em}
+li{margin-bottom:.32em}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:4em;
+  padding-top:1.4em;border-top:1px solid var(--rule);font-family:var(--sans);
+  font-size:14px}
+.pager a{text-decoration:none;max-width:46%}
+.pager .dir{display:block;font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted)}
+.hero{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;
+  align-items:start;margin-bottom:2.4em}
+.hero img{width:100%;border-radius:10px;border:1px solid var(--rule)}
+.hero h1{margin-bottom:.15em}
+.hero .sub{font-family:var(--sans);color:var(--muted);font-size:16px;
+  margin:0 0 1em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;margin:1.6em 0}
+.cards a{display:block;border:1px solid var(--rule);border-radius:9px;
+  padding:12px 14px;text-decoration:none;color:var(--ink);font-family:var(--sans)}
+.cards a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.cards .n{font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700}
+.cards .t{font-weight:600;font-size:15px;margin:.15em 0 .25em}
+.cards .s{font-size:12.5px;color:var(--muted);line-height:1.45}
+.menu{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  main{padding:28px 20px 80px}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero img{max-width:220px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><a class="brand" href="index.html">Don&#x27;t Make Me Leave the Chat</a>
+<p class="tagline">A common sense approach to MCP Apps</p>
+<div class="part">Front matter</div>
+<a href="preface.html">Preface</a>
+<a href="how-to-read.html">How to Read This Book</a>
+<div class="part">Part 1 - Guiding Principles</div>
+<a href="ch01.html">1. Don&#x27;t Make Me Leave the Chat</a>
+<a href="ch02.html">2. Your App Has Two Users</a>
+<a href="ch03.html">3. How People Actually Use Apps in Chat</a>
+<a href="ch04.html">4. Never Ask What the Conversation Already Knows</a>
+<a href="ch05.html">5. Omit Needless Widgets</a>
+<div class="part">Part 2 - Things You Need to Get Right</div>
+<a href="ch06.html">6. The Machinery, Briefly</a>
+<a href="ch07.html">7. State, or Knowledge in the World versus in the Head</a>
+<a href="ch08.html">8. Navigation in Someone Else&#x27;s House</a>
+<a href="ch09.html">9. Forms and Actions</a>
+<a href="ch10.html">10. Trust, Courtesy, and the Sandbox</a>
+<div class="part">Part 3 - Making Sure You Got It Right</div>
+<a href="ch11.html" class="current">11. Testing on Ten Prompts a Day</a>
+<a href="ch12.html">12. Hosts Are the New Browsers</a>
+<div class="part">Part 4 - Larger Concerns</div>
+<a href="ch13.html">13. Distribution, or Your Server Is Your Storefront</a>
+<div class="part">Appendices</div>
+<a href="appendix-a.html">Appendix A. The Laws, on One Page</a>
+<a href="appendix-b.html">Appendix B. The Host Capability Matrix, Generated</a>
+<a href="appendix-c.html">Appendix C. The Ten-Prompt Test Kit</a>
+<a href="appendix-d.html">Appendix D. Gallery Repository Map</a>
+<div class="part">End matter</div>
+<a href="about.html">About</a>
+<div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
+</nav>
+<main>
+<p class="eyebrow">Chapter 11</p><h1>Testing on Ten Prompts a Day</h1><p class="summary">Five humans and an afternoon, plus the half that is new: does the model use your app correctly.</p><p>Krug’s testing chapter is the most useful thing he wrote, and the argument was about economics rather than method. Elaborate usability testing is expensive, so it happens once, late, when nothing can be changed. Cheap testing is worth more than good testing, because cheap testing happens.</p>
+<p>His numbers: three to five users, one morning a month, watched by whoever can be dragged into the room. That finds most of what an expensive study finds, at about one percent of the cost, early enough to act on.</p>
+<p>All of that transfers unchanged. Then this medium doubles the audience.</p>
+<h2 id="the-human-half-unchanged">The human half, unchanged</h2>
+<p>Five people. Three tasks. One afternoon. Somebody watching.</p>
+<p><strong>Recruit loosely.</strong> Krug’s finding that recruiting the “wrong” users still finds most problems holds here. You are looking for interface failures, not domain expertise.</p>
+<p><strong>Give tasks, not instructions.</strong> “Find out whether we can get out of the Northwind contract early” is a task. “Click the find clause button” is a rehearsal.</p>
+<p><strong>Watch, do not help.</strong> The urge to explain is overwhelming and it destroys the data. Every explanation you give in the room is one you cannot give in production.</p>
+<p><strong>Ask them to think aloud.</strong> Especially in this medium, because half the interaction is what they <em>typed</em>, and you need to hear what they expected the assistant to do.</p>
+<p><strong>Stop after each session and fix something.</strong> Five sessions and one fix at the end is worse than five sessions with four fixes between them.</p>
+<p>Three things to watch for that are specific to chat:</p>
+<ul>
+<li><strong>What did they type?</strong> If nobody phrases the request the way your tool description expects, your app will not get invoked in the wild. This is a finding about your description, not about your user.</li>
+<li><strong>Did they notice the widget?</strong> In a scrolling transcript, on a phone, a render can be missed entirely. If they scrolled past it and typed a follow-up question instead, that is the answer to Chapter 1’s first question.</li>
+<li><strong>Did they touch the controls?</strong> A control nobody touches in five sessions is a control you can delete. This is the cheapest deletion criterion in the book.</li>
+</ul>
+<h2 id="the-new-half-the-model-as-a-user">The new half: the model as a user</h2>
+<p>Now the part with no precedent, and the part you can run every commit.</p>
+<p>Your other user can be tested automatically, at scale, without recruiting anybody, because it is software. And it needs testing more than the human does, because you never watch it use your app. You watch the transcript afterwards and infer.</p>
+<p>There are three questions, and they map onto the three ways an app fails its second user.</p>
+<p><strong>1. Invocation.</strong> Given a prompt that should use your app, does the model use it? Given one that should not, does it stay away?</p>
+<p>Under-invocation is the common failure and it is nearly always the description. The tool is fine, the app is beautiful, and the model never reaches for it, because the description says what the tool <em>is</em> instead of when to use it.</p>
+<p>Over-invocation is rarer and more annoying. A tool described too broadly gets called for everything, and now every conversation has a widget in it.</p>
+<p><strong>2. Argument quality.</strong> When the model does call, does it pass what it knows?</p>
+<p>This is Law 3 measured. If the conversation contained the date and the model called your tool without it, you have found either a missing schema property or a property whose description does not say what goes in it.</p>
+<p><strong>3. Readback.</strong> After the render, can the model answer questions about what happened?</p>
+<p>Ask a follow-up that depends on the widget’s state. If the answer is wrong or hedged, your write-back is missing or too thin. This is the check that catches Figure 2-1, and it catches it in about four seconds.</p>
+<h2 id="the-harness-that-runs-without-a-model">The harness that runs without a model</h2>
+<p>Before you spend anything on model-in-the-loop runs, there is a tier of checks that need no model at all, run in under a second, and catch most of what goes wrong. The gallery ships them in <code>gallery/evals/checks.js</code>.</p>
+<p>Each one is a question the model would ask about your tool, expressed as a grep:</p>
+<ul>
+<li><strong>Does the description say when to use this?</strong> A regex for <em>use when</em>, <em>when the user</em>, <em>call this when</em>. Crude, and it works, because a description with no trigger clause is a description that never says when.</li>
+<li><strong>Does the tool have more than one address?</strong> An empty <code>properties</code> object means the model cannot re-summon a specific view, so the app has to ask the user for everything. Chapters 4, 7, and 8 all end up here.</li>
+<li><strong>Is the text answer an answer?</strong> If <code>content</code> is under nine words, it is almost certainly a log line. “Loan analytics suite opened.” tells the model nothing it can use.</li>
+<li><strong>Does an interactive app ever write back?</strong> If the HTML binds a click handler and never calls <code>setContext</code>, the second user is locked out.</li>
+<li><strong>Does anything that changes the world name a way back?</strong> Chapter 9’s requirement, checked mechanically.</li>
+</ul>
+<p>None of that is clever. All of it has caught something.</p>
+<h2 id="a-worked-session">A worked session</h2>
+<p>Here is what happened the first time those checks ran against this book’s own gallery. The apps had just been written, by somebody who had just finished writing the chapters telling you not to make these mistakes.</p>
+<pre><code>21 tools checked, 20 error(s), 15 warning(s)</code></pre>
+<p>Twenty errors. Some of the findings, verbatim:</p>
+<pre><code>FAIL  service_status  [empty-schema] no input properties, so the model cannot
+                      re-summon a specific view and the app must ask the user
+                      for everything
+FAIL  submit_expense  [log-line] content reads as a log line rather than an
+                      answer: &quot;Expense EXP-91909 submitted. Void it with
+                      void_expense.&quot;
+FAIL  pick_flight     [no-trigger] description never says when to reach for
+                      this tool
+warn  submit_expense  [bare-property] property &quot;amount&quot; has no description,
+                      enum, or default</code></pre>
+<p>Three of those are worth dwelling on.</p>
+<p><code>service_status</code> had an empty input schema. It is the chapter-3 exhibit of doing a dashboard right, and it could not be scoped to a service, which means “just show me checkout” produced the whole platform. Chapter 7’s re-render contract failed on the book’s own example.</p>
+<p><code>submit_expense</code> returned a sentence that reads fine to a person and tells the model nothing about what was filed. The amount, the merchant, and the date were all in <code>structuredContent</code> and none of them were in the text, so a host without the extension got a receipt number and no receipt.</p>
+<p><code>pick_flight</code> had a good description that never said when to use it. It said what not to do (<em>do not call this before origin, destination, and date are known</em>) without ever saying what to do.</p>
+<p>Fixing all twenty took about forty minutes and touched only descriptions, schemas, and <code>content</code> strings. Not one pixel changed. That is the shape of this work: the second user’s entire interface is text, so its bugs are text bugs, and text bugs are cheap.</p>
+<pre><code>21 tools checked, 0 error(s), 0 warning(s)</code></pre>
+<h2 id="the-model-in-the-loop-tier">The model-in-the-loop tier</h2>
+<p>The checks above are a filter. They tell you a description has no trigger clause. They cannot tell you whether the trigger clause works.</p>
+<p>For that you need a model, a prompt suite, and a host. The cheap version is a headless run against a host you already have. From the repository root:</p>
+<pre class="bash"><code>claude -p &quot;Using only the gallery MCP server, answer in exactly two lines: \
+  which lender is cheapest over five years and the total, and whether that \
+  changes at three years.&quot; \
+  --allowedTools &quot;mcp__gallery__compare_rates_text&quot;</code></pre>
+<pre><code>Cedar Credit Union is cheapest over five years at $34,835 total (vs. Harbor
+Direct $34,965 and Northbank $35,000).
+Yes, it flips at three years: Northbank wins at $34,130 ... Cedar&#39;s $1,400 in
+fees only pays off over a longer horizon.</code></pre>
+<p>That is an invocation check, an argument check, and a readback check in one command, and it costs about ten cents.</p>
+<p>Build a suite of ten prompts per app. Five that should invoke it, phrased the way five different people would phrase it. Three that should not, including at least one near miss. Two that check readback after a render. Run them nightly, or on every change to a description, which is where the regressions come from.</p>
+<p>Two warnings from running this in anger.</p>
+<p><strong>Model runs are not deterministic.</strong> A single failure is noise. Run the suite three times and look at rates. A prompt that invokes correctly two times out of three is a description problem, not a flake.</p>
+<p><strong>Record the prompts, not the outputs.</strong> Outputs change with every model release. What you are testing is whether your description survives the paraphrase, and the prompt suite is the durable artefact.</p>
+<h2 id="what-to-fix-first">What to fix first</h2>
+<p>Krug’s triage, adapted. In order:</p>
+<p><strong>1. Things that make the model not call you.</strong> Nothing else matters if the app never renders. This is almost always the description, and it is almost always a missing trigger clause.</p>
+<p><strong>2. Things that make the model wrong afterwards.</strong> A widget that leaves the model with a stale or absent picture produces confident wrong answers, and confident wrong answers cost more trust than a missing feature.</p>
+<p><strong>3. Things that make the human ask a question they already answered.</strong> Every re-ask found in a session is a schema property you did not declare.</p>
+<p><strong>4. Everything else.</strong></p>
+<p>Resist the urge to fix the visual problems first. They are the ones you can see, which is why they get fixed, and they are usually the ones that matter least.</p>
+<h2 id="what-to-remember">What to remember</h2>
+<p>Five humans, three tasks, one afternoon, and fix something after each session. Then test the other user, which is cheaper because it never gets tired: does the model invoke you, does it pass what it knows, and can it answer afterwards. Most of that runs as static checks in under a second. The rest costs ten cents a run against a host you already have. And when the checks fail on your own examples, which they will, notice how many of the fixes are strings.</p>
+<p>Next chapter: the same widget, in four houses that do not agree.</p>
+
+<div class="pager"><a href="ch10.html"><span class="dir">Previous</span>10. Trust, Courtesy, and the Sandbox</a><a href="ch12.html" style="text-align:right"><span class="dir">Next</span>12. Hosts Are the New Browsers</a></div>
+</main>
+</div>
+</body>
+</html>

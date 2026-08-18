@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1. Don&#x27;t Make Me Leave the Chat &middot; Don&#x27;t Make Me Leave the Chat</title>
+<meta name="description" content="The first law, the three questions that enforce it, and the same task built three ways.">
+<meta property="og:title" content="1. Don&#x27;t Make Me Leave the Chat">
+<meta property="og:description" content="The first law, the three questions that enforce it, and the same task built three ways.">
+<style>
+:root{
+  --ink:#15181D; --muted:#5B6472; --rule:#D8DDE4; --wash:#F5F6F8;
+  --paper:#FFFFFF; --accent:#0F5C8C; --accent-soft:#E7F0F6;
+  --warm:#B4531A; --warm-soft:#FBF0E7; --good:#2C6E49; --good-soft:#E9F2EC;
+  --danger:#9B2226; --danger-soft:#FAECEC;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#E7EAEE; --muted:#98A2B0; --rule:#2C333D; --wash:#171B21;
+    --paper:#0F1216; --accent:#63AEDC; --accent-soft:#14232E;
+    --warm:#E08B4F; --warm-soft:#2A1D13; --good:#6FBF8E; --good-soft:#13221A;
+    --danger:#E4796F; --danger-soft:#291516;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:18px;line-height:1.62;
+  -webkit-text-size-adjust:100%}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);
+  max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 20px 60px;
+  border-right:1px solid var(--rule);font-family:var(--sans);font-size:14px}
+nav.toc .brand{display:block;font-weight:700;font-size:16px;color:var(--ink);
+  text-decoration:none;line-height:1.3;margin-bottom:4px}
+nav.toc .tagline{color:var(--muted);font-size:12.5px;margin:0 0 18px;line-height:1.45}
+nav.toc .part{margin:18px 0 6px;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:700}
+nav.toc a{display:block;padding:4px 8px;margin-left:-8px;border-radius:5px;
+  color:var(--muted);text-decoration:none}
+nav.toc a:hover{background:var(--wash);color:var(--ink)}
+nav.toc a.current{background:var(--accent-soft);color:var(--accent);font-weight:600}
+main{padding:44px 52px 120px;min-width:0;max-width:78ch}
+h1,h2,h3,h4{font-family:var(--sans);line-height:1.25;color:var(--ink)}
+h1{font-size:2.05em;margin:0 0 .2em;letter-spacing:-.015em}
+h2{font-size:1.42em;margin:2em 0 .5em;padding-top:.35em}
+h3{font-size:1.14em;margin:1.7em 0 .4em}
+p{margin:0 0 1.05em}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 .5em;font-weight:700}
+.summary{font-family:var(--sans);font-size:15px;color:var(--muted);
+  margin:0 0 2.2em;line-height:1.5}
+code{font-family:var(--mono);font-size:.855em;background:var(--wash);
+  padding:.12em .36em;border-radius:4px;word-break:break-word}
+pre{background:var(--wash);border-left:3px solid var(--rule);
+  border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
+  font-size:13.5px;line-height:1.5;margin:1.3em 0}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
+  padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
+aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.4em}
+aside.law p{margin:0;font-family:var(--sans);font-size:1.16em;font-weight:700;
+  line-height:1.35}
+blockquote{border-left:3px solid var(--warm);background:var(--warm-soft);
+  margin:1.5em 0;padding:12px 18px;border-radius:0 6px 6px 0;font-size:.98em}
+blockquote p:last-child{margin-bottom:0}
+figure{margin:2.2em 0;text-align:center}
+figure img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}
+@media (prefers-color-scheme: dark){
+  figure img{background:#fff;padding:8px}
+}
+figcaption{font-family:var(--sans);font-size:13.5px;color:var(--muted);
+  margin-top:.7em;text-align:left;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:1.5em 0}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);
+  vertical-align:top}
+thead th{border-bottom:2px solid var(--rule);font-weight:700}
+ul,ol{padding-left:1.35em;margin:0 0 1.05em}
+li{margin-bottom:.32em}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:4em;
+  padding-top:1.4em;border-top:1px solid var(--rule);font-family:var(--sans);
+  font-size:14px}
+.pager a{text-decoration:none;max-width:46%}
+.pager .dir{display:block;font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted)}
+.hero{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;
+  align-items:start;margin-bottom:2.4em}
+.hero img{width:100%;border-radius:10px;border:1px solid var(--rule)}
+.hero h1{margin-bottom:.15em}
+.hero .sub{font-family:var(--sans);color:var(--muted);font-size:16px;
+  margin:0 0 1em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;margin:1.6em 0}
+.cards a{display:block;border:1px solid var(--rule);border-radius:9px;
+  padding:12px 14px;text-decoration:none;color:var(--ink);font-family:var(--sans)}
+.cards a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.cards .n{font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700}
+.cards .t{font-weight:600;font-size:15px;margin:.15em 0 .25em}
+.cards .s{font-size:12.5px;color:var(--muted);line-height:1.45}
+.menu{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  main{padding:28px 20px 80px}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero img{max-width:220px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><a class="brand" href="index.html">Don&#x27;t Make Me Leave the Chat</a>
+<p class="tagline">A common sense approach to MCP Apps</p>
+<div class="part">Front matter</div>
+<a href="preface.html">Preface</a>
+<a href="how-to-read.html">How to Read This Book</a>
+<div class="part">Part 1 - Guiding Principles</div>
+<a href="ch01.html" class="current">1. Don&#x27;t Make Me Leave the Chat</a>
+<a href="ch02.html">2. Your App Has Two Users</a>
+<a href="ch03.html">3. How People Actually Use Apps in Chat</a>
+<a href="ch04.html">4. Never Ask What the Conversation Already Knows</a>
+<a href="ch05.html">5. Omit Needless Widgets</a>
+<div class="part">Part 2 - Things You Need to Get Right</div>
+<a href="ch06.html">6. The Machinery, Briefly</a>
+<a href="ch07.html">7. State, or Knowledge in the World versus in the Head</a>
+<a href="ch08.html">8. Navigation in Someone Else&#x27;s House</a>
+<a href="ch09.html">9. Forms and Actions</a>
+<a href="ch10.html">10. Trust, Courtesy, and the Sandbox</a>
+<div class="part">Part 3 - Making Sure You Got It Right</div>
+<a href="ch11.html">11. Testing on Ten Prompts a Day</a>
+<a href="ch12.html">12. Hosts Are the New Browsers</a>
+<div class="part">Part 4 - Larger Concerns</div>
+<a href="ch13.html">13. Distribution, or Your Server Is Your Storefront</a>
+<div class="part">Appendices</div>
+<a href="appendix-a.html">Appendix A. The Laws, on One Page</a>
+<a href="appendix-b.html">Appendix B. The Host Capability Matrix, Generated</a>
+<a href="appendix-c.html">Appendix C. The Ten-Prompt Test Kit</a>
+<a href="appendix-d.html">Appendix D. Gallery Repository Map</a>
+<div class="part">End matter</div>
+<a href="about.html">About</a>
+<div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
+</nav>
+<main>
+<p class="eyebrow">Chapter 1</p><h1>Don&#x27;t Make Me Leave the Chat</h1><p class="summary">The first law, the three questions that enforce it, and the same task built three ways.</p><p>Here is the first law, and if you only remember one thing from this book, make it this one:</p>
+<aside class="law"><span class="lawnum">Law 1</span><p>Don’t make me leave the chat.</p></aside>
+<p>That is most of the book. Everything else is footnotes, examples, and me talking you out of the dashboard you are already planning.</p>
+<h2 id="your-app-is-a-guest">Your app is a guest</h2>
+<p>An MCP App does not open in a tab. It does not get a URL. Nobody typed your name into anything. Your app appears in the middle of a conversation that was going fine without you, because a model decided your tool was useful for the next thirty seconds of somebody’s task.</p>
+<p>That makes you a guest. A welcome one, hopefully. But a guest.</p>
+<p>Guests have one job: help with the thing that is happening, then get out of the way. Guests do not rearrange the furniture, demand everyone’s attention, or announce that actually, the real party is at their house.</p>
+<p>You would be amazed how many widgets announce that the real party is at their house.</p>
+<figure>
+<img src="figures/xkcd-guest.png" alt="The guest with slides." />
+<figcaption aria-hidden="true">The guest with slides.</figcaption>
+</figure>
+<p>The comparison to a web page is worth making precise, because it is where most of the bad instincts come from. A web page is a destination. Somebody navigated to it. They typed a URL, or clicked a link, or opened a bookmark, and in doing so they made a decision: for the next few minutes, this page has my attention. The page can spend that attention. It has a header, a nav bar, a footer, and a cookie banner, and none of those are outrageous, because the user signed up for a place.</p>
+<p>An MCP App is not a place. It is a paragraph that happens to have buttons. It arrives in a stream of other paragraphs, in a column a few hundred pixels wide, underneath a sentence somebody typed and above a sentence somebody is about to type. Nobody signed up for it. Nobody can bookmark it. The user did not choose you; the model did, on their behalf, in the last two seconds.</p>
+<p>Design for the paragraph, not for the place.</p>
+<h2 id="why-leaving-is-so-expensive">Why leaving is so expensive</h2>
+<p>“Leave the chat” sounds dramatic. Most apps do not literally eject anyone. They do something quieter: they break the flow. And in this medium, the flow is worth more than it has ever been worth anywhere else, because the conversation is holding three things at once.</p>
+<p><strong>The context.</strong> Everything established so far. The account being discussed, the date range that matters, the option already ruled out, the tone the user has settled into. The moment your app behaves as if none of that happened, the user has to carry all of it across the gap by hand.</p>
+<p><strong>The momentum.</strong> The user was mid-task. They had the next step in their head. Every second your widget spends being impressive instead of useful is a second that thought is evaporating.</p>
+<p><strong>The model’s working state.</strong> This is the new one, and Chapter 2 is entirely about it. The model is tracking the task too. Send the user off to a tab, a login page, or a maze of controls the model cannot see into, and you have not just interrupted a person. You have blinded the other participant, and the user will discover this three turns later when they ask a follow-up question and get an answer that ignores everything they just did.</p>
+<p>A web page that wastes your attention costs you attention. A chat app that breaks the flow costs the context, the momentum, and the model, all three, and the user pays to rebuild every one of them.</p>
+<p>So the bar is high. Which brings us to the uncomfortable part.</p>
+<h2 id="an-app-must-earn-its-render">An app must earn its render</h2>
+<p>Text is the incumbent, and the incumbent is good.</p>
+<p>Text streams instantly, token by token, so the user is reading the answer while it is still being written. Text is quotable, searchable, and screen-readable. The model can refer back to it, and so can the user, six turns later, by scrolling. Text needs no viewport, no theme, no consent prompt, no load time, and no host capability negotiation. Text works in every client that has ever spoken this protocol and every client that ever will.</p>
+<p>Your widget is competing with that. Before you ship a render, it has to win.</p>
+<p>Three questions tell you whether it will. Ask them in order, and be honest, because your users will be.</p>
+<p><strong>1. Does this need to be <em>seen</em>, or just <em>read</em>?</strong></p>
+<p>A trend needs to be seen. A number needs to be read. “Revenue is up 12% to $4.2M” is a finished answer; a chart that says the same thing is a slower paragraph with a loading state. Shape, comparison, spatial arrangement, a picture of the actual thing: seen. A value, a status, a verdict, a fact: read.</p>
+<p>The test is not whether a picture would be <em>nice</em>. A picture is always nice. The test is whether the picture carries information that the sentence cannot. If you can write the caption, and the caption is the answer, ship the caption.</p>
+<p><strong>2. Will the user <em>act</em> on it, or just <em>glance</em> at it?</strong></p>
+<p>If the user is going to pick, adjust, approve, or explore, interactivity is doing real work. If they are going to look once and move on, you have shipped controls to somebody who wanted a sentence. Glances want billboards, not cockpits. Chapter 3 is entirely about designing for the glance.</p>
+<p>Watch for the tell: a widget with controls nobody touches is a widget that failed this question. The gallery’s evals in Chapter 11 measure exactly that.</p>
+<p><strong>3. Does the conversation already contain the answer?</strong></p>
+<p>The cruellest failure in this medium is a widget that renders four input fields when the user already said, in words, in this very conversation, what goes in three of them. If the conversation contains it, your app should arrive already knowing it. This one is important enough that it gets its own law in Chapter 4.</p>
+<p>Score zero out of three and the right widget count is zero. Write the sentence. Score one, think hard, and consider whether the one you scored is really worth a render. Two or three, render, and make it count.</p>
+<h2 id="teardown-the-same-task-three-ways">Teardown: the same task, three ways</h2>
+<p>The task: somebody comparing three loan quotes asks, “which of these is actually cheapest over five years?”</p>
+<p>The gallery builds this three ways. Run them yourself with <code>npm run gallery</code> and click through the Chapter 1 scenes; the argument survives on paper, but it lands in the renderer.</p>
+<h3 id="exhibit-a-prose">Exhibit A: prose</h3>
+<figure>
+<img src="figures/fig-1-1.png" alt="Figure 1-1. The plain text answer, from compare_rates_text. No user interface at all." />
+<figcaption aria-hidden="true">Figure 1-1. The plain text answer, from <code>compare_rates_text</code>. No user interface at all.</figcaption>
+</figure>
+<p>Total cost of ownership, one line per lender, cheapest marked, done. It streams in under a second. The model can cite it three turns later without another tool call. For a one-shot answer, this is the ceiling, and it costs nothing.</p>
+<p>Notice the last line of that answer, because it is the reason this chapter has two more exhibits: <em>the ranking changes with the horizon.</em> Northbank is cheapest for the first three years, and Cedar Credit Union from year four on, because Cedar’s lower rate takes that long to pay off its $1,400 fee. That sentence invites a follow-up question, and follow-up questions cost turns.</p>
+<h3 id="exhibit-b-the-kitchen-sink">Exhibit B: the kitchen sink</h3>
+<figure>
+<img src="figures/fig-1-2.png" alt="Figure 1-2. The over-built version, from compare_rates_suite. Five controls the task did not ask for." />
+<figcaption aria-hidden="true">Figure 1-2. The over-built version, from <code>compare_rates_suite</code>. Five controls the task did not ask for.</figcaption>
+</figure>
+<p>Somebody was proud of this one.</p>
+<p>It has tabs. It has an export button. It has a date range picker for a question that specified the range <em>in the question</em>. Count the annotations: five controls, zero of which the task asked for, the answer rendered as an unsorted table you have to compute yourself, and a settings gear, in a chat, which is the interface equivalent of a guest asking where you keep the fuse box.</p>
+<p>The user asked which loan is cheapest. This widget answers, “well, what would you like to configure first?”</p>
+<p>It also fails question 1 without noticing. The data here does not need to be seen. It needs to be <em>ranked</em>, which is a computation, and the widget declined to do it.</p>
+<h3 id="exhibit-c-the-right-sized-card">Exhibit C: the right-sized card</h3>
+<figure>
+<img src="figures/fig-1-3.png" alt="Figure 1-3. The fixed version, from compare_rates. One card, one control, the verdict as the headline." />
+<figcaption aria-hidden="true">Figure 1-3. The fixed version, from <code>compare_rates</code>. One card, one control, the verdict as the headline.</figcaption>
+</figure>
+<p>One card. Three rows. The verdict is the headline, in the largest type on screen, before anything else resolves.</p>
+<p>And exactly one control: a horizon slider, because “over five years” was an assumption, and it is the kind of assumption a user actually wants to poke at. Drag it to four years and the winner changes in front of you. Ask that same question in prose and it costs a turn, a tool call, and a wait, every single time.</p>
+<p>That slider is the entire reason Exhibit C beats Exhibit A. It passed question 2: the user will act.</p>
+<p>Notice what produced Exhibit C. Not restraint as a virtue. The three questions, used as a filter. Seen? Yes, a ranking that reorders. Act? Yes, one adjustable assumption. Already answered? Partly, and everything already answered is pre-filled and shown rather than asked.</p>
+<p>Notice also what Exhibit C did <em>not</em> drop. Every number Exhibit B showed is still there: APR, monthly payment, fees. They moved from a table to a subtitle under each row, where they are available to anyone who cares and invisible to anyone who does not. Omitting needless widgets is not the same as omitting information, and Chapter 5 spends its length on the difference.</p>
+<h2 id="the-objections-handled">The objections, handled</h2>
+<p>You have heard these already, or you will, probably in a planning meeting.</p>
+<p><strong>“But engagement.”</strong></p>
+<p>Somewhere, a dashboard is being pitched because time-in-widget will look excellent in the metrics. In a conversation, time-in-widget is not engagement. It is delay with a progress bar. The user’s goal has a finish line, and the flattering interpretation of them lingering in your UI is rarely the true one.</p>
+<p>Measure task completion and re-invocation instead. An app that finishes fast gets summoned again tomorrow. That is engagement, and it compounds, and the model is the one doing the summoning.</p>
+<p><strong>“But our whole product.”</strong></p>
+<p>The temptation to port the SaaS into the iframe is enormous, because the SaaS already exists and somebody already paid for it. Resist it.</p>
+<p>Your product was designed for a full screen, a logged-in session, a navigation model, and a user who arrived on purpose. None of those four things is true here. The chat version of your product is not your product, smaller. It is the thirty seconds of your product that this task needs. Everything else is the tour nobody asked for.</p>
+<p><em>Patterns of MCP App Architecture</em> calls this failure mode the SPA-in-a-box and has architectural reasons to hate it. This book just has taste, and taste gets there faster.</p>
+<p><strong>“But the model cannot do that in text.”</strong></p>
+<p>Correct, sometimes. That is exactly what the three questions are for. When the answer is genuinely visual, genuinely interactive, or genuinely faster to manipulate than to describe, render it with a clear conscience.</p>
+<p>This book is not anti-app. It is anti <em>needless</em> app, and the difference between those two positions is a test rather than a vibe. Chapter 11 shows you how to run the test for the price of one afternoon.</p>
+<p><strong>“Our users like it.”</strong></p>
+<p>Maybe. Five of them, watched for an hour, will tell you whether that is true, and the answer will not be ambiguous. It never is. Again: Chapter 11.</p>
+<h2 id="the-one-thing">The one thing</h2>
+<p>A good MCP App is the guest who shows up with exactly the tool the moment needs, uses it, hands the result back into the conversation, and lets the flow continue as though they had always been part of it.</p>
+<p>Don’t make me leave the chat. Not for a tab, not for a login, not for a tour of your tabs and settings. The conversation was the point. You were invited to help with it.</p>
+<p>Next chapter: the other guest at the table, the one reading your schemas instead of your pixels.</p>
+
+<div class="pager"><a href="how-to-read.html"><span class="dir">Previous</span>How to Read This Book</a><a href="ch02.html" style="text-align:right"><span class="dir">Next</span>2. Your App Has Two Users</a></div>
+</main>
+</div>
+</body>
+</html>

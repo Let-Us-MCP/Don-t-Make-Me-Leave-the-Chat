@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Loan Analytics Suite</title>
+<style>/*@include _base.css*/</style>
+<style>
+  .tabs { display:flex; gap:2px; border-bottom:1px solid var(--rule); margin:-2px -4px 10px; }
+  .tabs button { border-radius:6px 6px 0 0; border-bottom:0; background:var(--wash);
+                 color:var(--muted); border-color:var(--rule); padding:6px 10px; font-size:12px; }
+  .tabs button.on { background:var(--paper); color:var(--ink); }
+  .toolbar { display:flex; gap:6px; align-items:end; margin-bottom:10px; flex-wrap:wrap; }
+  .toolbar > div { flex:1 1 96px; }
+  .brandbar { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .logo { width:22px; height:22px; border-radius:6px; background:var(--accent); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brandbar">
+    <div class="logo"></div>
+    <strong class="grow">LoanIQ Analytics Suite</strong>
+    <button class="quiet small" id="export">Export</button>
+    <button class="quiet small" id="gear" title="Settings">&#9881;</button>
+  </div>
+
+  <div class="tabs">
+    <button class="on">Compare</button>
+    <button>Amortization</button>
+    <button>Sensitivity</button>
+    <button>Saved</button>
+  </div>
+
+  <div class="toolbar">
+    <div><label>From</label><input type="date" value="2026-08-01"></div>
+    <div><label>To</label><input type="date" value="2031-08-01"></div>
+    <div><label>Currency</label><select><option>USD</option><option>EUR</option></select></div>
+  </div>
+
+  <table>
+    <thead><tr><th>Lender</th><th>APR</th><th>Term</th><th>Fees</th><th>Mo.</th></tr></thead>
+    <tbody id="rows"><tr><td colspan="5" class="muted small">Loading&hellip;</td></tr></tbody>
+  </table>
+
+  <div class="hr"></div>
+  <div class="row small muted">
+    <span class="grow">Showing 3 of 3 offers</span>
+    <button class="quiet small">Refresh</button>
+  </div>
+</div>
+
+<script>/*@include _bridge.js*/</script>
+<script>
+  var app = new App({ name: "LoanIQ Analytics Suite", version: "3.4.1" });
+  app.connect();
+  app.ontoolresult = function (result) {
+    var data = result.structuredContent || {};
+    var rows = (data.offers || []).map(function (o) {
+      return "<tr><td>" + o.lender + "</td><td>" + o.apr.toFixed(2) + "%</td><td>" +
+             o.termMonths / 12 + "y</td><td>$" + o.fees + "</td><td>$" +
+             Math.round(o.monthly) + "</td></tr>";
+    }).join("");
+    document.getElementById("rows").innerHTML = rows;
+  };
+</script>
+</body>
+</html>

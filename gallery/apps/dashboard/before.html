@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Ops Overview</title>
+<style>/*@include _base.css*/</style>
+<style>
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+  .tile { border:1px solid var(--rule); border-radius:8px; padding:6px; text-align:center; }
+  .tile .n { font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .tile .l { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+  .spark { height:14px; background:var(--wash); border-radius:3px; margin-top:4px; }
+</style></head>
+<body>
+<div class="card">
+  <div class="row spread" style="margin-bottom:8px">
+    <strong>Ops Overview</strong>
+    <span class="small muted">auto-refresh 30s</span>
+  </div>
+  <div class="grid" id="tiles"></div>
+  <div class="hr"></div>
+  <div class="grid" style="grid-template-columns:repeat(2,1fr)">
+    <div class="tile"><div class="l">p50 / p95 / p99 latency</div><div class="spark"></div></div>
+    <div class="tile"><div class="l">error rate by service</div><div class="spark"></div></div>
+    <div class="tile"><div class="l">queue depth</div><div class="spark"></div></div>
+    <div class="tile"><div class="l">cache hit ratio</div><div class="spark"></div></div>
+  </div>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  var app = new App({ name: "Ops Overview", version: "7.2.0" });
+  app.connect();
+  app.ontoolresult = function (result) {
+    var d = result.structuredContent || {};
+    document.getElementById("tiles").innerHTML = (d.metrics || []).map(function (m) {
+      return '<div class="tile"><div class="n">' + m.value + '</div><div class="l">' +
+             m.label + '</div><div class="spark"></div></div>';
+    }).join("");
+  };
+</script>
+</body></html>

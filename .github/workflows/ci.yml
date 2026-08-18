@@ -1,0 +1,82 @@
+name: CI
+
+# The book's claim is that the gallery runs and the figures regenerate. This is
+# what keeps that claim true. It does not capture renders: headless Chrome in CI
+# is slow, and a broken camera shows up locally on the next `make renders`.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  gallery:
+    name: Gallery
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Every app parses and connects
+        run: node tools/check_apps.mjs
+
+      - name: Model-as-user checks
+        run: node gallery/evals/run.js --all
+
+      - name: The server answers over stdio
+        run: |
+          printf '%s\n' \
+            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2026-07-28","capabilities":{}}}' \
+            '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"compare_rates_text","arguments":{"horizonYears":3}}}' \
+            | node gallery/stdio.js \
+            | node -e "
+              let out=''; process.stdin.on('data',c=>out+=c).on('end',()=>{
+                const lines=out.trim().split('\n').map(JSON.parse);
+                const call=lines.find(l=>l.id===2);
+                const text=call.result.content[0].text;
+                if(!text.includes('Northbank')) { console.error(text); process.exit(1); }
+                console.log('stdio OK:', text.split('\n')[0]);
+              });"
+
+      - name: The server probe runs
+        run: |
+          node gallery/serve.js & sleep 2
+          node gallery/probe/probe.js http://localhost:8931/mcp
+
+  prose:
+    name: Prose and references
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Prose rules
+        run: python3 tools/lint_prose.py
+
+      - name: Cross-references and figures
+        run: python3 tools/check_refs.py
+
+      - name: Appendix B is generated, not hand-edited
+        run: |
+          python3 tools/build_matrix.py
+          git diff --exit-code book/appendices/appB.md
+
+  site:
+    name: Site builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+      - name: Build the site
+        run: python3 tools/build_site.py
+      - name: docs/ is committed, so it must not drift
+        run: git diff --exit-code docs/

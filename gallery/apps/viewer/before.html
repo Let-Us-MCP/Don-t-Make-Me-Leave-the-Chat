@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Document Viewer</title>
+<style>/*@include _base.css*/</style>
+<style>
+  .bar { display:flex; gap:4px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
+  .bar button { padding:3px 8px; font-size:11px; }
+  .page { border:1px solid var(--rule); border-radius:6px; height:230px; padding:10px;
+          overflow:hidden; font-size:9px; line-height:1.35; color:var(--muted); }
+  .thumbs { display:flex; gap:4px; margin-top:8px; overflow-x:auto; }
+  .thumb { flex:0 0 34px; height:44px; border:1px solid var(--rule); border-radius:3px; }
+</style></head>
+<body>
+<div class="card">
+  <div class="bar">
+    <button class="quiet">&#8676;</button><button class="quiet">&#8677;</button>
+    <span class="small muted">Page <input value="1" style="width:36px;display:inline-block"> of 84</span>
+    <button class="quiet">&minus;</button><button class="quiet">100%</button><button class="quiet">+</button>
+    <button class="quiet">Rotate</button><button class="quiet">Search</button>
+    <button class="quiet">Print</button><button class="quiet">Download</button>
+  </div>
+  <div class="page" id="page">Loading document&hellip;</div>
+  <div class="thumbs">
+    <div class="thumb"></div><div class="thumb"></div><div class="thumb"></div>
+    <div class="thumb"></div><div class="thumb"></div><div class="thumb"></div>
+    <div class="thumb"></div><div class="thumb"></div>
+  </div>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  var app = new App({ name: "Document Viewer", version: "4.0.0" });
+  app.connect();
+  app.ontoolresult = function (result) {
+    var d = result.structuredContent || {};
+    document.getElementById("page").textContent = (d.pageText || "").repeat(1);
+  };
+</script>
+</body></html>

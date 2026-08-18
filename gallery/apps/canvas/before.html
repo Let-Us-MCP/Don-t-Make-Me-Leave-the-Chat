@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Budget Canvas</title>
+<style>/*@include _base.css*/</style>
+<style>
+  canvas { width:100%; height:190px; border:1px solid var(--rule); border-radius:8px;
+           touch-action:none; display:block; }
+  .tools { display:flex; gap:4px; margin-bottom:6px; }
+  .tools button { padding:3px 8px; font-size:11px; }
+</style></head>
+<body>
+<div class="card">
+  <div class="tools">
+    <button class="quiet">Pen</button><button class="quiet">Box</button>
+    <button class="quiet">Text</button><button class="quiet">Erase</button>
+    <button class="quiet">Undo</button>
+  </div>
+  <canvas id="c" width="700" height="380"></canvas>
+  <p class="small muted" style="margin-top:6px">Drag to allocate. Nothing here is saved.</p>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  /* A canvas the model cannot see into. Everything the user draws stays in
+   * pixels: no structuredContent, no context write-back, no readback. */
+  var app = new App({ name: "Budget Canvas", version: "1.0.0" });
+  app.connect();
+  var c = document.getElementById("c"), ctx = c.getContext("2d"), down = false;
+  c.addEventListener("pointerdown", function (e) { down = true; ctx.beginPath();
+    ctx.moveTo(e.offsetX * 700 / c.clientWidth, e.offsetY * 380 / c.clientHeight); });
+  c.addEventListener("pointermove", function (e) {
+    if (!down) return;
+    ctx.lineTo(e.offsetX * 700 / c.clientWidth, e.offsetY * 380 / c.clientHeight);
+    ctx.stroke();
+  });
+  window.addEventListener("pointerup", function () { down = false; });
+</script>
+</body></html>

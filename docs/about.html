@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About &middot; Don&#x27;t Make Me Leave the Chat</title>
+<meta name="description" content="The author, the series, the licence, and how to send a correction.">
+<meta property="og:title" content="About">
+<meta property="og:description" content="The author, the series, the licence, and how to send a correction.">
+<style>
+:root{
+  --ink:#15181D; --muted:#5B6472; --rule:#D8DDE4; --wash:#F5F6F8;
+  --paper:#FFFFFF; --accent:#0F5C8C; --accent-soft:#E7F0F6;
+  --warm:#B4531A; --warm-soft:#FBF0E7; --good:#2C6E49; --good-soft:#E9F2EC;
+  --danger:#9B2226; --danger-soft:#FAECEC;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#E7EAEE; --muted:#98A2B0; --rule:#2C333D; --wash:#171B21;
+    --paper:#0F1216; --accent:#63AEDC; --accent-soft:#14232E;
+    --warm:#E08B4F; --warm-soft:#2A1D13; --good:#6FBF8E; --good-soft:#13221A;
+    --danger:#E4796F; --danger-soft:#291516;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:18px;line-height:1.62;
+  -webkit-text-size-adjust:100%}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);
+  max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 20px 60px;
+  border-right:1px solid var(--rule);font-family:var(--sans);font-size:14px}
+nav.toc .brand{display:block;font-weight:700;font-size:16px;color:var(--ink);
+  text-decoration:none;line-height:1.3;margin-bottom:4px}
+nav.toc .tagline{color:var(--muted);font-size:12.5px;margin:0 0 18px;line-height:1.45}
+nav.toc .part{margin:18px 0 6px;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:700}
+nav.toc a{display:block;padding:4px 8px;margin-left:-8px;border-radius:5px;
+  color:var(--muted);text-decoration:none}
+nav.toc a:hover{background:var(--wash);color:var(--ink)}
+nav.toc a.current{background:var(--accent-soft);color:var(--accent);font-weight:600}
+main{padding:44px 52px 120px;min-width:0;max-width:78ch}
+h1,h2,h3,h4{font-family:var(--sans);line-height:1.25;color:var(--ink)}
+h1{font-size:2.05em;margin:0 0 .2em;letter-spacing:-.015em}
+h2{font-size:1.42em;margin:2em 0 .5em;padding-top:.35em}
+h3{font-size:1.14em;margin:1.7em 0 .4em}
+p{margin:0 0 1.05em}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 .5em;font-weight:700}
+.summary{font-family:var(--sans);font-size:15px;color:var(--muted);
+  margin:0 0 2.2em;line-height:1.5}
+code{font-family:var(--mono);font-size:.855em;background:var(--wash);
+  padding:.12em .36em;border-radius:4px;word-break:break-word}
+pre{background:var(--wash);border-left:3px solid var(--rule);
+  border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
+  font-size:13.5px;line-height:1.5;margin:1.3em 0}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
+  padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
+aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.4em}
+aside.law p{margin:0;font-family:var(--sans);font-size:1.16em;font-weight:700;
+  line-height:1.35}
+blockquote{border-left:3px solid var(--warm);background:var(--warm-soft);
+  margin:1.5em 0;padding:12px 18px;border-radius:0 6px 6px 0;font-size:.98em}
+blockquote p:last-child{margin-bottom:0}
+figure{margin:2.2em 0;text-align:center}
+figure img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}
+@media (prefers-color-scheme: dark){
+  figure img{background:#fff;padding:8px}
+}
+figcaption{font-family:var(--sans);font-size:13.5px;color:var(--muted);
+  margin-top:.7em;text-align:left;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:1.5em 0}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);
+  vertical-align:top}
+thead th{border-bottom:2px solid var(--rule);font-weight:700}
+ul,ol{padding-left:1.35em;margin:0 0 1.05em}
+li{margin-bottom:.32em}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:4em;
+  padding-top:1.4em;border-top:1px solid var(--rule);font-family:var(--sans);
+  font-size:14px}
+.pager a{text-decoration:none;max-width:46%}
+.pager .dir{display:block;font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted)}
+.hero{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;
+  align-items:start;margin-bottom:2.4em}
+.hero img{width:100%;border-radius:10px;border:1px solid var(--rule)}
+.hero h1{margin-bottom:.15em}
+.hero .sub{font-family:var(--sans);color:var(--muted);font-size:16px;
+  margin:0 0 1em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;margin:1.6em 0}
+.cards a{display:block;border:1px solid var(--rule);border-radius:9px;
+  padding:12px 14px;text-decoration:none;color:var(--ink);font-family:var(--sans)}
+.cards a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.cards .n{font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700}
+.cards .t{font-weight:600;font-size:15px;margin:.15em 0 .25em}
+.cards .s{font-size:12.5px;color:var(--muted);line-height:1.45}
+.menu{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  main{padding:28px 20px 80px}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero img{max-width:220px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><a class="brand" href="index.html">Don&#x27;t Make Me Leave the Chat</a>
+<p class="tagline">A common sense approach to MCP Apps</p>
+<div class="part">Front matter</div>
+<a href="preface.html">Preface</a>
+<a href="how-to-read.html">How to Read This Book</a>
+<div class="part">Part 1 - Guiding Principles</div>
+<a href="ch01.html">1. Don&#x27;t Make Me Leave the Chat</a>
+<a href="ch02.html">2. Your App Has Two Users</a>
+<a href="ch03.html">3. How People Actually Use Apps in Chat</a>
+<a href="ch04.html">4. Never Ask What the Conversation Already Knows</a>
+<a href="ch05.html">5. Omit Needless Widgets</a>
+<div class="part">Part 2 - Things You Need to Get Right</div>
+<a href="ch06.html">6. The Machinery, Briefly</a>
+<a href="ch07.html">7. State, or Knowledge in the World versus in the Head</a>
+<a href="ch08.html">8. Navigation in Someone Else&#x27;s House</a>
+<a href="ch09.html">9. Forms and Actions</a>
+<a href="ch10.html">10. Trust, Courtesy, and the Sandbox</a>
+<div class="part">Part 3 - Making Sure You Got It Right</div>
+<a href="ch11.html">11. Testing on Ten Prompts a Day</a>
+<a href="ch12.html">12. Hosts Are the New Browsers</a>
+<div class="part">Part 4 - Larger Concerns</div>
+<a href="ch13.html">13. Distribution, or Your Server Is Your Storefront</a>
+<div class="part">Appendices</div>
+<a href="appendix-a.html">Appendix A. The Laws, on One Page</a>
+<a href="appendix-b.html">Appendix B. The Host Capability Matrix, Generated</a>
+<a href="appendix-c.html">Appendix C. The Ten-Prompt Test Kit</a>
+<a href="appendix-d.html">Appendix D. Gallery Repository Map</a>
+<div class="part">End matter</div>
+<a href="about.html" class="current">About</a>
+<div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
+</nav>
+<main>
+<h1>About</h1><p class="summary">The author, the series, the licence, and how to send a correction.</p><h2 id="the-author">The author</h2>
+<p><strong>Krimler</strong> writes about protocols and the systems built on top of them. This is the third book in a series about the Model Context Protocol, and the first one about taste rather than mechanism.</p>
+<p>Corrections, disagreements, and reproduction failures are all welcome, and the last of those most of all. The entire premise of this series is that the claims are checkable, so a figure you cannot regenerate or a check you cannot reproduce is the most useful bug report available.</p>
+<ul>
+<li>Repository: <a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat" class="uri">https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat</a></li>
+<li>Issues: <a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat/issues" class="uri">https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat/issues</a></li>
+</ul>
+<h2 id="the-series">The series</h2>
+<div class="table-wrap"><table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Book</th>
+<th>Framing</th>
+<th>About</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>Building High-Performance MCP Applications</em></td>
+<td>HPBN</td>
+<td>The wire, measured</td>
+</tr>
+<tr>
+<td><em>Patterns of MCP App Architecture</em></td>
+<td>Fowler</td>
+<td>The architecture, named</td>
+</tr>
+<tr>
+<td><em>Don’t Make Me Leave the Chat</em></td>
+<td>Krug</td>
+<td>The judgment, tested</td>
+</tr>
+</tbody>
+</table></div>
+<p>The first is at <a href="https://let-us-mcp.github.io/Building-High-Performance-MCP-Applications/" class="uri">https://let-us-mcp.github.io/Building-High-Performance-MCP-Applications/</a>.</p>
+<h2 id="colophon">Colophon</h2>
+<p>Written in Markdown. The website is generated from that Markdown by <code>tools/build_site.py</code>, so there is exactly one copy of every sentence.</p>
+<p>The annotated renders are captured from the companion gallery by headless Chrome, driven over the DevTools Protocol by <code>tools/capture_figures.mjs</code>. The hand-drawn figures are matplotlib, in xkcd mode, from scripts in <code>figures-src/</code>. The cover is generated by <code>figures-src/cover.py</code>, so its provenance is unambiguous and no third-party artwork is involved.</p>
+<p>Prose rules are enforced by <code>tools/lint_prose.py</code>: no em dashes, a banned-phrase list, and near-duplicate sentence detection across the whole book.</p>
+<h2 id="licence">Licence</h2>
+<p>The prose is copyright © 2026 Krimler. All rights reserved.</p>
+<p>The gallery, the tools, and the figure sources are MIT licensed, so you can copy the patterns into your own work without asking.</p>
+
+<div class="pager"><a href="appendix-d.html"><span class="dir">Previous</span>Appendix D. Gallery Repository Map</a><span></span></div>
+</main>
+</div>
+</body>
+</html>

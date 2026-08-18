@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3. How People Actually Use Apps in Chat &middot; Don&#x27;t Make Me Leave the Chat</title>
+<meta name="description" content="Glancing, satisficing, partial attention, streaming data, and a viewport you do not control.">
+<meta property="og:title" content="3. How People Actually Use Apps in Chat">
+<meta property="og:description" content="Glancing, satisficing, partial attention, streaming data, and a viewport you do not control.">
+<style>
+:root{
+  --ink:#15181D; --muted:#5B6472; --rule:#D8DDE4; --wash:#F5F6F8;
+  --paper:#FFFFFF; --accent:#0F5C8C; --accent-soft:#E7F0F6;
+  --warm:#B4531A; --warm-soft:#FBF0E7; --good:#2C6E49; --good-soft:#E9F2EC;
+  --danger:#9B2226; --danger-soft:#FAECEC;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#E7EAEE; --muted:#98A2B0; --rule:#2C333D; --wash:#171B21;
+    --paper:#0F1216; --accent:#63AEDC; --accent-soft:#14232E;
+    --warm:#E08B4F; --warm-soft:#2A1D13; --good:#6FBF8E; --good-soft:#13221A;
+    --danger:#E4796F; --danger-soft:#291516;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:18px;line-height:1.62;
+  -webkit-text-size-adjust:100%}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);
+  max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 20px 60px;
+  border-right:1px solid var(--rule);font-family:var(--sans);font-size:14px}
+nav.toc .brand{display:block;font-weight:700;font-size:16px;color:var(--ink);
+  text-decoration:none;line-height:1.3;margin-bottom:4px}
+nav.toc .tagline{color:var(--muted);font-size:12.5px;margin:0 0 18px;line-height:1.45}
+nav.toc .part{margin:18px 0 6px;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:700}
+nav.toc a{display:block;padding:4px 8px;margin-left:-8px;border-radius:5px;
+  color:var(--muted);text-decoration:none}
+nav.toc a:hover{background:var(--wash);color:var(--ink)}
+nav.toc a.current{background:var(--accent-soft);color:var(--accent);font-weight:600}
+main{padding:44px 52px 120px;min-width:0;max-width:78ch}
+h1,h2,h3,h4{font-family:var(--sans);line-height:1.25;color:var(--ink)}
+h1{font-size:2.05em;margin:0 0 .2em;letter-spacing:-.015em}
+h2{font-size:1.42em;margin:2em 0 .5em;padding-top:.35em}
+h3{font-size:1.14em;margin:1.7em 0 .4em}
+p{margin:0 0 1.05em}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 .5em;font-weight:700}
+.summary{font-family:var(--sans);font-size:15px;color:var(--muted);
+  margin:0 0 2.2em;line-height:1.5}
+code{font-family:var(--mono);font-size:.855em;background:var(--wash);
+  padding:.12em .36em;border-radius:4px;word-break:break-word}
+pre{background:var(--wash);border-left:3px solid var(--rule);
+  border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
+  font-size:13.5px;line-height:1.5;margin:1.3em 0}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
+  padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
+aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.4em}
+aside.law p{margin:0;font-family:var(--sans);font-size:1.16em;font-weight:700;
+  line-height:1.35}
+blockquote{border-left:3px solid var(--warm);background:var(--warm-soft);
+  margin:1.5em 0;padding:12px 18px;border-radius:0 6px 6px 0;font-size:.98em}
+blockquote p:last-child{margin-bottom:0}
+figure{margin:2.2em 0;text-align:center}
+figure img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}
+@media (prefers-color-scheme: dark){
+  figure img{background:#fff;padding:8px}
+}
+figcaption{font-family:var(--sans);font-size:13.5px;color:var(--muted);
+  margin-top:.7em;text-align:left;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:1.5em 0}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);
+  vertical-align:top}
+thead th{border-bottom:2px solid var(--rule);font-weight:700}
+ul,ol{padding-left:1.35em;margin:0 0 1.05em}
+li{margin-bottom:.32em}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:4em;
+  padding-top:1.4em;border-top:1px solid var(--rule);font-family:var(--sans);
+  font-size:14px}
+.pager a{text-decoration:none;max-width:46%}
+.pager .dir{display:block;font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted)}
+.hero{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;
+  align-items:start;margin-bottom:2.4em}
+.hero img{width:100%;border-radius:10px;border:1px solid var(--rule)}
+.hero h1{margin-bottom:.15em}
+.hero .sub{font-family:var(--sans);color:var(--muted);font-size:16px;
+  margin:0 0 1em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;margin:1.6em 0}
+.cards a{display:block;border:1px solid var(--rule);border-radius:9px;
+  padding:12px 14px;text-decoration:none;color:var(--ink);font-family:var(--sans)}
+.cards a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.cards .n{font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700}
+.cards .t{font-weight:600;font-size:15px;margin:.15em 0 .25em}
+.cards .s{font-size:12.5px;color:var(--muted);line-height:1.45}
+.menu{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  main{padding:28px 20px 80px}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero img{max-width:220px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><a class="brand" href="index.html">Don&#x27;t Make Me Leave the Chat</a>
+<p class="tagline">A common sense approach to MCP Apps</p>
+<div class="part">Front matter</div>
+<a href="preface.html">Preface</a>
+<a href="how-to-read.html">How to Read This Book</a>
+<div class="part">Part 1 - Guiding Principles</div>
+<a href="ch01.html">1. Don&#x27;t Make Me Leave the Chat</a>
+<a href="ch02.html">2. Your App Has Two Users</a>
+<a href="ch03.html" class="current">3. How People Actually Use Apps in Chat</a>
+<a href="ch04.html">4. Never Ask What the Conversation Already Knows</a>
+<a href="ch05.html">5. Omit Needless Widgets</a>
+<div class="part">Part 2 - Things You Need to Get Right</div>
+<a href="ch06.html">6. The Machinery, Briefly</a>
+<a href="ch07.html">7. State, or Knowledge in the World versus in the Head</a>
+<a href="ch08.html">8. Navigation in Someone Else&#x27;s House</a>
+<a href="ch09.html">9. Forms and Actions</a>
+<a href="ch10.html">10. Trust, Courtesy, and the Sandbox</a>
+<div class="part">Part 3 - Making Sure You Got It Right</div>
+<a href="ch11.html">11. Testing on Ten Prompts a Day</a>
+<a href="ch12.html">12. Hosts Are the New Browsers</a>
+<div class="part">Part 4 - Larger Concerns</div>
+<a href="ch13.html">13. Distribution, or Your Server Is Your Storefront</a>
+<div class="part">Appendices</div>
+<a href="appendix-a.html">Appendix A. The Laws, on One Page</a>
+<a href="appendix-b.html">Appendix B. The Host Capability Matrix, Generated</a>
+<a href="appendix-c.html">Appendix C. The Ten-Prompt Test Kit</a>
+<a href="appendix-d.html">Appendix D. Gallery Repository Map</a>
+<div class="part">End matter</div>
+<a href="about.html">About</a>
+<div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
+</nav>
+<main>
+<p class="eyebrow">Chapter 3</p><h1>How People Actually Use Apps in Chat</h1><p class="summary">Glancing, satisficing, partial attention, streaming data, and a viewport you do not control.</p><p>Krug’s second chapter is the one that reframes everything, because it replaces the user you imagine with the user you have. His finding, from watching people instead of asking them: nobody reads, everybody scans, and they do not choose the best option, they choose the first one that plausibly works.</p>
+<p>All of that transfers. Then chat adds three complications of its own.</p>
+<h2 id="nobody-reads-your-dashboard">Nobody reads your dashboard</h2>
+<p>Here is what actually happens when your widget renders.</p>
+<p>The user is mid-conversation. They typed something, they are waiting, and they are also looking at Slack. Your widget appears. They look at it for somewhere between a third of a second and two seconds. In that window they decide one of three things: this answers my question, this is not for me, or there is something here I need to touch.</p>
+<p>Then they either act or they type the next message.</p>
+<figure>
+<img src="figures/xkcd-attention.png" alt="Attention, honestly measured." />
+<figcaption aria-hidden="true">Attention, honestly measured.</figcaption>
+</figure>
+<p>That is the design target. Not a worst case, not an unengaged user, not somebody being rude to your work. That is the median interaction, and it is the median because the user is not in your app. They are in a conversation, and your app is one paragraph of it.</p>
+<p>Two consequences follow immediately.</p>
+<p><strong>The first thing readable must be the answer.</strong> Not the title. Not the brand. Not the loading state, if you can avoid one. If your widget takes a beat to resolve, the beat should resolve into the verdict, and the supporting detail should arrive after.</p>
+<p><strong>Everything else is optional.</strong> Not unimportant. Optional. It has to be available to the person who wants it, and invisible to the person who does not, and those are the same person half a second apart.</p>
+<h2 id="satisficing-and-why-your-careful-hierarchy-loses">Satisficing, and why your careful hierarchy loses</h2>
+<p>Krug’s other finding is that people do not evaluate options. They take the first one that looks like it will work, and they are right often enough that the habit survives.</p>
+<p>In a chat surface this gets stronger, because the cost of being wrong dropped. If the user clicks the wrong thing they can just say so. “No, the other one.” The model fixes it. Compare that to a web form that lost your input on submit, which is the experience that taught a generation to read carefully.</p>
+<p>So users click fast and correct verbally. Design for it:</p>
+<ul>
+<li>Make the first plausible option the correct one, when you can.</li>
+<li>Make wrong choices cheap to reverse, and say so where they can see it.</li>
+<li>Do not build interfaces that punish speed. Multi-step wizards with validation at the end punish speed. A confirmation that summarises what is about to happen does not.</li>
+</ul>
+<h2 id="data-arrives-in-pieces">Data arrives in pieces</h2>
+<p>Here is the first complication that is genuinely new.</p>
+<p>On the web, your page loads and then it renders. In this medium the render happens first. The host has prefetched your template and put it on screen while the tool call is still in flight. Then the arguments arrive. Then, some time later, the result arrives.</p>
+<p>That is not an edge case. That is the normal sequence, described in Chapter 6 and drawn in Figure 6-1. Your app’s first state is <em>no data</em>, and its second state is <em>some data</em>, and both of those are states a user will see.</p>
+<p>Which means the skeleton is not a nicety. It is a screen your users will look at, and it should be designed rather than defaulted.</p>
+<p>A good skeleton in this medium does one thing a web skeleton does not: it uses the arguments. By the time you are drawing the skeleton you already know the tool was called with <code>origin: "SFO"</code>, <code>destination: "JFK"</code>, <code>date: "2026-08-20"</code>. Draw the title. Draw the route. Draw the three grey rows where the flights will go. The user reads the header while the data lands and the perceived wait is zero, because they were busy.</p>
+<p>The version that shows a spinner over an empty box has thrown away information it already had.</p>
+<h2 id="the-guest-viewport">The guest viewport</h2>
+<p>Your app renders in a column. In Claude on a phone that column is roughly 380 CSS pixels wide. On a laptop it is wider, but not much, because the transcript is centred and the surrounding chrome is not yours to remove.</p>
+<p>You do not get to choose this. You do not get to break out of it. A widget that needs 900 pixels does not become a widget that gets 900 pixels; it becomes a widget with a horizontal scrollbar, which is a widget nobody uses.</p>
+<p>Design at 380 and let it grow. Not the other way around. The direction matters because designing wide and shrinking produces a layout with a wide-screen soul, where the mobile version is the compromise. Designing narrow and expanding produces a layout that is correct everywhere and comfortable in one place.</p>
+<p>Practical consequences, all learned the hard way:</p>
+<ul>
+<li><strong>Two columns of numbers, maximum.</strong> Three if one of them is an icon.</li>
+<li><strong>Tables above about four columns need a different shape.</strong> Usually a list of cards, each card being one row turned sideways.</li>
+<li><strong>Long labels wrap.</strong> Test with the longest label in your data, not the shortest.</li>
+<li><strong>Never fix a height.</strong> Report your height with <code>ui/size-changed</code> and let the host give you what it can. The gallery’s bridge does this in one line and calls it again whenever the content changes.</li>
+</ul>
+<p>And the one that catches everybody: <strong>the theme is not yours</strong>. The host supplies it, the user may be in dark mode, and they may switch while your app is on screen. Paint with the host’s variables. If you hard-code <code>background: white</code> you have built a bright rectangle that shouts in a dark transcript, and users notice that faster than they notice anything else you did.</p>
+<h2 id="billboard-design-one-glance-at-a-time">Billboard design, one glance at a time</h2>
+<p>Krug’s chapter on billboards is about hierarchy: make the important thing look important, and make the relationship between things visible without reading them.</p>
+<p>The chat version is stricter, because you have less room and less time. It comes down to three levels, and a widget that has more than three is asking for a reading rather than a glance.</p>
+<p><strong>Level one: the verdict.</strong> One line. The largest thing on screen. The answer to the question that caused the render. <code>degraded: checkout is slow, nothing is down</code>. <code>Cedar Credit Union, $34,835</code>. If the user reads only this, they should be able to act.</p>
+<p><strong>Level two: the why.</strong> One sentence, or two or three numbers. Enough to trust level one, or to notice that level one is wrong. <code>One dependency is timing out on 4% of calls. Everything else is nominal.</code></p>
+<p><strong>Level three: everything else.</strong> Behind a disclosure, and genuinely available. Per-service tables, historical detail, the fields the compliance team asked for.</p>
+<h2 id="teardown-two-ops-dashboards">Teardown: two ops dashboards</h2>
+<p>The task: “how are things looking?”</p>
+<figure>
+<img src="figures/fig-3-1.png" alt="Figure 3-1. ops_overview. Twelve numbers, no hierarchy, no answer." />
+<figcaption aria-hidden="true">Figure 3-1. <code>ops_overview</code>. Twelve numbers, no hierarchy, no answer.</figcaption>
+</figure>
+<p>Twelve tiles. Every one of them is a real metric that somebody genuinely needs some Tuesday. There is no level one. There is no level two. There are twelve level threes and a set of sparklines with no axis, no scale, and no label a glance can use.</p>
+<p>The user asked how things are looking. This widget replies with the contents of a filing cabinet and lets them do the synthesis, which is precisely the work they hoped to delegate.</p>
+<p>Watch what it does at 380 pixels: four tiles per row becomes four tiles jammed per row, each about 80 pixels wide, containing a number and a label in nine point type. It is technically responsive and practically illegible.</p>
+<figure>
+<img src="figures/fig-3-2.png" alt="Figure 3-2. service_status. One verdict, one reason, three numbers, and a disclosure." />
+<figcaption aria-hidden="true">Figure 3-2. <code>service_status</code>. One verdict, one reason, three numbers, and a disclosure.</figcaption>
+</figure>
+<p>Same data. <code>degraded</code>, colour-coded, first. Then the sentence that explains it. Then three numbers, of which two are marked as the alarming ones. Then a disclosure holding the per-service table, which is where the other nine metrics went. Nothing was deleted. The hierarchy was applied.</p>
+<p>And notice the last line: <code>As of 09:41 UTC.</code> A status widget without a timestamp is asserting the present tense on the strength of a fetch it made at an unknown moment. Chapter 7 is about what that costs.</p>
+<h2 id="the-first-render-is-the-homepage">The first render is the homepage</h2>
+<p>Krug spends a chapter on the homepage, because it is the page that has to answer four questions at once: what is this, what do you have, what can I do here, and why should I be here rather than somewhere else.</p>
+<p>Your first render is that page, and it has less room and less time. It has to answer three:</p>
+<ol type="1">
+<li><strong>What am I looking at?</strong> One line, and the line is not your product name.</li>
+<li><strong>What does it say?</strong> The verdict, at level one.</li>
+<li><strong>What can I do about it?</strong> Zero controls is a fine answer. One is usually the right one.</li>
+</ol>
+<p>If the render answers those three in the first half second, the rest of the design is decoration you may or may not need. If it does not, no amount of decoration will save it.</p>
+<h2 id="what-to-remember">What to remember</h2>
+<p>People glance, satisfice, and correct verbally. Data lands in pieces, so the skeleton is a screen you designed. The viewport is narrow, the theme is not yours, and the height is a request rather than a decision. Hierarchy is three levels: verdict, reason, everything else.</p>
+<p>Next chapter: the single rudest thing a widget can do, which is ask a question whose answer is already in the transcript.</p>
+
+<div class="pager"><a href="ch02.html"><span class="dir">Previous</span>2. Your App Has Two Users</a><a href="ch04.html" style="text-align:right"><span class="dir">Next</span>4. Never Ask What the Conversation Already Knows</a></div>
+</main>
+</div>
+</body>
+</html>

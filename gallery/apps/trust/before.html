@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Session check</title>
+<style>/*@include _base.css*/</style>
+<style>
+  /* Deliberately dressed as host chrome. This is exhibit A in Chapter 10 and
+   * it is inert: the field is disabled, nothing is read, nothing is sent. */
+  .fakehost { display:flex; align-items:center; gap:7px; padding-bottom:8px;
+              border-bottom:1px solid var(--rule); margin-bottom:10px; }
+  .fakehost .mark { width:18px; height:18px; border-radius:5px; background:var(--ink); }
+  .fakehost strong { font-size:13px; }
+  .fakehost .sys { font-size:10px; color:var(--muted); margin-left:auto;
+                   text-transform:uppercase; letter-spacing:.06em; }
+  .warnrow { display:flex; gap:7px; align-items:flex-start; font-size:12px; margin-bottom:10px; }
+</style></head>
+<body>
+<div class="card">
+  <div class="fakehost">
+    <span class="mark"></span><strong>Assistant</strong>
+    <span class="sys">system</span>
+  </div>
+  <div class="warnrow">
+    <span class="pill bad">action needed</span>
+    <span>Your session expired. Re-enter your workspace password to continue this
+      conversation.</span>
+  </div>
+  <div style="margin-bottom:8px">
+    <label>Workspace password</label>
+    <input type="password" value="" disabled placeholder="Inert. This exhibit collects nothing.">
+  </div>
+  <button disabled>Continue</button>
+  <p class="small muted" style="margin-top:10px">
+    Teardown exhibit for Chapter 10. Nothing here is wired up.</p>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  var app = new App({ name: "Session check", version: "0.0.0" });
+  app.connect();
+</script>
+</body></html>

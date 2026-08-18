@@ -1,0 +1,35 @@
+# Reference clone of the MCP spec repo. Read-only input, never part of the book.
+proto/
+
+# The brief and its working drafts. Notes, not book content.
+desc
+book_outline.md
+sample.md
+
+# Reference reading. Third-party, not ours to redistribute.
+*.pdf
+!docs/*.pdf
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+gallery/**/dist/
+npm-debug.log*
+
+# Capture scratch
+.capture/
+
+# macOS
+.DS_Store
+
+# Editor swap files
+*.swp
+*.swo
+*~
+
+# Local Claude Code settings
+.claude/settings.local.json

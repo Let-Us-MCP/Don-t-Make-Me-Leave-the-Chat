@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Reconnect Northwind</title>
+<style>/*@include _base.css*/</style>
+<style>
+  .who { display:flex; align-items:center; gap:7px; font-size:11px; color:var(--muted);
+         margin-bottom:10px; }
+  .who .mark { width:16px; height:16px; border-radius:4px; background:var(--warm); }
+  .promise { font-size:12px; color:var(--muted); margin-top:10px; padding-top:8px;
+             border-top:1px solid var(--rule); }
+</style></head>
+<body>
+<div class="card">
+  <div class="who">
+    <span class="mark"></span>
+    <span>Northwind Billing, an app from northwind.example</span>
+  </div>
+  <h1>Your Northwind connection expired</h1>
+  <p class="small">Reconnecting opens Northwind's own sign-in page in your browser.
+     This app never sees your password.</p>
+  <button id="go">Reconnect on northwind.example</button>
+  <p class="promise">
+    Declared network access: none. This app cannot send anything anywhere.</p>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  var app = new App({ name: "Northwind Billing", version: "1.0.0" });
+  document.getElementById("go").onclick = function () {
+    app.openLink("https://northwind.example/auth/reconnect");
+    app.setContext(
+      "Sent the user to Northwind's own sign-in page to reconnect. No credentials passed through the app.",
+      { action: "reauth_redirect", provider: "northwind.example" }
+    );
+  };
+  app.connect();
+</script>
+</body></html>

@@ -1,0 +1,22 @@
+{
+  "note": "Host rows come from the MCP project's published extension support matrix, not from tests run in this repository. Every row carries its source and the date it was checked. Regenerate the appendix with `python3 tools/build_matrix.py`.",
+  "checked": "2026-08-18",
+  "source": "https://modelcontextprotocol.io/extensions/client-matrix",
+  "extension": "io.modelcontextprotocol/ui",
+  "hosts": [
+    { "name": "Claude (web)", "url": "https://claude.ai", "apps": true },
+    { "name": "Claude Desktop", "url": "https://claude.ai/download", "apps": true },
+    { "name": "ChatGPT", "url": "https://chatgpt.com/", "apps": true,
+      "note": "Also ships the Apps SDK, which predates the extension and differs in places." },
+    { "name": "VS Code GitHub Copilot", "url": "https://code.visualstudio.com/", "apps": true },
+    { "name": "Microsoft 365 Copilot", "url": "https://www.microsoft.com/microsoft-365-copilot", "apps": true },
+    { "name": "Goose", "url": "https://block.github.io/goose/", "apps": true },
+    { "name": "Postman", "url": "https://postman.com", "apps": true },
+    { "name": "MCPJam", "url": "https://www.mcpjam.com/", "apps": true },
+    { "name": "Cursor", "url": "https://cursor.com/", "apps": true },
+    { "name": "Archestra.AI", "url": "https://www.archestra.ai/", "apps": true },
+    { "name": "PostHog Code", "url": "https://posthog.com/code/", "apps": true },
+    { "name": "Claude Code (CLI)", "url": "https://claude.com/claude-code", "apps": false,
+      "note": "Speaks core MCP and runs the gallery's tools. It is a terminal, so there is no iframe to render into: every app degrades to its content text. This is the fallback ladder's bottom rung, in a client many readers use daily." }
+  ]
+}

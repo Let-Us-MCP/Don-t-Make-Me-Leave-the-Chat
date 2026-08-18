@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>13. Distribution, or Your Server Is Your Storefront &middot; Don&#x27;t Make Me Leave the Chat</title>
+<meta name="description" content="How anybody finds your app, why the listing is a render too, and the laws on one page.">
+<meta property="og:title" content="13. Distribution, or Your Server Is Your Storefront">
+<meta property="og:description" content="How anybody finds your app, why the listing is a render too, and the laws on one page.">
+<style>
+:root{
+  --ink:#15181D; --muted:#5B6472; --rule:#D8DDE4; --wash:#F5F6F8;
+  --paper:#FFFFFF; --accent:#0F5C8C; --accent-soft:#E7F0F6;
+  --warm:#B4531A; --warm-soft:#FBF0E7; --good:#2C6E49; --good-soft:#E9F2EC;
+  --danger:#9B2226; --danger-soft:#FAECEC;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#E7EAEE; --muted:#98A2B0; --rule:#2C333D; --wash:#171B21;
+    --paper:#0F1216; --accent:#63AEDC; --accent-soft:#14232E;
+    --warm:#E08B4F; --warm-soft:#2A1D13; --good:#6FBF8E; --good-soft:#13221A;
+    --danger:#E4796F; --danger-soft:#291516;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:18px;line-height:1.62;
+  -webkit-text-size-adjust:100%}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);
+  max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 20px 60px;
+  border-right:1px solid var(--rule);font-family:var(--sans);font-size:14px}
+nav.toc .brand{display:block;font-weight:700;font-size:16px;color:var(--ink);
+  text-decoration:none;line-height:1.3;margin-bottom:4px}
+nav.toc .tagline{color:var(--muted);font-size:12.5px;margin:0 0 18px;line-height:1.45}
+nav.toc .part{margin:18px 0 6px;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:700}
+nav.toc a{display:block;padding:4px 8px;margin-left:-8px;border-radius:5px;
+  color:var(--muted);text-decoration:none}
+nav.toc a:hover{background:var(--wash);color:var(--ink)}
+nav.toc a.current{background:var(--accent-soft);color:var(--accent);font-weight:600}
+main{padding:44px 52px 120px;min-width:0;max-width:78ch}
+h1,h2,h3,h4{font-family:var(--sans);line-height:1.25;color:var(--ink)}
+h1{font-size:2.05em;margin:0 0 .2em;letter-spacing:-.015em}
+h2{font-size:1.42em;margin:2em 0 .5em;padding-top:.35em}
+h3{font-size:1.14em;margin:1.7em 0 .4em}
+p{margin:0 0 1.05em}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 .5em;font-weight:700}
+.summary{font-family:var(--sans);font-size:15px;color:var(--muted);
+  margin:0 0 2.2em;line-height:1.5}
+code{font-family:var(--mono);font-size:.855em;background:var(--wash);
+  padding:.12em .36em;border-radius:4px;word-break:break-word}
+pre{background:var(--wash);border-left:3px solid var(--rule);
+  border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
+  font-size:13.5px;line-height:1.5;margin:1.3em 0}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
+  padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
+aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.4em}
+aside.law p{margin:0;font-family:var(--sans);font-size:1.16em;font-weight:700;
+  line-height:1.35}
+blockquote{border-left:3px solid var(--warm);background:var(--warm-soft);
+  margin:1.5em 0;padding:12px 18px;border-radius:0 6px 6px 0;font-size:.98em}
+blockquote p:last-child{margin-bottom:0}
+figure{margin:2.2em 0;text-align:center}
+figure img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}
+@media (prefers-color-scheme: dark){
+  figure img{background:#fff;padding:8px}
+}
+figcaption{font-family:var(--sans);font-size:13.5px;color:var(--muted);
+  margin-top:.7em;text-align:left;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:1.5em 0}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);
+  vertical-align:top}
+thead th{border-bottom:2px solid var(--rule);font-weight:700}
+ul,ol{padding-left:1.35em;margin:0 0 1.05em}
+li{margin-bottom:.32em}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:4em;
+  padding-top:1.4em;border-top:1px solid var(--rule);font-family:var(--sans);
+  font-size:14px}
+.pager a{text-decoration:none;max-width:46%}
+.pager .dir{display:block;font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted)}
+.hero{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;
+  align-items:start;margin-bottom:2.4em}
+.hero img{width:100%;border-radius:10px;border:1px solid var(--rule)}
+.hero h1{margin-bottom:.15em}
+.hero .sub{font-family:var(--sans);color:var(--muted);font-size:16px;
+  margin:0 0 1em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;margin:1.6em 0}
+.cards a{display:block;border:1px solid var(--rule);border-radius:9px;
+  padding:12px 14px;text-decoration:none;color:var(--ink);font-family:var(--sans)}
+.cards a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.cards .n{font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700}
+.cards .t{font-weight:600;font-size:15px;margin:.15em 0 .25em}
+.cards .s{font-size:12.5px;color:var(--muted);line-height:1.45}
+.menu{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  main{padding:28px 20px 80px}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero img{max-width:220px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><a class="brand" href="index.html">Don&#x27;t Make Me Leave the Chat</a>
+<p class="tagline">A common sense approach to MCP Apps</p>
+<div class="part">Front matter</div>
+<a href="preface.html">Preface</a>
+<a href="how-to-read.html">How to Read This Book</a>
+<div class="part">Part 1 - Guiding Principles</div>
+<a href="ch01.html">1. Don&#x27;t Make Me Leave the Chat</a>
+<a href="ch02.html">2. Your App Has Two Users</a>
+<a href="ch03.html">3. How People Actually Use Apps in Chat</a>
+<a href="ch04.html">4. Never Ask What the Conversation Already Knows</a>
+<a href="ch05.html">5. Omit Needless Widgets</a>
+<div class="part">Part 2 - Things You Need to Get Right</div>
+<a href="ch06.html">6. The Machinery, Briefly</a>
+<a href="ch07.html">7. State, or Knowledge in the World versus in the Head</a>
+<a href="ch08.html">8. Navigation in Someone Else&#x27;s House</a>
+<a href="ch09.html">9. Forms and Actions</a>
+<a href="ch10.html">10. Trust, Courtesy, and the Sandbox</a>
+<div class="part">Part 3 - Making Sure You Got It Right</div>
+<a href="ch11.html">11. Testing on Ten Prompts a Day</a>
+<a href="ch12.html">12. Hosts Are the New Browsers</a>
+<div class="part">Part 4 - Larger Concerns</div>
+<a href="ch13.html" class="current">13. Distribution, or Your Server Is Your Storefront</a>
+<div class="part">Appendices</div>
+<a href="appendix-a.html">Appendix A. The Laws, on One Page</a>
+<a href="appendix-b.html">Appendix B. The Host Capability Matrix, Generated</a>
+<a href="appendix-c.html">Appendix C. The Ten-Prompt Test Kit</a>
+<a href="appendix-d.html">Appendix D. Gallery Repository Map</a>
+<div class="part">End matter</div>
+<a href="about.html">About</a>
+<div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
+</nav>
+<main>
+<p class="eyebrow">Chapter 13</p><h1>Distribution, or Your Server Is Your Storefront</h1><p class="summary">How anybody finds your app, why the listing is a render too, and the laws on one page.</p><p>Everything up to here assumed your app got called. This chapter is about the step before that, which decides whether any of the rest ever happens.</p>
+<h2 id="two-doors-two-users">Two doors, two users</h2>
+<p>There are two ways somebody ends up with your app installed, and they map onto the two users, because of course they do.</p>
+<p><strong>A human browses.</strong> They go to a registry, a directory, or a marketplace inside their host, and they read listings. Name, one-line description, maybe an icon and a screenshot. They install the one that sounds like what they need.</p>
+<p><strong>A model selects.</strong> Your server is already connected, along with eleven others, and the model is choosing among forty tools for the next call. It reads names, descriptions, and schemas. It picks one.</p>
+<p>The second door is the one that gets used more often, per unit of time, by a very large margin. A human installs you once. A model chooses among your tools every turn, for months.</p>
+<p>Which means the tool description you wrote in Chapter 2 is not only how the model operates your app. It is your entire ranking algorithm.</p>
+<figure>
+<img src="figures/xkcd-storefront.png" alt="What you shipped, and what gets read." />
+<figcaption aria-hidden="true">What you shipped, and what gets read.</figcaption>
+</figure>
+<h2 id="the-listing-is-a-render">The listing is a render</h2>
+<p>Apply the whole book to your listing, because it is subject to the same rules.</p>
+<p><strong>It has one glance.</strong> Chapter 3. Somebody scrolling a directory gives your row the same half second they give your widget. The first words have to say what this is for.</p>
+<p><strong>It should not ask what the reader already knows.</strong> Chapter 4. A listing that opens by explaining what MCP is has spent its first line on somebody who is already in a registry.</p>
+<p><strong>It should omit needless words.</strong> Chapter 5. “A powerful, comprehensive solution for…” is four words that say nothing followed by the actual answer.</p>
+<p><strong>It builds or spends trust.</strong> Chapter 10. The listing is where a user decides whether to grant your server access to their conversation. Name the origin. Say what you touch. If your apps declare no network access, that is worth saying here, where somebody is deciding.</p>
+<p>The concrete version, for both audiences:</p>
+<div class="table-wrap"><table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th>For the human browsing</th>
+<th>For the model selecting</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Name</strong></td>
+<td>Recognisable, sayable</td>
+<td>Guessable from the task</td>
+</tr>
+<tr>
+<td><strong>One line</strong></td>
+<td>What problem it solves</td>
+<td>What it does</td>
+</tr>
+<tr>
+<td><strong>Description</strong></td>
+<td>Why it beats the alternative</td>
+<td>When to reach for it</td>
+</tr>
+<tr>
+<td><strong>Tool names</strong></td>
+<td>Rarely seen</td>
+<td>The primary signal</td>
+</tr>
+<tr>
+<td><strong>Schemas</strong></td>
+<td>Never seen</td>
+<td>What the model can pass you</td>
+</tr>
+</tbody>
+</table></div>
+<p>Notice the bottom two rows. Half your storefront is invisible to human shoppers and decisive for the other user, and it is the half nobody reviews before launch.</p>
+<h2 id="naming-briefly">Naming, briefly</h2>
+<p>Tool names are the single highest-leverage strings in your server, and the rules are short.</p>
+<p><strong>Verb plus object.</strong> <code>compare_rates</code>, <code>find_clause</code>, <code>submit_expense</code>. What it does, to what.</p>
+<p><strong>No product names.</strong> <code>loaniq_analyze</code> requires the model to know what LoanIQ is. <code>compare_rates</code> does not.</p>
+<p><strong>No versions.</strong> <code>search_v2</code> tells the model there is a v1 and invites it to wonder which one you meant.</p>
+<p><strong>Disambiguate close pairs.</strong> If you have <code>submit_expense</code> and <code>save_expense</code>, one of them is getting called wrongly, and the fix is names that differ in the verb the user would use.</p>
+<p><strong>Say no in the description.</strong> “Do not call this before origin, destination, and date are known” is a real constraint that a model will honour. Negative space is part of the door handle.</p>
+<h2 id="when-the-app-is-the-product">When the app is the product</h2>
+<p>One case changes the calculus in this book, and it is worth naming.</p>
+<p>Sometimes the MCP App is not a companion to a product that exists elsewhere. It is the whole thing. There is no web app to port, no SaaS to shrink. The conversation is the only surface.</p>
+<p>Three things change.</p>
+<p><strong>The first render carries more.</strong> It is not one paragraph in somebody’s task; it is the first impression of your product. It can afford slightly more: a name, a sense of what else is here. Slightly. The viewport did not get bigger.</p>
+<p><strong>Retention lives in the model’s memory, not in a bookmark.</strong> People return by asking again, which means your tool names and descriptions are your homepage, your SEO, and your brand recall, all at once.</p>
+<p><strong>Trust is your whole moat.</strong> With no website behind you, the only signals a user has are your listing, your declared permissions, and how your renders behave. Chapter 10 stops being a chapter about courtesy and becomes a chapter about business.</p>
+<p>What does not change is every law in Part 1. An app-first product that ships a dashboard nobody asked for fails in exactly the same way, and faster, because it has nothing else to fall back on.</p>
+<h2 id="the-laws-on-one-page">The laws, on one page</h2>
+<p>Here they are, in the order you should apply them.</p>
+<aside class="law"><span class="lawnum">Law 1</span><p>Don’t make me leave the chat.</p></aside>
+<p>The conversation holds the context, the momentum, and the model’s working state. Breaking the flow costs all three. Before you render, ask: does this need to be <em>seen</em> or just <em>read</em>? Will the user <em>act</em> or just <em>glance</em>? Does the conversation already contain the answer?</p>
+<aside class="law"><span class="lawnum">Law 2</span><p>Your app has two users. One reads pixels. The other reads schemas.</p></aside>
+<p>Names, descriptions, and schemas are the model’s affordances. <code>ui/set-context</code> is its feedback. Compute the fact once and render it twice. In every design review, ask what the model sees when this renders.</p>
+<aside class="law"><span class="lawnum">Law 3</span><p>Never ask what the conversation already knows.</p></aside>
+<p>Put the fields in your schema so the model can fill them. Show what you assumed, say where it came from, and put corrections one click away. Every control you add is a consent prompt you might have added.</p>
+<aside class="law"><span class="lawnum">Law 4</span><p>Omit needless widgets.</p></aside>
+<p>Six archetypes cover nearly everything. Know which one you are building. When two are fighting, split rather than compress. And the right widget count is sometimes zero.</p>
+<p>Print it. Tape it to the monitor. Appendix A is the same page, formatted for exactly that.</p>
+<h2 id="what-this-book-was-arguing">What this book was arguing</h2>
+<p>One thing, in the end.</p>
+<p>Every host that renders MCP Apps is about to fill up with widgets. Most of them will be slower paragraphs, dashboards nobody asked for, and forms that re-ask what the conversation already established. That is not a prediction about developers being careless. It is what happened on the web, and on mobile, and it happened because the tools made building easy before anybody agreed on what was worth building.</p>
+<p>The thing that eventually fixed the web was not better frameworks. It was a shared sense of taste, spread by a small number of short books that stated obvious things nobody was acting on, and by testing cheap enough that nobody had an excuse.</p>
+<p>That is what this was. Four laws, a gallery you can run, and a testing method that costs an afternoon and ten cents.</p>
+<p>The medium is new enough that the conventions are still being set, which means whatever you ship next is part of setting them. Ship the card, not the dashboard. Write the description as though it were the only thing you shipped. Say what the human just did. Test with five people and ten prompts.</p>
+<p>And do not make me leave the chat.</p>
+
+<div class="pager"><a href="ch12.html"><span class="dir">Previous</span>12. Hosts Are the New Browsers</a><a href="appendix-a.html" style="text-align:right"><span class="dir">Next</span>Appendix A. The Laws, on One Page</a></div>
+</main>
+</div>
+</body>
+</html>

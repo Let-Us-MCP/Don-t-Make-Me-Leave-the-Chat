@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Deploy status</title>
+<style>/*@include _base.css*/</style>
+<style>
+  .steps { list-style:none; padding:0; margin:8px 0 0; }
+  .steps li { display:flex; gap:8px; align-items:center; padding:4px 0; font-size:13px; }
+  .dot { width:9px; height:9px; border-radius:50%; background:var(--rule); flex:0 0 auto; }
+  .dot.on { background:var(--good); }
+  .dot.run { background:var(--accent); animation:pulse 1.4s infinite; }
+  .dot.fail { background:var(--danger); }
+  @keyframes pulse { 50% { opacity:.35; } }
+  .stale { display:none; }
+  .stale.show { display:flex; }
+</style></head>
+<body>
+<div class="card">
+  <div class="row spread">
+    <h1>Deploying <span id="rel">&hellip;</span></h1>
+    <span class="pill flat" id="phase">&nbsp;</span>
+  </div>
+  <p class="small muted" id="since">&nbsp;</p>
+  <ul class="steps" id="steps"></ul>
+
+  <div class="row stale" id="stale">
+    <span class="pill warm">may be out of date</span>
+    <button class="ghost small" id="refresh">Check now</button>
+  </div>
+  <div class="origin"><span id="asof">&nbsp;</span></div>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  var app = new App({ name: "Deploy status", version: "1.0.0" });
+  var release = null, lastFetch = 0;
+  var STALE_AFTER_MS = 20000;
+
+  function paint(d) {
+    release = d.release;
+    lastFetch = Date.now();
+    document.getElementById("rel").textContent = d.release || "";
+    var phase = document.getElementById("phase");
+    phase.textContent = d.phase;
+    phase.className = "pill " + (d.phase === "succeeded" ? "good"
+      : d.phase === "failed" ? "bad" : "flat");
+    document.getElementById("since").textContent = d.summary || "";
+    document.getElementById("steps").innerHTML = (d.steps || []).map(function (s) {
+      var cls = s.state === "done" ? "on" : s.state === "running" ? "run"
+              : s.state === "failed" ? "fail" : "";
+      return '<li><span class="dot ' + cls + '"></span><span class="grow">' + s.name +
+             '</span><span class="small muted">' + (s.detail || s.state) + "</span></li>";
+    }).join("");
+    document.getElementById("asof").textContent = "Read from the deploy API at " + d.asOf + ".";
+    document.getElementById("stale").classList.remove("show");
+
+    /* Persisted so "show me that deploy again" re-renders the same tracker,
+     * and so the model can answer questions about it without another call. */
+    app.setContext(
+      "Deploy " + d.release + " is " + d.phase + ". " + (d.summary || ""),
+      { release: d.release, phase: d.phase, asOf: d.asOf, steps: d.steps }
+    );
+    app.reportSize();
+  }
+
+  function refresh() {
+    if (!release) return;
+    app.callServerTool({ name: "deploy_status", arguments: { release: release } })
+       .then(function (res) { paint(res.structuredContent || {}); });
+  }
+
+  document.getElementById("refresh").onclick = refresh;
+
+  /* The model can act between renders, so a tracker that has been on screen a
+   * while says so instead of quietly asserting a state it stopped checking. */
+  setInterval(function () {
+    if (lastFetch && Date.now() - lastFetch > STALE_AFTER_MS) {
+      document.getElementById("stale").classList.add("show");
+      app.reportSize();
+    }
+  }, 2000);
+
+  app.ontoolresult = function (result) { paint(result.structuredContent || {}); };
+  app.connect();
+</script>
+</body></html>

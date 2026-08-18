@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7. State, or Knowledge in the World versus in the Head &middot; Don&#x27;t Make Me Leave the Chat</title>
+<meta name="description" content="What belongs in the widget, what belongs in the transcript, and why your widget can be wrong through nobody&#x27;s fault.">
+<meta property="og:title" content="7. State, or Knowledge in the World versus in the Head">
+<meta property="og:description" content="What belongs in the widget, what belongs in the transcript, and why your widget can be wrong through nobody&#x27;s fault.">
+<style>
+:root{
+  --ink:#15181D; --muted:#5B6472; --rule:#D8DDE4; --wash:#F5F6F8;
+  --paper:#FFFFFF; --accent:#0F5C8C; --accent-soft:#E7F0F6;
+  --warm:#B4531A; --warm-soft:#FBF0E7; --good:#2C6E49; --good-soft:#E9F2EC;
+  --danger:#9B2226; --danger-soft:#FAECEC;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#E7EAEE; --muted:#98A2B0; --rule:#2C333D; --wash:#171B21;
+    --paper:#0F1216; --accent:#63AEDC; --accent-soft:#14232E;
+    --warm:#E08B4F; --warm-soft:#2A1D13; --good:#6FBF8E; --good-soft:#13221A;
+    --danger:#E4796F; --danger-soft:#291516;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:18px;line-height:1.62;
+  -webkit-text-size-adjust:100%}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);
+  max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 20px 60px;
+  border-right:1px solid var(--rule);font-family:var(--sans);font-size:14px}
+nav.toc .brand{display:block;font-weight:700;font-size:16px;color:var(--ink);
+  text-decoration:none;line-height:1.3;margin-bottom:4px}
+nav.toc .tagline{color:var(--muted);font-size:12.5px;margin:0 0 18px;line-height:1.45}
+nav.toc .part{margin:18px 0 6px;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:700}
+nav.toc a{display:block;padding:4px 8px;margin-left:-8px;border-radius:5px;
+  color:var(--muted);text-decoration:none}
+nav.toc a:hover{background:var(--wash);color:var(--ink)}
+nav.toc a.current{background:var(--accent-soft);color:var(--accent);font-weight:600}
+main{padding:44px 52px 120px;min-width:0;max-width:78ch}
+h1,h2,h3,h4{font-family:var(--sans);line-height:1.25;color:var(--ink)}
+h1{font-size:2.05em;margin:0 0 .2em;letter-spacing:-.015em}
+h2{font-size:1.42em;margin:2em 0 .5em;padding-top:.35em}
+h3{font-size:1.14em;margin:1.7em 0 .4em}
+p{margin:0 0 1.05em}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 .5em;font-weight:700}
+.summary{font-family:var(--sans);font-size:15px;color:var(--muted);
+  margin:0 0 2.2em;line-height:1.5}
+code{font-family:var(--mono);font-size:.855em;background:var(--wash);
+  padding:.12em .36em;border-radius:4px;word-break:break-word}
+pre{background:var(--wash);border-left:3px solid var(--rule);
+  border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
+  font-size:13.5px;line-height:1.5;margin:1.3em 0}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
+  padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
+aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.4em}
+aside.law p{margin:0;font-family:var(--sans);font-size:1.16em;font-weight:700;
+  line-height:1.35}
+blockquote{border-left:3px solid var(--warm);background:var(--warm-soft);
+  margin:1.5em 0;padding:12px 18px;border-radius:0 6px 6px 0;font-size:.98em}
+blockquote p:last-child{margin-bottom:0}
+figure{margin:2.2em 0;text-align:center}
+figure img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}
+@media (prefers-color-scheme: dark){
+  figure img{background:#fff;padding:8px}
+}
+figcaption{font-family:var(--sans);font-size:13.5px;color:var(--muted);
+  margin-top:.7em;text-align:left;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:1.5em 0}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);
+  vertical-align:top}
+thead th{border-bottom:2px solid var(--rule);font-weight:700}
+ul,ol{padding-left:1.35em;margin:0 0 1.05em}
+li{margin-bottom:.32em}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:4em;
+  padding-top:1.4em;border-top:1px solid var(--rule);font-family:var(--sans);
+  font-size:14px}
+.pager a{text-decoration:none;max-width:46%}
+.pager .dir{display:block;font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted)}
+.hero{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;
+  align-items:start;margin-bottom:2.4em}
+.hero img{width:100%;border-radius:10px;border:1px solid var(--rule)}
+.hero h1{margin-bottom:.15em}
+.hero .sub{font-family:var(--sans);color:var(--muted);font-size:16px;
+  margin:0 0 1em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;margin:1.6em 0}
+.cards a{display:block;border:1px solid var(--rule);border-radius:9px;
+  padding:12px 14px;text-decoration:none;color:var(--ink);font-family:var(--sans)}
+.cards a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.cards .n{font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700}
+.cards .t{font-weight:600;font-size:15px;margin:.15em 0 .25em}
+.cards .s{font-size:12.5px;color:var(--muted);line-height:1.45}
+.menu{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  main{padding:28px 20px 80px}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero img{max-width:220px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><a class="brand" href="index.html">Don&#x27;t Make Me Leave the Chat</a>
+<p class="tagline">A common sense approach to MCP Apps</p>
+<div class="part">Front matter</div>
+<a href="preface.html">Preface</a>
+<a href="how-to-read.html">How to Read This Book</a>
+<div class="part">Part 1 - Guiding Principles</div>
+<a href="ch01.html">1. Don&#x27;t Make Me Leave the Chat</a>
+<a href="ch02.html">2. Your App Has Two Users</a>
+<a href="ch03.html">3. How People Actually Use Apps in Chat</a>
+<a href="ch04.html">4. Never Ask What the Conversation Already Knows</a>
+<a href="ch05.html">5. Omit Needless Widgets</a>
+<div class="part">Part 2 - Things You Need to Get Right</div>
+<a href="ch06.html">6. The Machinery, Briefly</a>
+<a href="ch07.html" class="current">7. State, or Knowledge in the World versus in the Head</a>
+<a href="ch08.html">8. Navigation in Someone Else&#x27;s House</a>
+<a href="ch09.html">9. Forms and Actions</a>
+<a href="ch10.html">10. Trust, Courtesy, and the Sandbox</a>
+<div class="part">Part 3 - Making Sure You Got It Right</div>
+<a href="ch11.html">11. Testing on Ten Prompts a Day</a>
+<a href="ch12.html">12. Hosts Are the New Browsers</a>
+<div class="part">Part 4 - Larger Concerns</div>
+<a href="ch13.html">13. Distribution, or Your Server Is Your Storefront</a>
+<div class="part">Appendices</div>
+<a href="appendix-a.html">Appendix A. The Laws, on One Page</a>
+<a href="appendix-b.html">Appendix B. The Host Capability Matrix, Generated</a>
+<a href="appendix-c.html">Appendix C. The Ten-Prompt Test Kit</a>
+<a href="appendix-d.html">Appendix D. Gallery Repository Map</a>
+<div class="part">End matter</div>
+<a href="about.html">About</a>
+<div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
+</nav>
+<main>
+<p class="eyebrow">Chapter 7</p><h1>State, or Knowledge in the World versus in the Head</h1><p class="summary">What belongs in the widget, what belongs in the transcript, and why your widget can be wrong through nobody&#x27;s fault.</p><p>Norman split knowledge into two kinds. Knowledge in the world is information you can see: the labels on the buttons, the shape of the plug, the position of the dial. Knowledge in the head is what you have to remember: the command, the password, which of the four identical switches is the one for the porch.</p>
+<p>Interfaces that put knowledge in the world are easy. Interfaces that demand knowledge in the head are the ones people write angry reviews about.</p>
+<p>This medium has both, and the split falls in an unfamiliar place. Knowledge in the world is what is on screen in your widget. Knowledge in the head is what is in the model’s context. And the second one is durable while the first one is not, which inverts every instinct you have from building web applications.</p>
+<h2 id="two-places-to-keep-a-fact">Two places to keep a fact</h2>
+<p><strong>In the widget.</strong> Fast, private, and free. Slider positions, which disclosure is open, scroll position, the half-typed text in a field. This state lives in the frame and dies with it.</p>
+<p><strong>In the context.</strong> Slower, shared, costly, and durable. Anything the model needs to answer a follow-up question. Anything that should survive the conversation moving on. Anything a person would have said out loud.</p>
+<p>The rule of thumb from Chapter 2 is the practical version: if a person would say it, write it back; if it is a mouse position, do not.</p>
+<p>Here is the sorting test, applied to a widget:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Fact</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Which tab is open</td>
+<td>Widget</td>
+</tr>
+<tr>
+<td>Which flight the user picked</td>
+<td>Context</td>
+</tr>
+<tr>
+<td>Scroll position in the table</td>
+<td>Widget</td>
+</tr>
+<tr>
+<td>That the user changed the horizon to four years</td>
+<td>Context</td>
+</tr>
+<tr>
+<td>Whether the “advanced” disclosure is expanded</td>
+<td>Widget</td>
+</tr>
+<tr>
+<td>That the expense was submitted, and its ID</td>
+<td>Context</td>
+</tr>
+<tr>
+<td>The colour of the highlight</td>
+<td>Widget</td>
+</tr>
+<tr>
+<td>That the rollout reached 50% at 09:26</td>
+<td>Context</td>
+</tr>
+</tbody>
+</table></div>
+<p>The pattern: <strong>decisions and outcomes go to the context; presentation stays in the widget.</strong></p>
+<h2 id="the-problem-that-is-genuinely-new">The problem that is genuinely new</h2>
+<p>Now the part with no web analogue.</p>
+<p>Between your render and the user’s next glance at it, the model can act.</p>
+<p>It can call your tool again with different arguments. It can call a different tool that changes the same underlying thing. It can do three of those in a row because the user asked it to. And your widget knows about none of it, because your widget is a static document in a sandboxed frame that was handed one result and then left alone.</p>
+<figure>
+<img src="figures/xkcd-staleness.png" alt="Confidence stays flat. Truth does not." />
+<figcaption aria-hidden="true">Confidence stays flat. Truth does not.</figcaption>
+</figure>
+<p>On the web this happens too, and we handle it with polling, sockets, and optimistic updates. What is different here is the <em>source</em> of the change. It is not another user in another city. It is the same user, in this conversation, thirty seconds ago, using words instead of your buttons.</p>
+<p>Which makes the staleness feel like a lie rather than a race condition. The user literally just told the assistant to do the thing. Your widget, three inches away on the same screen, is still displaying the world as it was before they said it.</p>
+<h2 id="three-honest-responses">Three honest responses</h2>
+<p>You have three options, and the wrong one is to pretend the problem does not exist.</p>
+<p><strong>Timestamp everything.</strong> The cheapest fix, and it closes most of the gap. Say when you read the world. <code>As of 09:41 UTC.</code> One line. It converts an assertion about the present into a report about a moment, which is what it actually was.</p>
+<p><strong>Decay visibly.</strong> After some interval, say that you might be behind and offer to check. The gallery’s tracker does this after twenty seconds:</p>
+<pre class="javascript"><code>setInterval(function () {
+  if (lastFetch &amp;&amp; Date.now() - lastFetch &gt; STALE_AFTER_MS) {
+    document.getElementById(&quot;stale&quot;).classList.add(&quot;show&quot;);
+  }
+}, 2000);</code></pre>
+<p>A badge saying <em>may be out of date</em> and a <em>Check now</em> button. Eleven lines. It is more honest than polling, because polling makes the widget look live without making it live, and a widget that looks live is a widget that gets believed.</p>
+<p><strong>Refresh on demand, and let the model trigger it.</strong> The best version, when the data supports it. The refresh path is the same tool call the model would make, which means the tool has to be safe to call repeatedly. Design for that: the gallery’s <code>deploy_status</code> description says so out loud, <em>Safe to call again when the user asks whether anything changed</em>, because that sentence is a door handle for the second user.</p>
+<p>What you should not do is fake liveness. An auto-refresh indicator on a widget that fetched once is worse than no indicator, because it converts an inconsistency the user might have caught into one they will not.</p>
+<h2 id="re-render-from-context">Re-render from context</h2>
+<p>“Show me that dashboard again” should work.</p>
+<p>It is a completely reasonable thing to say four turns later, and in this medium it is not a navigation request. There is no back button and no URL. It is a request for the model to call the tool again.</p>
+<p>For that to produce the <em>same</em> dashboard rather than a generic one, two things have to be true.</p>
+<p><strong>The tool must accept the parameters that made it specific.</strong> If the user’s dashboard was scoped to a release, a date range, or an account, those have to be arguments, not internal state. A tool with an empty input schema cannot be re-summoned specifically. This is the same lesson as Chapter 4, arriving from a different direction: your input schema is the vocabulary the model has for talking about your app.</p>
+<p><strong>The model must know what those parameters were.</strong> Which means they were written back, in <code>content</code> at render time and in <code>ui/set-context</code> whenever the human changed them.</p>
+<p>Put those together and you get a small design contract:</p>
+<blockquote><p>Anything a user might want to return to must be expressible as arguments to your tool, and the model must have been told the values.</p>
+</blockquote>
+<p>The gallery’s rate comparison satisfies this: <code>horizonYears</code> is an argument, and every slider change writes back <code>{ horizonYears: 4, cheapest: "...", totalCost: ... }</code>. Ask for it again at any point and the same comparison comes back, at the horizon you left it on.</p>
+<p>The before version does not satisfy it. Its schema is empty, so “show me that again” produces the default view and the user does the work twice.</p>
+<h2 id="teardown-two-deploy-trackers">Teardown: two deploy trackers</h2>
+<p>The task: “ship 2026.8.14 and keep an eye on it.”</p>
+<figure>
+<img src="figures/fig-7-1.png" alt="Figure 7-1. deploy_tracker. Rendered once, then frozen, and confident about it." />
+<figcaption aria-hidden="true">Figure 7-1. <code>deploy_tracker</code>. Rendered once, then frozen, and confident about it.</figcaption>
+</figure>
+<p>This one is a nice piece of work. Clean step list, status dots, a start time.</p>
+<p>It has one fetch in its entire lifetime. Everything after that is a picture of a moment that has passed. The canary finished two minutes ago; this widget will say <code>running</code> until the conversation ends.</p>
+<p>Look at the transcript underneath. The user asks “did the canary finish?” and now the model has to answer. It has one piece of information, from the original tool result, and that information says <code>running</code>. So the model says the canary is still running, in text, next to a widget that also says <code>running</code>, and the user has two independent-looking confirmations of something that is false.</p>
+<p>That is the real cost. Not that the widget is stale. That the widget’s staleness became the model’s answer, so the error got laundered into confidence.</p>
+<p>Notice also the header: <em>Started 09:22 UTC</em>. A start time and no read time. The one timestamp it shows is the one that cannot go stale, and the one it needs is missing.</p>
+<figure>
+<img src="figures/fig-7-2.png" alt="Figure 7-2. deploy_status. Same data, plus a read time, a refresh, and a write-back." />
+<figcaption aria-hidden="true">Figure 7-2. <code>deploy_status</code>. Same data, plus a read time, a refresh, and a write-back.</figcaption>
+</figure>
+<p>Four changes, none of them large.</p>
+<p><em>Read from the deploy API at 09:26 UTC</em> at the bottom. The phase as a pill, so the verdict is at level one. A <code>may be out of date</code> badge that appears on a timer, with a <code>Check now</code> button next to it. And <code>setContext</code> on every paint, so the model has the phase, the summary, and the read time without another render.</p>
+<p>Now “did the canary finish?” gets answered from context that includes its own timestamp, and if the model is unsure it can call the tool again, because the tool said it was safe to.</p>
+<h2 id="optimistic-updates-and-when-to-lie">Optimistic updates, and when to lie</h2>
+<p>One nuance, because the advice above can be read as “never show anything you have not confirmed”, which would make every widget feel slow.</p>
+<p>Optimistic updates are fine. Show the state the user just asked for, immediately, before the round trip completes. That is not staleness; it is responsiveness, and users read the delay as breakage.</p>
+<p>The rule is that the optimism has to be <em>reversible and visible</em>. If the call fails, say so, in place, and put the old value back. And do not write an optimistic state to the model’s context, because the model cannot see your rollback. Write back on confirmation only.</p>
+<p>Optimistic in the world, confirmed in the head. That is the split this chapter is about, doing useful work.</p>
+<h2 id="what-to-remember">What to remember</h2>
+<p>Presentation lives in the widget and dies with it. Decisions and outcomes go to the context and survive. The model can act between your renders, so a widget that asserts the present tense without a timestamp is claiming more than it knows. Timestamp, decay visibly, refresh on demand, and make your tool safe to call again so the model can do it for you.</p>
+<p>Next chapter: getting around, in a house with no doors.</p>
+
+<div class="pager"><a href="ch06.html"><span class="dir">Previous</span>6. The Machinery, Briefly</a><a href="ch08.html" style="text-align:right"><span class="dir">Next</span>8. Navigation in Someone Else&#x27;s House</a></div>
+</main>
+</div>
+</body>
+</html>

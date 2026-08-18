@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Confirm expense</title>
+<style>/*@include _base.css*/</style>
+<style>
+  .known { display:grid; grid-template-columns:auto 1fr; gap:2px 10px; font-size:13px; margin:8px 0; }
+  .known dt { color:var(--muted); }
+  .known dd { margin:0; }
+  details { margin-top:8px; }
+  summary { cursor:pointer; font-size:12px; color:var(--accent); }
+  details .f { margin-top:8px; }
+  .amount { font-variant-numeric:tabular-nums; }
+</style></head>
+<body>
+<div class="card" id="root">
+  <h1>Confirm this expense</h1>
+  <div class="row spread">
+    <span class="big amount" id="amount">&nbsp;</span>
+    <span class="pill flat" id="cat">&nbsp;</span>
+  </div>
+  <dl class="known" id="known"></dl>
+
+  <div class="f">
+    <label for="just" id="justLabel">Business justification</label>
+    <input id="just" placeholder="One line, optional">
+  </div>
+
+  <details>
+    <summary>Change merchant, date, or category</summary>
+    <div class="f"><label for="merchant">Merchant</label><input id="merchant"></div>
+    <div class="f"><label for="date">Date</label><input id="date" type="date"></div>
+    <div class="f"><label for="cat2">Category</label>
+      <select id="cat2"><option>Travel</option><option>Meals</option>
+      <option>Software</option><option>Other</option></select></div>
+  </details>
+
+  <div class="row" style="margin-top:12px">
+    <button id="submit">Submit expense</button>
+    <span class="err" id="err"></span>
+  </div>
+  <div class="origin"><span>Employee, cost centre, amount, and date came from the receipt you sent.</span></div>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  var app = new App({ name: "Confirm expense", version: "1.0.0" });
+  var draft = {};
+
+  function money(v, cur) {
+    return new Intl.NumberFormat("en-US", { style: "currency", currency: cur || "USD" }).format(v);
+  }
+
+  function fill() {
+    document.getElementById("amount").textContent = money(draft.amount, draft.currency);
+    document.getElementById("cat").textContent = draft.category || "Uncategorised";
+    document.getElementById("known").innerHTML =
+      [["Merchant", draft.merchant], ["Date", draft.date],
+       ["Employee", draft.employeeId], ["Cost centre", draft.costCentre]]
+      .map(function (p) { return "<dt>" + p[0] + "</dt><dd>" + p[1] + "</dd>"; }).join("");
+    /* The threshold is a rule, so it is stated before it is enforced. A field
+     * labelled "optional" that then refuses to submit has told the user one
+     * thing and the server another. */
+    var needsWhy = draft.amount > 500;
+    document.getElementById("justLabel").textContent =
+      needsWhy ? "Business justification (required over $500)" : "Business justification";
+    document.getElementById("just").placeholder =
+      needsWhy ? "One line. Required at this amount." : "One line, optional";
+    document.getElementById("merchant").value = draft.merchant || "";
+    document.getElementById("date").value = draft.date || "";
+    if (draft.category) document.getElementById("cat2").value = draft.category;
+    app.reportSize();
+  }
+
+  /* One source of truth for validation. The same rule is declared in the tool's
+   * input schema on the server, so the model is stopped by the same constraint
+   * that stops the human. */
+  function validate() {
+    if (!(draft.amount > 0)) return "Amount must be greater than zero.";
+    if (draft.amount > 500 && !document.getElementById("just").value.trim()) {
+      return "Expenses over $500 need a justification.";
+    }
+    return "";
+  }
+
+  document.getElementById("submit").addEventListener("click", function () {
+    draft.merchant = document.getElementById("merchant").value || draft.merchant;
+    draft.date = document.getElementById("date").value || draft.date;
+    draft.category = document.getElementById("cat2").value;
+    draft.justification = document.getElementById("just").value.trim();
+    var problem = validate();
+    document.getElementById("err").textContent = problem;
+    if (problem) { app.reportSize(); return; }
+
+    app.callServerTool({ name: "submit_expense", arguments: draft }).then(function (res) {
+      var id = (res.structuredContent || {}).expenseId || "submitted";
+      document.getElementById("root").innerHTML =
+        '<div class="row"><span class="pill good">submitted</span>' +
+        '<span class="grow small">' + money(draft.amount, draft.currency) +
+        " to " + draft.merchant + ", reference " + id + ".</span></div>" +
+        '<p class="small muted" style="margin-top:8px">Ask me to void it if that was wrong.</p>';
+      app.setContext(
+        "Expense " + id + " submitted: " + money(draft.amount, draft.currency) +
+          " at " + draft.merchant + " on " + draft.date + ". Reversible with void_expense.",
+        { expenseId: id, amount: draft.amount, merchant: draft.merchant, undoTool: "void_expense" }
+      );
+      app.reportSize();
+    });
+  });
+
+  app.ontoolresult = function (result) {
+    draft = Object.assign({}, (result.structuredContent || {}).draft);
+    fill();
+  };
+  app.connect();
+</script>
+</body></html>

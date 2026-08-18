@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5. Omit Needless Widgets &middot; Don&#x27;t Make Me Leave the Chat</title>
+<meta name="description" content="The six archetypes, what each owes both users, and the case for shipping zero.">
+<meta property="og:title" content="5. Omit Needless Widgets">
+<meta property="og:description" content="The six archetypes, what each owes both users, and the case for shipping zero.">
+<style>
+:root{
+  --ink:#15181D; --muted:#5B6472; --rule:#D8DDE4; --wash:#F5F6F8;
+  --paper:#FFFFFF; --accent:#0F5C8C; --accent-soft:#E7F0F6;
+  --warm:#B4531A; --warm-soft:#FBF0E7; --good:#2C6E49; --good-soft:#E9F2EC;
+  --danger:#9B2226; --danger-soft:#FAECEC;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#E7EAEE; --muted:#98A2B0; --rule:#2C333D; --wash:#171B21;
+    --paper:#0F1216; --accent:#63AEDC; --accent-soft:#14232E;
+    --warm:#E08B4F; --warm-soft:#2A1D13; --good:#6FBF8E; --good-soft:#13221A;
+    --danger:#E4796F; --danger-soft:#291516;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:18px;line-height:1.62;
+  -webkit-text-size-adjust:100%}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);
+  max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 20px 60px;
+  border-right:1px solid var(--rule);font-family:var(--sans);font-size:14px}
+nav.toc .brand{display:block;font-weight:700;font-size:16px;color:var(--ink);
+  text-decoration:none;line-height:1.3;margin-bottom:4px}
+nav.toc .tagline{color:var(--muted);font-size:12.5px;margin:0 0 18px;line-height:1.45}
+nav.toc .part{margin:18px 0 6px;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:700}
+nav.toc a{display:block;padding:4px 8px;margin-left:-8px;border-radius:5px;
+  color:var(--muted);text-decoration:none}
+nav.toc a:hover{background:var(--wash);color:var(--ink)}
+nav.toc a.current{background:var(--accent-soft);color:var(--accent);font-weight:600}
+main{padding:44px 52px 120px;min-width:0;max-width:78ch}
+h1,h2,h3,h4{font-family:var(--sans);line-height:1.25;color:var(--ink)}
+h1{font-size:2.05em;margin:0 0 .2em;letter-spacing:-.015em}
+h2{font-size:1.42em;margin:2em 0 .5em;padding-top:.35em}
+h3{font-size:1.14em;margin:1.7em 0 .4em}
+p{margin:0 0 1.05em}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 .5em;font-weight:700}
+.summary{font-family:var(--sans);font-size:15px;color:var(--muted);
+  margin:0 0 2.2em;line-height:1.5}
+code{font-family:var(--mono);font-size:.855em;background:var(--wash);
+  padding:.12em .36em;border-radius:4px;word-break:break-word}
+pre{background:var(--wash);border-left:3px solid var(--rule);
+  border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
+  font-size:13.5px;line-height:1.5;margin:1.3em 0}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
+  padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
+aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.4em}
+aside.law p{margin:0;font-family:var(--sans);font-size:1.16em;font-weight:700;
+  line-height:1.35}
+blockquote{border-left:3px solid var(--warm);background:var(--warm-soft);
+  margin:1.5em 0;padding:12px 18px;border-radius:0 6px 6px 0;font-size:.98em}
+blockquote p:last-child{margin-bottom:0}
+figure{margin:2.2em 0;text-align:center}
+figure img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}
+@media (prefers-color-scheme: dark){
+  figure img{background:#fff;padding:8px}
+}
+figcaption{font-family:var(--sans);font-size:13.5px;color:var(--muted);
+  margin-top:.7em;text-align:left;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:1.5em 0}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);
+  vertical-align:top}
+thead th{border-bottom:2px solid var(--rule);font-weight:700}
+ul,ol{padding-left:1.35em;margin:0 0 1.05em}
+li{margin-bottom:.32em}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:4em;
+  padding-top:1.4em;border-top:1px solid var(--rule);font-family:var(--sans);
+  font-size:14px}
+.pager a{text-decoration:none;max-width:46%}
+.pager .dir{display:block;font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted)}
+.hero{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;
+  align-items:start;margin-bottom:2.4em}
+.hero img{width:100%;border-radius:10px;border:1px solid var(--rule)}
+.hero h1{margin-bottom:.15em}
+.hero .sub{font-family:var(--sans);color:var(--muted);font-size:16px;
+  margin:0 0 1em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;margin:1.6em 0}
+.cards a{display:block;border:1px solid var(--rule);border-radius:9px;
+  padding:12px 14px;text-decoration:none;color:var(--ink);font-family:var(--sans)}
+.cards a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.cards .n{font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700}
+.cards .t{font-weight:600;font-size:15px;margin:.15em 0 .25em}
+.cards .s{font-size:12.5px;color:var(--muted);line-height:1.45}
+.menu{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  main{padding:28px 20px 80px}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero img{max-width:220px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><a class="brand" href="index.html">Don&#x27;t Make Me Leave the Chat</a>
+<p class="tagline">A common sense approach to MCP Apps</p>
+<div class="part">Front matter</div>
+<a href="preface.html">Preface</a>
+<a href="how-to-read.html">How to Read This Book</a>
+<div class="part">Part 1 - Guiding Principles</div>
+<a href="ch01.html">1. Don&#x27;t Make Me Leave the Chat</a>
+<a href="ch02.html">2. Your App Has Two Users</a>
+<a href="ch03.html">3. How People Actually Use Apps in Chat</a>
+<a href="ch04.html">4. Never Ask What the Conversation Already Knows</a>
+<a href="ch05.html" class="current">5. Omit Needless Widgets</a>
+<div class="part">Part 2 - Things You Need to Get Right</div>
+<a href="ch06.html">6. The Machinery, Briefly</a>
+<a href="ch07.html">7. State, or Knowledge in the World versus in the Head</a>
+<a href="ch08.html">8. Navigation in Someone Else&#x27;s House</a>
+<a href="ch09.html">9. Forms and Actions</a>
+<a href="ch10.html">10. Trust, Courtesy, and the Sandbox</a>
+<div class="part">Part 3 - Making Sure You Got It Right</div>
+<a href="ch11.html">11. Testing on Ten Prompts a Day</a>
+<a href="ch12.html">12. Hosts Are the New Browsers</a>
+<div class="part">Part 4 - Larger Concerns</div>
+<a href="ch13.html">13. Distribution, or Your Server Is Your Storefront</a>
+<div class="part">Appendices</div>
+<a href="appendix-a.html">Appendix A. The Laws, on One Page</a>
+<a href="appendix-b.html">Appendix B. The Host Capability Matrix, Generated</a>
+<a href="appendix-c.html">Appendix C. The Ten-Prompt Test Kit</a>
+<a href="appendix-d.html">Appendix D. Gallery Repository Map</a>
+<div class="part">End matter</div>
+<a href="about.html">About</a>
+<div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
+</nav>
+<main>
+<p class="eyebrow">Chapter 5</p><h1>Omit Needless Widgets</h1><p class="summary">The six archetypes, what each owes both users, and the case for shipping zero.</p><aside class="law"><span class="lawnum">Law 4</span><p>Omit needless widgets.</p></aside>
+<p>Strunk and White told writers to omit needless words. Krug pointed out that half the words on any web page could go without anyone noticing, and that removing them made the remaining half easier to find.</p>
+<p>The same arithmetic applies here, at a higher exchange rate, because your viewport is a fifth the size and your user’s attention is a tenth as long.</p>
+<figure>
+<img src="figures/xkcd-omit.png" alt="The curve turns over sooner than the roadmap assumes." />
+<figcaption aria-hidden="true">The curve turns over sooner than the roadmap assumes.</figcaption>
+</figure>
+<h2 id="the-porting-instinct">The porting instinct</h2>
+<p>The most common way to get this wrong is not to over-design. It is to port.</p>
+<p>Somebody has a product. The product has a dashboard. MCP Apps arrive, the dashboard is already built, and putting it in an iframe takes an afternoon. Ship it.</p>
+<p>What arrives in the conversation is a 1200 pixel application squeezed into a 380 pixel column, with a nav bar for pages the user cannot reach, a search box for content the conversation already narrowed, and a header containing a logo, a settings gear, and a notifications bell with a red dot on it.</p>
+<p>Every one of those elements was correct in the product. The nav bar is correct when there are pages. The search box is correct when the user arrived with no context. The bell is correct when this is where you live.</p>
+<p>None of them is correct in a paragraph.</p>
+<p>Porting fails because it moves the <em>artefact</em> instead of the <em>job</em>. The job that your product does for this user, in this conversation, in the next thirty seconds, is a small fraction of your product, and it is a fraction with different edges.</p>
+<h2 id="the-six-archetypes">The six archetypes</h2>
+<p>Nearly every useful MCP App is one of six things. Knowing which one you are building tells you what to keep and what to cut, and it tells you what you owe each of your two users.</p>
+<h3 id="the-picker">The picker</h3>
+<p>The human is choosing one thing from a small set. The model needs to know what they chose.</p>
+<p>Owes the human: a small set, differentiated at a glance, one tap to commit. Owes the model: the choice, written back, plus enough about it to act on.</p>
+<p>Fails when: the set is not small. A picker over 400 rows is a search interface wearing a picker’s clothes, and search interfaces belong to the model, not to your widget. Let the model narrow, then pick.</p>
+<h3 id="the-form">The form</h3>
+<p>The human is providing information the system does not have.</p>
+<p>Owes the human: the fewest fields that are genuinely unknown, prefilled context shown rather than asked, correction one click away. Owes the model: the same constraints in the schema that the UI enforces, and the submitted result written back.</p>
+<p>Fails when: fields outnumber unknowns. See Chapter 4, and see the humbling case in Chapter 9 where a plain elicitation beats the whole thing.</p>
+<h3 id="the-dashboard">The dashboard</h3>
+<p>The human is checking on something.</p>
+<p>Owes the human: a verdict, a reason, and everything else behind a disclosure. Owes the model: the verdict as a sentence, because “how are things” will be asked again in text.</p>
+<p>Fails when: there is no verdict. A dashboard that only presents numbers has delegated the synthesis back to the person who asked you to do it.</p>
+<h3 id="the-viewer">The viewer</h3>
+<p>The human needs to see a thing: a document, an image, a model, a chart.</p>
+<p>Owes the human: the relevant part, at a useful size, with the reason it is relevant marked. Owes the model: a text rendering of what is on screen, because the model cannot see the pixels and the user will ask about them.</p>
+<p>Fails when: it rebuilds the browser. Zoom, rotate, print, download, page navigation, and thumbnails are a viewer application. In a chat, they are somebody else’s toolbar.</p>
+<h3 id="the-tracker">The tracker</h3>
+<p>The human is watching something change.</p>
+<p>Owes the human: current state, the time it was read, and a way to refresh. Owes the model: the same, so a question about it does not need a new render.</p>
+<p>Fails when: it stops looking and keeps asserting. Chapter 7.</p>
+<h3 id="the-canvas">The canvas</h3>
+<p>The human is manipulating something directly, because describing it in words would be slower.</p>
+<p>Owes the human: direct manipulation that feels immediate. Owes the model: the result of the manipulation, in structured form, at every resting point.</p>
+<p>Fails when: it is opaque. Figure 2-1 is a canvas that fails this way.</p>
+<h2 id="knowing-which-one-you-are">Knowing which one you are</h2>
+<p>Most confused widgets are two archetypes fighting.</p>
+<p>A dashboard with a form in it: the user came to check on something and got asked a question. A viewer with a picker in it: the user came to read one clause and got a table of contents. A canvas with a dashboard around it: the user came to move things and got metrics about the things.</p>
+<p>When you cannot tell which archetype you are building, that is the finding. Split it. Two renders, each with one job, beat one render with two, because the conversation is a perfectly good container for a sequence and your widget is a poor one.</p>
+<h2 id="when-the-right-number-is-zero">When the right number is zero</h2>
+<p>This deserves to be said plainly, because it is the option nobody defends in planning meetings.</p>
+<p>Sometimes the correct MCP App is no MCP App.</p>
+<ul>
+<li><strong>A verdict is a sentence.</strong> “Yes, you can cancel with 90 days notice.” Nothing visual is being communicated.</li>
+<li><strong>Under about five rows and three columns, a Markdown table in <code>content</code> is fine.</strong> It streams, it copies, it is screen-readable, it costs nothing, and the model can quote it later.</li>
+<li><strong>A structured question is an elicitation.</strong> The host renders it, in the host’s own style, in every host, including the ones that do not do apps.</li>
+<li><strong>A confirmation is a sentence and a tool call.</strong> “I’m about to void EXP-40122. Confirm?” needs no chrome.</li>
+</ul>
+<p>Every one of those options is faster than your widget, works in more places than your widget, and survives being scrolled past in a way your widget does not.</p>
+<p>Shipping zero widgets for a given tool is not a failure to adopt the platform. It is the platform working: MCP Apps are an option, they negotiate as an extension, and a server that renders exactly where rendering helps is a well-designed server.</p>
+<h2 id="teardown-one-over-built-picker">Teardown: one over-built picker</h2>
+<p>The task: “get me to New York Thursday morning, economy, just me.”</p>
+<figure>
+<img src="figures/fig-5-1.png" alt="Figure 5-1. search_flights. A web page wearing a chat costume." />
+<figcaption aria-hidden="true">Figure 5-1. <code>search_flights</code>. A web page wearing a chat costume.</figcaption>
+</figure>
+<p>Six filters, all six re-asking things the sentence contained. Ten columns: flight, departure, arrival, stops, duration, aircraft, cabin, fare, bags, CO2. Pagination, for three results. In a 380 pixel column the table scrolls horizontally, which means the fare, which is the only column anybody looks at first, is off screen.</p>
+<p>The aircraft type is interesting to about one traveller in fifty. It is on screen, at the same visual weight as the price, on every render, for everybody.</p>
+<figure>
+<img src="figures/fig-5-2.png" alt="Figure 5-2. pick_flight. Three options, one tap, filters resolved into a sentence." />
+<figcaption aria-hidden="true">Figure 5-2. <code>pick_flight</code>. Three options, one tap, filters resolved into a sentence.</figcaption>
+</figure>
+<p>Three cards. Departure and arrival as the headline, because that is how people choose flights. Fare as the second thing. Duration and flight number underneath. Two tags, <code>cheapest</code> and <code>fastest</code>, because those are the two comparisons that drive most decisions and computing them is free.</p>
+<p>The six filters became one line of grey text: <em>SFO to JFK, one passenger, economy.</em> Everything the filters would have set is stated, so the user can see that the assumptions are right, and nothing is being asked.</p>
+<p>The other seven columns are gone from the render. They are not gone from the system: they are in <code>structuredContent</code>, so the model has them, and if the user asks “which one is the widebody” the answer comes back in text without another render. That is the decomposition this chapter is about. One widget became a smaller widget plus a sentence, and the information that left the pixels went somewhere it can still be used.</p>
+<h2 id="the-decomposition-test">The decomposition test</h2>
+<p>When a widget feels overloaded, run this in order:</p>
+<ol type="1">
+<li><strong>What is the one question this render answers?</strong> Write it down. If you write down two, you have two widgets.</li>
+<li><strong>What is on screen that does not serve that question?</strong> Move it to <code>structuredContent</code>, to a disclosure, or to the bin.</li>
+<li><strong>What is on screen that a sentence would serve better?</strong> Move it to <code>content</code>.</li>
+<li><strong>What remains, and does it still beat prose?</strong> Chapter 1’s three questions, applied to the residue.</li>
+</ol>
+<p>Step four is the one people skip, and it is the one that occasionally tells you to delete the widget. That is a good outcome. It is cheaper to learn it now than after the launch.</p>
+<h2 id="what-to-remember">What to remember</h2>
+<p>Six archetypes cover nearly everything: picker, form, dashboard, viewer, tracker, canvas. Each owes the human one thing and the model another. Confusion about which one you are building shows up as an overloaded widget, and the fix is to split rather than to compress. And the right widget count is sometimes zero, which is a decision you are allowed to make on purpose.</p>
+<p>That is Part 1. Four laws, and everything after this is what it takes to honour them.</p>
+<p>Next chapter: enough mechanism to make the rest of the arguments land, and no more.</p>
+
+<div class="pager"><a href="ch04.html"><span class="dir">Previous</span>4. Never Ask What the Conversation Already Knows</a><a href="ch06.html" style="text-align:right"><span class="dir">Next</span>6. The Machinery, Briefly</a></div>
+</main>
+</div>
+</body>
+</html>

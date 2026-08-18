@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Rate comparison</title>
+<style>/*@include _base.css*/</style>
+<style>
+  .verdict { display:flex; align-items:baseline; gap:8px; margin-bottom:2px; }
+  .offer { display:grid; grid-template-columns:1fr auto; gap:2px 10px;
+           padding:8px 10px; border-radius:8px; align-items:baseline; }
+  .offer + .offer { margin-top:2px; }
+  .offer.best { background:var(--good-soft); }
+  .offer .name { font-weight:600; }
+  .offer .total { font-variant-numeric:tabular-nums; font-weight:600; }
+  .offer .sub { grid-column:1/2; font-size:12px; color:var(--muted); }
+  .offer .delta { grid-column:2/3; font-size:12px; color:var(--muted);
+                  font-variant-numeric:tabular-nums; }
+  .term { margin-top:12px; }
+  .term .row { gap:8px; }
+  .term output { font-variant-numeric:tabular-nums; font-weight:600; min-width:52px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="verdict">
+    <span class="big" id="best">&nbsp;</span>
+    <span class="pill good">cheapest</span>
+  </div>
+  <p class="small muted" id="headline">Total cost over the term you asked about.</p>
+
+  <div id="offers"></div>
+
+  <div class="term">
+    <label for="term">Compare over <output id="termOut">5</output> years</label>
+    <input type="range" id="term" min="1" max="10" step="1" value="5">
+  </div>
+
+  <div class="origin">
+    <span>Amounts and rates from the three offers in this conversation.</span>
+  </div>
+</div>
+
+<script>/*@include _bridge.js*/</script>
+<script>
+  var app = new App({ name: "Rate comparison", version: "1.0.0" });
+  var offers = [];
+  var years = 5;
+
+  function money(n) {
+    return "$" + Math.round(n).toLocaleString("en-US");
+  }
+
+  /* No arithmetic here on purpose. The server priced every horizon once, so the
+   * number on screen and the number in the model's context come from the same
+   * calculation. See gallery/fixtures.js, priceOffers(). */
+  function render() {
+    if (!offers.length) return;
+    var scored = offers
+      .map(function (o) { return { o: o, total: o.totals[years] }; })
+      .sort(function (a, b) { return a.total - b.total; });
+    var best = scored[0];
+
+    document.getElementById("best").textContent = best.o.lender;
+    document.getElementById("headline").textContent =
+      money(best.total) + " over " + years + " years, fees and payoff included.";
+
+    document.getElementById("offers").innerHTML = scored.map(function (s, i) {
+      var delta = i === 0 ? "" : "+" + money(s.total - best.total);
+      return '<div class="offer' + (i === 0 ? " best" : "") + '">' +
+        '<span class="name">' + s.o.lender + "</span>" +
+        '<span class="total">' + money(s.total) + "</span>" +
+        '<span class="sub">' + s.o.apr.toFixed(2) + "% APR, " + money(s.o.monthly) +
+        "/mo, " + money(s.o.fees) + " fees</span>" +
+        '<span class="delta">' + delta + "</span></div>";
+    }).join("");
+
+    /* Law 2: the human moved a slider, so the model is told what it now says. */
+    app.setContext(
+      "Comparing over " + years + " years: " + best.o.lender + " is cheapest at " +
+        money(best.total) + " total.",
+      { horizonYears: years, cheapest: best.o.lender, totalCost: best.total }
+    );
+    app.reportSize();
+  }
+
+  app.ontoolresult = function (result) {
+    var data = result.structuredContent || {};
+    offers = data.offers || [];
+    if (data.horizonYears) {
+      years = data.horizonYears;
+      document.getElementById("term").value = years;
+      document.getElementById("termOut").textContent = years;
+    }
+    render();
+  };
+
+  document.getElementById("term").addEventListener("input", function (e) {
+    years = Number(e.target.value);
+    document.getElementById("termOut").textContent = years;
+    render();
+  });
+
+  app.connect();
+</script>
+</body>
+</html>

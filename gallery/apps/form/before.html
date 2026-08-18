@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>New Expense</title>
+<style>/*@include _base.css*/</style>
+<style>.f { margin-bottom:8px; } .req:after { content:" *"; color:var(--danger); }</style>
+</head>
+<body>
+<div class="card">
+  <h1>Submit an expense</h1>
+  <p class="small muted">All fields marked * are required.</p>
+  <div class="f"><label class="req">Employee ID</label><input placeholder="e.g. E-40122"></div>
+  <div class="f"><label class="req">Cost centre</label><input placeholder="e.g. CC-ENG-7"></div>
+  <div class="f"><label class="req">Merchant</label><input></div>
+  <div class="f"><label class="req">Date</label><input type="date"></div>
+  <div class="f"><label class="req">Amount</label><input type="number" step="0.01"></div>
+  <div class="f"><label class="req">Currency</label>
+    <select><option>USD</option><option>EUR</option><option>GBP</option></select></div>
+  <div class="f"><label class="req">Category</label>
+    <select><option>Select&hellip;</option><option>Travel</option><option>Meals</option>
+    <option>Software</option><option>Other</option></select></div>
+  <div class="f"><label>Project code</label><input></div>
+  <div class="f"><label>Business justification</label><textarea rows="3"></textarea></div>
+  <div class="row"><button>Submit</button><button class="quiet">Save draft</button>
+    <button class="quiet">Cancel</button></div>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  var app = new App({ name: "New Expense", version: "5.1.0" });
+  app.connect();
+</script>
+</body></html>

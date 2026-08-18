@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Allocate the budget</title>
+<style>/*@include _base.css*/</style>
+<style>
+  .bars { display:flex; flex-direction:column; gap:9px; margin-top:10px; }
+  .bar .row { gap:8px; }
+  .bar .name { width:76px; font-size:12px; }
+  .bar .amt { width:74px; text-align:right; font-variant-numeric:tabular-nums;
+              font-weight:600; font-size:13px; }
+  .track { flex:1 1 auto; height:16px; border-radius:8px; background:var(--wash);
+           position:relative; cursor:ew-resize; touch-action:none; }
+  .fill { height:100%; border-radius:8px; background:var(--accent); }
+  .total { margin-top:10px; font-size:13px; }
+  .total.over { color:var(--danger); font-weight:600; }
+</style></head>
+<body>
+<div class="card">
+  <div class="row spread">
+    <h1>Allocate <span id="cap">&nbsp;</span></h1>
+    <span class="pill flat" id="left">&nbsp;</span>
+  </div>
+  <p class="small muted" id="hint">Drag a bar to move money. Everything else stays put.</p>
+  <div class="bars" id="bars"></div>
+  <div class="total" id="total"></div>
+  <div class="row" style="margin-top:10px">
+    <button id="apply">Apply allocation</button>
+    <button class="quiet" id="reset">Reset</button>
+  </div>
+  <div class="origin"><span>Starting split is last quarter's actuals, from the conversation.</span></div>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  var app = new App({ name: "Budget allocator", version: "1.0.0" });
+  var cap = 0, items = [], initial = [];
+
+  function money(n) { return "$" + Math.round(n).toLocaleString("en-US"); }
+
+  function render() {
+    var used = items.reduce(function (a, b) { return a + b.amount; }, 0);
+    document.getElementById("cap").textContent = money(cap);
+    document.getElementById("left").textContent = money(cap - used) + " unallocated";
+    document.getElementById("bars").innerHTML = items.map(function (it, i) {
+      var pct = cap ? (it.amount / cap) * 100 : 0;
+      return '<div class="bar"><div class="row"><span class="name">' + it.name + "</span>" +
+        '<span class="track" data-i="' + i + '"><span class="fill" style="width:' +
+        pct.toFixed(1) + '%"></span></span><span class="amt">' + money(it.amount) +
+        "</span></div></div>";
+    }).join("");
+    var t = document.getElementById("total");
+    t.textContent = money(used) + " of " + money(cap) + " allocated.";
+    t.className = "total" + (used > cap ? " over" : "");
+    app.reportSize();
+  }
+
+  function drag(e) {
+    var track = e.target.closest(".track");
+    if (!track) return;
+    var i = Number(track.dataset.i);
+    function move(ev) {
+      var r = track.getBoundingClientRect();
+      var x = Math.min(Math.max(ev.clientX - r.left, 0), r.width);
+      items[i].amount = Math.round((x / r.width) * cap / 500) * 500;
+      render();
+    }
+    move(e);
+    function up() {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      /* Every drag is legible to the model, not just to the eye. */
+      app.setContext(
+        "Budget now: " + items.map(function (it) { return it.name + " " + money(it.amount); }).join(", ") + ".",
+        { cap: cap, allocation: items.map(function (it) { return { name: it.name, amount: it.amount }; }) }
+      );
+    }
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  }
+
+  document.getElementById("bars").addEventListener("pointerdown", drag);
+  document.getElementById("reset").onclick = function () {
+    items = initial.map(function (x) { return Object.assign({}, x); });
+    render();
+  };
+  document.getElementById("apply").onclick = function () {
+    app.callServerTool({ name: "apply_budget", arguments: { allocation: items } });
+    app.setContext("Allocation applied.", { applied: true, allocation: items });
+  };
+
+  app.ontoolresult = function (result) {
+    var d = result.structuredContent || {};
+    cap = d.cap || 0;
+    items = (d.allocation || []).map(function (x) { return Object.assign({}, x); });
+    initial = items.map(function (x) { return Object.assign({}, x); });
+    render();
+  };
+  app.connect();
+</script>
+</body></html>

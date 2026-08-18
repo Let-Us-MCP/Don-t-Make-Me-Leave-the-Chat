@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4. Never Ask What the Conversation Already Knows &middot; Don&#x27;t Make Me Leave the Chat</title>
+<meta name="description" content="Prefill from context, make it correctable, and treat every click as a tax.">
+<meta property="og:title" content="4. Never Ask What the Conversation Already Knows">
+<meta property="og:description" content="Prefill from context, make it correctable, and treat every click as a tax.">
+<style>
+:root{
+  --ink:#15181D; --muted:#5B6472; --rule:#D8DDE4; --wash:#F5F6F8;
+  --paper:#FFFFFF; --accent:#0F5C8C; --accent-soft:#E7F0F6;
+  --warm:#B4531A; --warm-soft:#FBF0E7; --good:#2C6E49; --good-soft:#E9F2EC;
+  --danger:#9B2226; --danger-soft:#FAECEC;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#E7EAEE; --muted:#98A2B0; --rule:#2C333D; --wash:#171B21;
+    --paper:#0F1216; --accent:#63AEDC; --accent-soft:#14232E;
+    --warm:#E08B4F; --warm-soft:#2A1D13; --good:#6FBF8E; --good-soft:#13221A;
+    --danger:#E4796F; --danger-soft:#291516;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:18px;line-height:1.62;
+  -webkit-text-size-adjust:100%}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);
+  max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 20px 60px;
+  border-right:1px solid var(--rule);font-family:var(--sans);font-size:14px}
+nav.toc .brand{display:block;font-weight:700;font-size:16px;color:var(--ink);
+  text-decoration:none;line-height:1.3;margin-bottom:4px}
+nav.toc .tagline{color:var(--muted);font-size:12.5px;margin:0 0 18px;line-height:1.45}
+nav.toc .part{margin:18px 0 6px;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:700}
+nav.toc a{display:block;padding:4px 8px;margin-left:-8px;border-radius:5px;
+  color:var(--muted);text-decoration:none}
+nav.toc a:hover{background:var(--wash);color:var(--ink)}
+nav.toc a.current{background:var(--accent-soft);color:var(--accent);font-weight:600}
+main{padding:44px 52px 120px;min-width:0;max-width:78ch}
+h1,h2,h3,h4{font-family:var(--sans);line-height:1.25;color:var(--ink)}
+h1{font-size:2.05em;margin:0 0 .2em;letter-spacing:-.015em}
+h2{font-size:1.42em;margin:2em 0 .5em;padding-top:.35em}
+h3{font-size:1.14em;margin:1.7em 0 .4em}
+p{margin:0 0 1.05em}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 .5em;font-weight:700}
+.summary{font-family:var(--sans);font-size:15px;color:var(--muted);
+  margin:0 0 2.2em;line-height:1.5}
+code{font-family:var(--mono);font-size:.855em;background:var(--wash);
+  padding:.12em .36em;border-radius:4px;word-break:break-word}
+pre{background:var(--wash);border-left:3px solid var(--rule);
+  border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
+  font-size:13.5px;line-height:1.5;margin:1.3em 0}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
+  padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
+aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.4em}
+aside.law p{margin:0;font-family:var(--sans);font-size:1.16em;font-weight:700;
+  line-height:1.35}
+blockquote{border-left:3px solid var(--warm);background:var(--warm-soft);
+  margin:1.5em 0;padding:12px 18px;border-radius:0 6px 6px 0;font-size:.98em}
+blockquote p:last-child{margin-bottom:0}
+figure{margin:2.2em 0;text-align:center}
+figure img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}
+@media (prefers-color-scheme: dark){
+  figure img{background:#fff;padding:8px}
+}
+figcaption{font-family:var(--sans);font-size:13.5px;color:var(--muted);
+  margin-top:.7em;text-align:left;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:1.5em 0}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);
+  vertical-align:top}
+thead th{border-bottom:2px solid var(--rule);font-weight:700}
+ul,ol{padding-left:1.35em;margin:0 0 1.05em}
+li{margin-bottom:.32em}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:4em;
+  padding-top:1.4em;border-top:1px solid var(--rule);font-family:var(--sans);
+  font-size:14px}
+.pager a{text-decoration:none;max-width:46%}
+.pager .dir{display:block;font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted)}
+.hero{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;
+  align-items:start;margin-bottom:2.4em}
+.hero img{width:100%;border-radius:10px;border:1px solid var(--rule)}
+.hero h1{margin-bottom:.15em}
+.hero .sub{font-family:var(--sans);color:var(--muted);font-size:16px;
+  margin:0 0 1em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;margin:1.6em 0}
+.cards a{display:block;border:1px solid var(--rule);border-radius:9px;
+  padding:12px 14px;text-decoration:none;color:var(--ink);font-family:var(--sans)}
+.cards a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.cards .n{font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700}
+.cards .t{font-weight:600;font-size:15px;margin:.15em 0 .25em}
+.cards .s{font-size:12.5px;color:var(--muted);line-height:1.45}
+.menu{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  main{padding:28px 20px 80px}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero img{max-width:220px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><a class="brand" href="index.html">Don&#x27;t Make Me Leave the Chat</a>
+<p class="tagline">A common sense approach to MCP Apps</p>
+<div class="part">Front matter</div>
+<a href="preface.html">Preface</a>
+<a href="how-to-read.html">How to Read This Book</a>
+<div class="part">Part 1 - Guiding Principles</div>
+<a href="ch01.html">1. Don&#x27;t Make Me Leave the Chat</a>
+<a href="ch02.html">2. Your App Has Two Users</a>
+<a href="ch03.html">3. How People Actually Use Apps in Chat</a>
+<a href="ch04.html" class="current">4. Never Ask What the Conversation Already Knows</a>
+<a href="ch05.html">5. Omit Needless Widgets</a>
+<div class="part">Part 2 - Things You Need to Get Right</div>
+<a href="ch06.html">6. The Machinery, Briefly</a>
+<a href="ch07.html">7. State, or Knowledge in the World versus in the Head</a>
+<a href="ch08.html">8. Navigation in Someone Else&#x27;s House</a>
+<a href="ch09.html">9. Forms and Actions</a>
+<a href="ch10.html">10. Trust, Courtesy, and the Sandbox</a>
+<div class="part">Part 3 - Making Sure You Got It Right</div>
+<a href="ch11.html">11. Testing on Ten Prompts a Day</a>
+<a href="ch12.html">12. Hosts Are the New Browsers</a>
+<div class="part">Part 4 - Larger Concerns</div>
+<a href="ch13.html">13. Distribution, or Your Server Is Your Storefront</a>
+<div class="part">Appendices</div>
+<a href="appendix-a.html">Appendix A. The Laws, on One Page</a>
+<a href="appendix-b.html">Appendix B. The Host Capability Matrix, Generated</a>
+<a href="appendix-c.html">Appendix C. The Ten-Prompt Test Kit</a>
+<a href="appendix-d.html">Appendix D. Gallery Repository Map</a>
+<div class="part">End matter</div>
+<a href="about.html">About</a>
+<div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
+</nav>
+<main>
+<p class="eyebrow">Chapter 4</p><h1>Never Ask What the Conversation Already Knows</h1><p class="summary">Prefill from context, make it correctable, and treat every click as a tax.</p><aside class="law"><span class="lawnum">Law 3</span><p>Never ask what the conversation already knows.</p></aside>
+<p>This is the law with the shortest path from violation to insult.</p>
+<p>The user typed the answer. It is above your widget on the screen, in their own words, in their own message, thirty seconds ago. Your app rendered an empty field asking for it. The user is now retyping something they already said, into a box, inside a conversation whose entire premise is that they should not have to do that.</p>
+<figure>
+<img src="figures/xkcd-reask.png" alt="The form that was not listening." />
+<figcaption aria-hidden="true">The form that was not listening.</figcaption>
+</figure>
+<p>Krug’s version of this law is “mindless choices”: the interface asks a question the user has no basis to answer, or no interest in answering, and every one of those is a small tax on getting anything done. Our version is worse, because the answer was not merely obvious. It was <em>stated</em>.</p>
+<h2 id="what-the-conversation-knows">What the conversation knows</h2>
+<p>More than you think, and it accumulates.</p>
+<p>By the time your tool is called, the model is sitting on:</p>
+<ul>
+<li><strong>What the user said.</strong> Explicitly, in this session, in their own words.</li>
+<li><strong>What the user said earlier.</strong> Three turns back, which they will absolutely expect you to remember, because a person would have.</li>
+<li><strong>What previous tools returned.</strong> Including yours, if you have been called before in this conversation.</li>
+<li><strong>What the model inferred.</strong> “My usual cost centre” resolves to <code>CC-ENG-7</code> because that came back from a lookup two turns ago.</li>
+</ul>
+<p>All of that is available to you, if you let it be. The mechanism is unglamorous: put the fields in your input schema, describe them, and the model fills them in when it calls you.</p>
+<p>That last clause is the part people miss. <strong>A field the model can fill is a field the user never sees.</strong> Your input schema is not a validation artefact. It is the list of questions you are choosing not to ask.</p>
+<p>Compare the two expense tools in the gallery. The before version:</p>
+<pre class="javascript"><code>inputSchema: { type: &quot;object&quot;, properties: {} }</code></pre>
+<p>No inputs. The tool takes nothing, so the model passes nothing, so the app knows nothing, so the app asks for everything. Nine fields, in a chat, for a $62 coffee. The empty schema is not a neutral choice. It is the decision to interrogate the user, made accidentally, in a file nobody reviewed.</p>
+<p>The after version:</p>
+<pre class="javascript"><code>inputSchema: {
+  type: &quot;object&quot;,
+  properties: {
+    merchant: { type: &quot;string&quot; },
+    amount:   { type: &quot;number&quot;, exclusiveMinimum: 0 },
+    currency: { type: &quot;string&quot;, default: &quot;USD&quot; },
+    date:     { type: &quot;string&quot;, format: &quot;date&quot; },
+    category: { type: &quot;string&quot;, enum: [&quot;Travel&quot;, &quot;Meals&quot;, &quot;Software&quot;, &quot;Other&quot;] },
+  },
+}</code></pre>
+<p>Five properties, and the model fills all five from one sentence of user input. Note <code>enum</code> on category: the model now picks from a closed set instead of inventing “Food &amp; Bev”, and the human gets a correct default instead of a dropdown.</p>
+<h2 id="prefill-and-then-show-your-work">Prefill, and then show your work</h2>
+<p>Prefilling is half the job. The other half is making the prefill visible and correctable, because prefill without visibility is just a confident guess that nobody audited.</p>
+<p>The pattern that works, in three parts:</p>
+<p><strong>Show what you assumed.</strong> Not in a tooltip. On screen, in the layout, as facts. The gallery’s confirmation shows merchant, date, employee, and cost centre as a small definition list. Four things the user did not type into this widget, all of them checkable at a glance.</p>
+<p><strong>Say where it came from.</strong> One line at the bottom: <em>Employee, cost centre, amount, and date came from the receipt you sent.</em> This is the single highest value sentence in most widgets and it costs nothing. It converts a mysterious prefilled form into a summary the user can verify, and it converts a wrong prefill from a silent error into an obvious one.</p>
+<p><strong>Make correction cheap and quiet.</strong> Not a modal. Not an edit mode. A disclosure labelled with what is inside it: <em>Change merchant, date, or category</em>. Closed by default, one click away, and nothing is lost when it stays closed.</p>
+<p>That is progressive disclosure done honestly: fewer controls showing, everything reachable. The dishonest version hides things behind a gear icon labelled nothing, and then congratulates itself on a clean interface.</p>
+<h2 id="every-click-is-a-tool-call">Every click is a tool call</h2>
+<p>Here is the part that is structurally different from the web, and it is the reason this law is a law rather than a preference.</p>
+<p>On a web page, a click is free. It is a DOM event. Nobody approves it, nobody logs it, nobody sees a permission dialog.</p>
+<p>In this medium, a click that does anything is a <code>tools/call</code> that travels from your sandboxed iframe to the host, through whatever consent policy the user has configured, out to the server, and back. Hosts may prompt. Hosts may prompt <em>every time</em>, depending on how the user set things up and how destructive the tool looks.</p>
+<p>So every interactive control you add is a potential permission dialog you have added, and permission dialogs have a well-documented failure mode: after the fourth one, people stop reading them. That is not a hypothetical. It is the entire history of mobile permission prompts, and it is how consent fatigue turns a security feature into a rubber stamp.</p>
+<p>Which gives you a design rule with an unusually clear justification:</p>
+<blockquote><p>Every control you add spends a little of the user’s willingness to read the next consent prompt, including the ones that matter.</p>
+</blockquote>
+<p>Four fields the model could have filled are not four small annoyances. They are four opportunities to teach somebody that clicking through is fine.</p>
+<h2 id="teardown-nine-fields-becomes-one-confirmation">Teardown: nine fields becomes one confirmation</h2>
+<p>The task: the user sends a receipt and says “file it against my usual cost centre.”</p>
+<figure>
+<img src="figures/fig-4-1.png" alt="Figure 4-1. new_expense. Nine fields, seven of them already answered." />
+<figcaption aria-hidden="true">Figure 4-1. <code>new_expense</code>. Nine fields, seven of them already answered.</figcaption>
+</figure>
+<p>Count what is being re-asked. Employee ID: the system knows this, because it knows who is talking. Cost centre: the user just referred to it, and a lookup resolved it two turns ago. Merchant, date, amount, currency: all four are in the receipt, and all four were in the sentence.</p>
+<p>That leaves category, which the model can infer with an <code>enum</code>, and justification, which is genuinely optional and genuinely unknown.</p>
+<p>Nine fields. Two of them carry information the system did not already have. The other seven are a transcription exercise.</p>
+<p>There is a second failure here, quieter and worse. Look at what the model sees after this renders: nothing. The tool returned “Expense form opened.” The user now fills in nine fields, and the model watches none of it. Law 2 and Law 3 fail together, because they usually do.</p>
+<figure>
+<img src="figures/fig-4-2.png" alt="Figure 4-2. confirm_expense. Four facts shown, one field asked, everything correctable." />
+<figcaption aria-hidden="true">Figure 4-2. <code>confirm_expense</code>. Four facts shown, one field asked, everything correctable.</figcaption>
+</figure>
+<p>The amount is the headline, because that is the thing a person checks. The four known facts sit underneath as a list, verifiable in one pass. One field is open, and it is the one field nobody could have filled in for you. The disclosure holds the corrections. The origin line says where the prefill came from.</p>
+<p>One question instead of nine. Not by removing capability, and not by removing information. By using what was already said.</p>
+<h2 id="when-you-genuinely-need-to-ask">When you genuinely need to ask</h2>
+<p>Sometimes you do need input, and the law does not forbid it. It forbids asking for what you already have. Three cases where asking is right:</p>
+<p><strong>The information does not exist yet.</strong> A justification, a preference, a judgement call. Nobody has said it, so somebody has to.</p>
+<p><strong>The stakes justify confirmation.</strong> “Yes, delete the production database” is a question worth asking even though the intent is clear, because the cost of being wrong is unbounded. Chapter 9 is about how to ask it well.</p>
+<p><strong>The user is exploring.</strong> A slider that re-ranks, a filter that narrows. Nothing here is being re-asked, because the user is generating new information by playing with it. This is the case that earned the slider in Chapter 1.</p>
+<p>The test that separates those from the violations: <em>if the user answered this already, would my widget notice?</em> If the answer is no, you are not asking. You are interrogating.</p>
+<h2 id="the-elicitation-escape-hatch">The elicitation escape hatch</h2>
+<p>There is one more option, and it is worth knowing before you build a form at all.</p>
+<p>Core MCP already has a way to ask the user a structured question without any UI of your own. The host renders it, in its own style, with its own accessibility and its own consent handling. You provide a schema, you get an answer.</p>
+<p>If your widget is a form and nothing else, that mechanism may beat it. It is faster to build, it is consistent with every other prompt the user has seen, and it works in hosts that do not render apps at all. Chapter 9 opens with the case where it wins, because it wins more often than app developers like to admit.</p>
+<h2 id="what-to-remember">What to remember</h2>
+<p>The conversation is a database and you have read access. Put fields in your schema so the model can fill them. Show what you assumed, say where it came from, make the correction one click away and closed by default. Every control you add is a consent prompt you might have added, and consent prompts are a shared resource you are spending on somebody else’s behalf.</p>
+<p>Next chapter: what happens when you keep asking these questions honestly, which is that most of your widget disappears.</p>
+
+<div class="pager"><a href="ch03.html"><span class="dir">Previous</span>3. How People Actually Use Apps in Chat</a><a href="ch05.html" style="text-align:right"><span class="dir">Next</span>5. Omit Needless Widgets</a></div>
+</main>
+</div>
+</body>
+</html>

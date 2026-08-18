@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Deploy Tracker</title>
+<style>/*@include _base.css*/</style>
+<style>
+  .steps { list-style:none; padding:0; margin:8px 0 0; }
+  .steps li { display:flex; gap:8px; align-items:center; padding:4px 0; font-size:13px; }
+  .dot { width:9px; height:9px; border-radius:50%; background:var(--rule); flex:0 0 auto; }
+  .dot.on { background:var(--good); }
+  .dot.run { background:var(--accent); }
+</style></head>
+<body>
+<div class="card">
+  <h1>Deploying <span id="rel">&hellip;</span></h1>
+  <p class="small muted">Started <span id="t">&hellip;</span></p>
+  <ul class="steps" id="steps"></ul>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  /* State lives only here. Nothing is written back to the model, and nothing
+   * is re-fetched after the first render, so this widget keeps showing the
+   * world as it was at render time no matter what happens next. */
+  var app = new App({ name: "Deploy Tracker", version: "2.3.0" });
+  app.connect();
+  app.ontoolresult = function (result) {
+    var d = result.structuredContent || {};
+    document.getElementById("rel").textContent = d.release || "";
+    document.getElementById("t").textContent = d.startedAt || "";
+    document.getElementById("steps").innerHTML = (d.steps || []).map(function (s) {
+      return '<li><span class="dot ' + (s.state === "done" ? "on" : s.state === "running" ? "run" : "") +
+        '"></span><span class="grow">' + s.name + "</span><span class='small muted'>" +
+        s.state + "</span></li>";
+    }).join("");
+  };
+</script>
+</body></html>

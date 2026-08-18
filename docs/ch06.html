@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6. The Machinery, Briefly &middot; Don&#x27;t Make Me Leave the Chat</title>
+<meta name="description" content="The lifecycle in one page, the sandbox, and the two channels, so the rest of the book never explains plumbing mid-argument.">
+<meta property="og:title" content="6. The Machinery, Briefly">
+<meta property="og:description" content="The lifecycle in one page, the sandbox, and the two channels, so the rest of the book never explains plumbing mid-argument.">
+<style>
+:root{
+  --ink:#15181D; --muted:#5B6472; --rule:#D8DDE4; --wash:#F5F6F8;
+  --paper:#FFFFFF; --accent:#0F5C8C; --accent-soft:#E7F0F6;
+  --warm:#B4531A; --warm-soft:#FBF0E7; --good:#2C6E49; --good-soft:#E9F2EC;
+  --danger:#9B2226; --danger-soft:#FAECEC;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#E7EAEE; --muted:#98A2B0; --rule:#2C333D; --wash:#171B21;
+    --paper:#0F1216; --accent:#63AEDC; --accent-soft:#14232E;
+    --warm:#E08B4F; --warm-soft:#2A1D13; --good:#6FBF8E; --good-soft:#13221A;
+    --danger:#E4796F; --danger-soft:#291516;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:18px;line-height:1.62;
+  -webkit-text-size-adjust:100%}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);
+  max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 20px 60px;
+  border-right:1px solid var(--rule);font-family:var(--sans);font-size:14px}
+nav.toc .brand{display:block;font-weight:700;font-size:16px;color:var(--ink);
+  text-decoration:none;line-height:1.3;margin-bottom:4px}
+nav.toc .tagline{color:var(--muted);font-size:12.5px;margin:0 0 18px;line-height:1.45}
+nav.toc .part{margin:18px 0 6px;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:700}
+nav.toc a{display:block;padding:4px 8px;margin-left:-8px;border-radius:5px;
+  color:var(--muted);text-decoration:none}
+nav.toc a:hover{background:var(--wash);color:var(--ink)}
+nav.toc a.current{background:var(--accent-soft);color:var(--accent);font-weight:600}
+main{padding:44px 52px 120px;min-width:0;max-width:78ch}
+h1,h2,h3,h4{font-family:var(--sans);line-height:1.25;color:var(--ink)}
+h1{font-size:2.05em;margin:0 0 .2em;letter-spacing:-.015em}
+h2{font-size:1.42em;margin:2em 0 .5em;padding-top:.35em}
+h3{font-size:1.14em;margin:1.7em 0 .4em}
+p{margin:0 0 1.05em}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 .5em;font-weight:700}
+.summary{font-family:var(--sans);font-size:15px;color:var(--muted);
+  margin:0 0 2.2em;line-height:1.5}
+code{font-family:var(--mono);font-size:.855em;background:var(--wash);
+  padding:.12em .36em;border-radius:4px;word-break:break-word}
+pre{background:var(--wash);border-left:3px solid var(--rule);
+  border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
+  font-size:13.5px;line-height:1.5;margin:1.3em 0}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
+  padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
+aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.4em}
+aside.law p{margin:0;font-family:var(--sans);font-size:1.16em;font-weight:700;
+  line-height:1.35}
+blockquote{border-left:3px solid var(--warm);background:var(--warm-soft);
+  margin:1.5em 0;padding:12px 18px;border-radius:0 6px 6px 0;font-size:.98em}
+blockquote p:last-child{margin-bottom:0}
+figure{margin:2.2em 0;text-align:center}
+figure img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}
+@media (prefers-color-scheme: dark){
+  figure img{background:#fff;padding:8px}
+}
+figcaption{font-family:var(--sans);font-size:13.5px;color:var(--muted);
+  margin-top:.7em;text-align:left;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:1.5em 0}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);
+  vertical-align:top}
+thead th{border-bottom:2px solid var(--rule);font-weight:700}
+ul,ol{padding-left:1.35em;margin:0 0 1.05em}
+li{margin-bottom:.32em}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:4em;
+  padding-top:1.4em;border-top:1px solid var(--rule);font-family:var(--sans);
+  font-size:14px}
+.pager a{text-decoration:none;max-width:46%}
+.pager .dir{display:block;font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted)}
+.hero{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;
+  align-items:start;margin-bottom:2.4em}
+.hero img{width:100%;border-radius:10px;border:1px solid var(--rule)}
+.hero h1{margin-bottom:.15em}
+.hero .sub{font-family:var(--sans);color:var(--muted);font-size:16px;
+  margin:0 0 1em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;margin:1.6em 0}
+.cards a{display:block;border:1px solid var(--rule);border-radius:9px;
+  padding:12px 14px;text-decoration:none;color:var(--ink);font-family:var(--sans)}
+.cards a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.cards .n{font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700}
+.cards .t{font-weight:600;font-size:15px;margin:.15em 0 .25em}
+.cards .s{font-size:12.5px;color:var(--muted);line-height:1.45}
+.menu{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  main{padding:28px 20px 80px}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero img{max-width:220px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><a class="brand" href="index.html">Don&#x27;t Make Me Leave the Chat</a>
+<p class="tagline">A common sense approach to MCP Apps</p>
+<div class="part">Front matter</div>
+<a href="preface.html">Preface</a>
+<a href="how-to-read.html">How to Read This Book</a>
+<div class="part">Part 1 - Guiding Principles</div>
+<a href="ch01.html">1. Don&#x27;t Make Me Leave the Chat</a>
+<a href="ch02.html">2. Your App Has Two Users</a>
+<a href="ch03.html">3. How People Actually Use Apps in Chat</a>
+<a href="ch04.html">4. Never Ask What the Conversation Already Knows</a>
+<a href="ch05.html">5. Omit Needless Widgets</a>
+<div class="part">Part 2 - Things You Need to Get Right</div>
+<a href="ch06.html" class="current">6. The Machinery, Briefly</a>
+<a href="ch07.html">7. State, or Knowledge in the World versus in the Head</a>
+<a href="ch08.html">8. Navigation in Someone Else&#x27;s House</a>
+<a href="ch09.html">9. Forms and Actions</a>
+<a href="ch10.html">10. Trust, Courtesy, and the Sandbox</a>
+<div class="part">Part 3 - Making Sure You Got It Right</div>
+<a href="ch11.html">11. Testing on Ten Prompts a Day</a>
+<a href="ch12.html">12. Hosts Are the New Browsers</a>
+<div class="part">Part 4 - Larger Concerns</div>
+<a href="ch13.html">13. Distribution, or Your Server Is Your Storefront</a>
+<div class="part">Appendices</div>
+<a href="appendix-a.html">Appendix A. The Laws, on One Page</a>
+<a href="appendix-b.html">Appendix B. The Host Capability Matrix, Generated</a>
+<a href="appendix-c.html">Appendix C. The Ten-Prompt Test Kit</a>
+<a href="appendix-d.html">Appendix D. Gallery Repository Map</a>
+<div class="part">End matter</div>
+<a href="about.html">About</a>
+<div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
+</nav>
+<main>
+<p class="eyebrow">Chapter 6</p><h1>The Machinery, Briefly</h1><p class="summary">The lifecycle in one page, the sandbox, and the two channels, so the rest of the book never explains plumbing mid-argument.</p><p>This chapter exists so that no other chapter has to stop and explain the wire.</p>
+<p>It is deliberately short and deliberately incomplete. <em>High-Performance MCP Applications</em> covers the protocol down to the bytes. <em>Patterns of MCP App Architecture</em> covers what happens when you have forty of these things in production. What follows is the minimum a designer needs to make good judgements, which turns out to be about six facts.</p>
+<h2 id="six-facts">Six facts</h2>
+<p><strong>1. UI is a resource, declared in advance.</strong></p>
+<p>Your server publishes an HTML document at a <code>ui://</code> URI, with the MIME type <code>text/html;profile=mcp-app</code>. It exists before any tool is called. That is what makes prefetching possible, and prefetching is what makes the first render fast.</p>
+<p><strong>2. A tool points at it.</strong></p>
+<p>A tool becomes an app by carrying <code>_meta.ui.resourceUri</code>. That is the whole attachment mechanism.</p>
+<pre class="javascript"><code>registerAppTool(server, &quot;compare_rates&quot;, {
+  title: &quot;Compare loan rates&quot;,
+  description: &quot;Show a comparison of the loan offers under discussion...&quot;,
+  inputSchema: { /* ... */ },
+  _meta: { ui: { resourceUri: &quot;ui://rate-compare/after&quot; } },
+}, handler);</code></pre>
+<p>Tools without that field are ordinary tools that return text. Both kinds can live on the same server, and a well-designed server usually has both.</p>
+<p><strong>3. It runs in a sandboxed iframe.</strong></p>
+<p>The host puts your document in an iframe with a restrictive sandbox. Your app cannot read the host’s DOM, cookies, or storage. It cannot navigate the parent. The host also applies a Content Security Policy built from what you declared in <code>_meta.ui.csp</code>, and the default is deny.</p>
+<p><strong>4. Everything crosses by <code>postMessage</code>.</strong></p>
+<p>The app talks to the host over <code>window.postMessage</code>, in JSON-RPC. Some methods are shared with core MCP (<code>tools/call</code>). Most are new and prefixed <code>ui/</code> (<code>ui/initialize</code>, <code>ui/set-context</code>, <code>ui/size-changed</code>, <code>ui/open-link</code>). Every message is loggable, which is what makes the medium auditable.</p>
+<p><strong>5. Results come in two shapes.</strong></p>
+<p>A tool result carries <code>content</code> (for the model) and <code>structuredContent</code> (for your app). Chapter 2 is about the consequences of that.</p>
+<p><strong>6. It is an extension, and it negotiates.</strong></p>
+<p>MCP Apps is <code>io.modelcontextprotocol/ui</code>, an optional extension. Client and server both declare it, and if either side does not, you get core behaviour: the tool runs and the text comes back. Which means your <code>content</code> string is not a nicety. In several hosts it is the whole product.</p>
+<h2 id="the-lifecycle-in-one-page">The lifecycle in one page</h2>
+<figure>
+<img src="figures/diag-lifecycle.png" alt="Figure 6-1. One render, from predeclaration to teardown." />
+<figcaption aria-hidden="true">Figure 6-1. One render, from predeclaration to teardown.</figcaption>
+</figure>
+<p><strong>Predeclare.</strong> The server lists the <code>ui://</code> resource. Nothing has happened yet.</p>
+<p><strong>Prefetch.</strong> The host may fetch the template ahead of time, on connect or on first sight of the tool. Your HTML is now sitting in the host, ready.</p>
+<p><strong>Render.</strong> The model calls the tool. The host renders the template immediately, before the tool result exists. Your app is on screen with no data.</p>
+<p><strong>Data delivery.</strong> The arguments arrive first, then the result. In the gallery’s bridge these are <code>ontoolinput</code> and <code>ontoolresult</code>. The gap between them is real and sometimes long, which is why Chapter 3 treats the skeleton as a designed screen.</p>
+<p><strong>Interact.</strong> The human does something. Your app calls <code>tools/call</code> for actions and <code>ui/set-context</code> for state the model should know about. The host mediates both, applies consent policy, and logs everything.</p>
+<p><strong>Teardown.</strong> The conversation moves on. The frame goes away. Anything you did not write back is gone.</p>
+<p>That last sentence is the one to remember. The frame is transient. The transcript is durable. Chapter 7 is entirely about the consequences.</p>
+<h2 id="what-the-sandbox-promises-the-user">What the sandbox promises the user</h2>
+<p>The sandbox is not a limitation imposed on you. It is a promise made to the user on your behalf, and it is the reason a stranger’s HTML is allowed to render inside a conversation that also contains their tax return.</p>
+<p>Specifically, it promises:</p>
+<ul>
+<li>Your app cannot read the transcript. Only what the host hands you.</li>
+<li>Your app cannot reach the user’s session, cookies, or local storage.</li>
+<li>Your app cannot navigate the page or open windows behind the user’s back.</li>
+<li>Your app cannot call anywhere you did not declare, and the host enforces it.</li>
+<li>Every action your app requests passes through the host, where it can be refused, logged, or shown to the user first.</li>
+</ul>
+<p>Two design consequences follow, and both are load-bearing for later chapters.</p>
+<p><strong>Do not fight it.</strong> Every trick for widening the sandbox is a trick that will be closed, and the closing will be a production incident. If your design needs <code>allow-same-origin</code> to work, your design needs changing.</p>
+<p><strong>Declare less than you can.</strong> An app that declares no external origins is making a statement the host can verify and the user can be shown. Chapter 10 argues that this is a design decision with a real effect on trust, not a security checkbox to be maximised.</p>
+<h2 id="content-versus-structuredcontent"><code>content</code> versus <code>structuredContent</code></h2>
+<p>Same fact, two renderings, one source. Chapter 2 made the design argument; here is the mechanical shape.</p>
+<pre class="javascript"><code>run({ horizonYears = 5 }) {
+  const offers = priceOffers();          // computed once
+  const ranked = rankOffers(horizonYears);
+  return {
+    content: [{
+      type: &quot;text&quot;,
+      text: `Comparing ${offers.length} offers over ${horizonYears} years. ` +
+            `${ranked[0].lender} is cheapest at ${money(ranked[0].total)}. ` +
+            `The user can change the horizon in the app.`,
+    }],
+    structuredContent: { horizonYears, offers },
+  };
+}</code></pre>
+<p>The <code>content</code> string is written for a reader. It says what happened, what the answer is, and what the human can do next. A model that never renders your app can still answer questions from that sentence, which is exactly what happens in hosts that do not support the extension.</p>
+<p>The <code>structuredContent</code> object is written for your app, and it is the <em>complete</em> data, including the eight horizons the user has not selected. That is deliberate: the slider then needs no round trip, and no arithmetic happens twice.</p>
+<p>Three rules that prevent most of the pain here:</p>
+<ul>
+<li><strong>Compute once.</strong> Derive both from the same call.</li>
+<li><strong>Write <code>content</code> for a reader, not a log.</strong> “Loan analytics suite opened.” is a log line. It tells the model nothing it can use.</li>
+<li><strong>Put in <code>structuredContent</code> what the app needs, plus what the model will be asked about.</strong> Figure 5-2 drops seven columns from the pixels and keeps them in the data, so “which one is the widebody” is answerable in text.</li>
+</ul>
+<h2 id="what-is-deliberately-not-here">What is deliberately not here</h2>
+<p>To keep the promise made at the top of this chapter, here is what this book will not explain, and where it lives.</p>
+<ul>
+<li><strong>Transport, framing, and session mechanics.</strong> <em>High-Performance MCP Applications</em>, Chapters 2 and 3.</li>
+<li><strong>Authorization flows.</strong> Same book, Chapter 4.</li>
+<li><strong>Task extension, long-running work, and progress.</strong> Same book, Chapter 9.</li>
+<li><strong>Fleet-scale concerns: versioning, registries at scale, multi-server hosts.</strong> <em>Patterns of MCP App Architecture</em>.</li>
+<li><strong>The exact field names in <code>_meta.ui</code>.</strong> The ext-apps specification, which is the normative document and which moves faster than any book.</li>
+</ul>
+<p>What this book does own is the question of whether to render at all, and what to put in the render. Everything from here on is that.</p>
+<h2 id="what-to-remember">What to remember</h2>
+<p>UI is a predeclared <code>ui://</code> resource, attached to a tool by <code>_meta.ui.resourceUri</code>, rendered in a sandboxed iframe, spoken to over <code>postMessage</code> in JSON-RPC. The template renders before the data arrives. The frame is transient and the transcript is durable. The result carries text for the model and data for the app, and they should come from one computation. And the whole thing is an optional extension, so the text path is not a fallback you tolerate. It is a product you ship.</p>
+<p>Next chapter: what happens to your widget’s idea of the world while nobody is looking at it.</p>
+
+<div class="pager"><a href="ch05.html"><span class="dir">Previous</span>5. Omit Needless Widgets</a><a href="ch07.html" style="text-align:right"><span class="dir">Next</span>7. State, or Knowledge in the World versus in the Head</a></div>
+</main>
+</div>
+</body>
+</html>

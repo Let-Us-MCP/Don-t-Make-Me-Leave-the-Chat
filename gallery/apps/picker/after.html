@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Pick a flight</title>
+<style>/*@include _base.css*/</style>
+<style>
+  .opt { display:grid; grid-template-columns:1fr auto; gap:2px 10px; padding:10px;
+         border:1px solid var(--rule); border-radius:10px; cursor:pointer; }
+  .opt + .opt { margin-top:6px; }
+  .opt:focus-visible, .opt.sel { border-color:var(--accent); background:var(--accent-soft); }
+  .opt .when { font-weight:600; }
+  .opt .fare { font-weight:600; font-variant-numeric:tabular-nums; }
+  .opt .sub, .opt .tag { font-size:12px; color:var(--muted); }
+  .opt .tag { text-align:right; }
+  .done { text-align:center; padding:6px 0; }
+</style></head>
+<body>
+<div class="card" id="root">
+  <h1 id="title">Three nonstops, Thursday</h1>
+  <p class="small muted" id="sub">SFO to JFK, one passenger, economy.</p>
+  <div id="opts"></div>
+  <div class="origin"><span id="from">Route, date, and cabin came from the conversation.</span></div>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  var app = new App({ name: "Pick a flight", version: "1.0.0" });
+  var flights = [];
+
+  function render() {
+    document.getElementById("opts").innerHTML = flights.map(function (f, i) {
+      var tag = f.cheapest ? '<span class="pill good">cheapest</span>'
+              : f.fastest ? '<span class="pill flat">fastest</span>' : "";
+      return '<div class="opt" tabindex="0" data-i="' + i + '" role="button">' +
+        '<span class="when">' + f.depart + " &rarr; " + f.arrive + "</span>" +
+        '<span class="fare">$' + f.fare + "</span>" +
+        '<span class="sub">' + f.number + ", " + f.duration + " nonstop</span>" +
+        '<span class="tag">' + tag + "</span></div>";
+    }).join("");
+  }
+
+  function choose(i) {
+    var f = flights[i];
+    document.getElementById("root").innerHTML =
+      '<div class="done"><div class="big">' + f.number + '</div>' +
+      '<p class="small muted">' + f.depart + ", $" + f.fare + ". Held for 20 minutes.</p></div>";
+    app.setContext(
+      "User picked " + f.number + " departing " + f.depart + " for $" + f.fare + ".",
+      { picked: f.number, fare: f.fare, depart: f.depart }
+    );
+    app.callServerTool({ name: "hold_flight", arguments: { number: f.number } });
+    app.reportSize();
+  }
+
+  document.addEventListener("click", function (e) {
+    var opt = e.target.closest(".opt");
+    if (opt) choose(Number(opt.dataset.i));
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    var opt = e.target.closest && e.target.closest(".opt");
+    if (opt) { e.preventDefault(); choose(Number(opt.dataset.i)); }
+  });
+
+  app.ontoolresult = function (result) {
+    var d = result.structuredContent || {};
+    flights = d.flights || [];
+    if (d.summary) document.getElementById("sub").textContent = d.summary;
+    if (d.title) document.getElementById("title").textContent = d.title;
+    render();
+  };
+  app.connect();
+</script>
+</body></html>

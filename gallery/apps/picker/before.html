@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Flight Search</title>
+<style>/*@include _base.css*/</style>
+<style>
+  .filters { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:10px; }
+  .wide { overflow-x:auto; }
+  table { min-width:640px; }
+  .pager { display:flex; gap:6px; justify-content:center; margin-top:10px; }
+  .pager button { padding:4px 9px; font-size:12px; }
+</style></head>
+<body>
+<div class="card">
+  <h1>Flight search</h1>
+  <div class="filters">
+    <div><label>From</label><input placeholder="Origin airport"></div>
+    <div><label>To</label><input placeholder="Destination airport"></div>
+    <div><label>Depart</label><input type="date"></div>
+    <div><label>Return</label><input type="date"></div>
+    <div><label>Cabin</label><select><option>Economy</option><option>Business</option></select></div>
+    <div><label>Passengers</label><input type="number" value="1"></div>
+  </div>
+  <div class="wide">
+    <table>
+      <thead><tr><th>Flight</th><th>Dep</th><th>Arr</th><th>Stops</th><th>Dur</th>
+      <th>Aircraft</th><th>Cabin</th><th>Fare</th><th>Bags</th><th>CO2</th></tr></thead>
+      <tbody id="rows"><tr><td colspan="10" class="muted small">Search to see results</td></tr></tbody>
+    </table>
+  </div>
+  <div class="pager"><button class="quiet">&larr;</button><button class="quiet">1</button>
+    <button class="quiet">2</button><button class="quiet">3</button><button class="quiet">&rarr;</button></div>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  var app = new App({ name: "Flight Search", version: "2.0.0" });
+  app.connect();
+  app.ontoolresult = function (result) {
+    var d = result.structuredContent || {};
+    document.getElementById("rows").innerHTML = (d.flights || []).map(function (f) {
+      return "<tr><td>" + f.number + "</td><td>" + f.depart + "</td><td>" + f.arrive +
+        "</td><td>" + f.stops + "</td><td>" + f.duration + "</td><td>" + f.aircraft +
+        "</td><td>" + f.cabin + "</td><td>$" + f.fare + "</td><td>" + f.bags +
+        "</td><td>" + f.co2 + "kg</td></tr>";
+    }).join("");
+  };
+</script>
+</body></html>
