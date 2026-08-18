@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -36,13 +37,18 @@ WORDS = {
 
 
 def node_json(expr: str):
+    if shutil.which("node") is None:
+        raise SystemExit(
+            "node is required to read gallery/registry.js. Install Node 18 or "
+            "later, or run this check locally."
+        )
     out = subprocess.run(
         [
             "node", "--input-type=module", "-e",
             f"import('{ROOT}/gallery/registry.js').then(m=>{{const APPS=m.APPS;"
             f"process.stdout.write(JSON.stringify({expr}))}})",
         ],
-        capture_output=True, text=True, cwd=ROOT,
+        capture_output=True, text=True, cwd=ROOT, timeout=60,
     )
     if out.returncode != 0:
         raise SystemExit(f"could not read the registry:\n{out.stderr}")
