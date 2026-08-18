@@ -25,7 +25,8 @@ export const APPS = [
     description:
       "Compare the loan offers already discussed and say which costs least over a " +
       "given number of years. Returns a written answer with no user interface. " +
-      "Use when the user wants the answer stated rather than something to adjust.",
+      "Use when the user asks which loan is cheapest and wants the answer " +
+      "stated: a one-shot question with no follow-up to explore.",
     inputSchema: {
       type: "object",
       properties: {
@@ -363,7 +364,8 @@ export const APPS = [
     description:
       "Show whether the platform is healthy right now, with the one or two numbers " +
       "that explain the verdict. Use when the user asks how things are, or whether " +
-      "something is down. Safe to call again to check for changes.",
+      "something is down. Safe to call again to check for changes. Reports the " +
+      "current state only; it cannot answer questions about past periods.",
     ui: "dashboard/after.html",
     inputSchema: {
       type: "object",

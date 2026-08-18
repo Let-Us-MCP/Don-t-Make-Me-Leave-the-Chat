@@ -88,7 +88,28 @@ On the first run this reported **20 errors and 15 warnings**, against tools
 written by somebody who had just finished writing the chapters telling you not
 to make those mistakes. Chapter 11 lists what it found.
 
-## 6. Building a figure found three more bugs
+## 6. The model-in-the-loop suite was run
+
+```
+$ node gallery/evals/model.mjs        # first run
+invoked  12/15
+skipped   7/9
+cost     $3.83
+
+$ node gallery/evals/model.mjs        # after three description fixes
+invoked  15/15
+skipped   8/9
+sibling   1/3
+cost     $4.14
+```
+
+Three suites, thirty prompts, driven against Claude Code over MCP from a
+scratch directory containing nothing but an `.mcp.json`. The isolation matters:
+the first version ran in the repository root, and the model read the prompt file,
+worked out it was being graded, and said so. Chapter 11 quotes the findings and
+what was changed because of them.
+
+## 7. Building a figure found three more bugs
 
 Figure 12-1 renders one widget under four host capability sets, which required
 teaching the mini host to claim less than it supports. Producing it found three
@@ -110,7 +131,7 @@ The third one is the interesting one, because it was intermittent: the first
 frame on a page was always fine and later frames were not, which is exactly the
 shape of bug that survives manual testing.
 
-## 7. Every figure regenerates
+## 8. Every figure regenerates
 
 ```
 $ node tools/capture_figures.mjs
@@ -131,3 +152,8 @@ $ python3 tools/build_figures.py --force
   this was written, the specification is right and this repository is wrong.
 - **Human usability findings.** Chapter 11 describes a method. No sessions were
   run for this edition, and no claim is made about what five users would find.
+  The chapter says so in its own text, not only here.
+- **Rendering in an iframe-capable host.** The model-in-the-loop suite ran
+  against Claude Code, which is a real host and a real model, and which does not
+  render apps. So the invocation, argument, and readback findings are real and
+  the rendering path in a shipping host remains untested by us.

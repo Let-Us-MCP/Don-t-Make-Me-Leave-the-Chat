@@ -1,15 +1,15 @@
 {
-  "note": "The ten-prompt method from Chapter 11, as data. Each suite names the tool it is about, five phrasings that should invoke it, three that should not, and two readback questions asked after a successful render. Run with gallery/evals/model.mjs.",
+  "note": "The ten-prompt method from Chapter 11, as data. Each suite names the tool it is about, five phrasings that should invoke it, three that should not, and two readback questions asked after a successful render. Run with gallery/evals/model.mjs. A suite may also record prompts where a sibling tool is the correct answer, which is how the first run of this suite found that its own expectations disagreed with Chapter 1.",
   "suites": [
     {
       "tool": "compare_rates",
       "context": "I've got three quotes on a $30,000 loan: Northbank 6.24% with no fee, Cedar Credit Union 4.35% with a $1,400 fee, and Harbor Direct 5.6% with a $500 fee.",
       "invoke": [
-        "Which of these is cheapest over five years?",
-        "Work out the real cost of each of these.",
         "I want to see how the answer changes if I pay it off early.",
-        "Sort out which loan I should take, assuming I keep it the full term.",
-        "Compare those three properly, not just by rate."
+        "Compare those three properly, not just by rate.",
+        "Let me play with the horizon on those three.",
+        "Show me those three so I can adjust the term.",
+        "What if I only keep it three years? Show me both."
       ],
       "skip": [
         "What does APR actually mean?",
@@ -19,7 +19,15 @@
       "readback": [
         "Which lender won, and by how much?",
         "What was Cedar's monthly payment?"
-      ]
+      ],
+      "prefer_sibling": {
+        "tool": "compare_rates_text",
+        "prompts": [
+          "Which of these is cheapest over five years?",
+          "Work out the real cost of each of these.",
+          "Sort out which loan I should take, assuming I keep it the full term."
+        ]
+      }
     },
     {
       "tool": "find_clause",

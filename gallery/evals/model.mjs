@@ -95,14 +95,24 @@ let spend = 0;
 
 for (const suite of suites) {
   for (let pass = 1; pass <= runs; pass++) {
-    for (const [kind, prompts] of [["invoke", suite.invoke], ["skip", suite.skip]]) {
+    const sibling = suite.prefer_sibling;
+    const groups = [["invoke", suite.invoke], ["skip", suite.skip]];
+    if (sibling) groups.push(["sibling", sibling.prompts]);
+
+    for (const [kind, prompts] of groups) {
       for (const p of prompts) {
         const full = `${suite.context}\n\n${p}`;
         const out = await ask(probe(full));
         spend += out.cost;
         const called = toolsFrom(out.text);
         const hit = called ? called.includes(suite.tool) : null;
-        const ok = kind === "invoke" ? hit === true : hit === false;
+        /* `sibling` is for prompts where a different tool is the right answer,
+         * which is how the first run of this harness discovered that its own
+         * expectations disagreed with Chapter 1. */
+        const ok =
+          kind === "invoke" ? hit === true
+          : kind === "skip" ? hit === false
+          : Boolean(called && called.includes(sibling.tool));
         results.push({ suite: suite.tool, pass, kind, prompt: p, called, ok });
         console.log(
           `${ok ? "ok  " : "FAIL"} [${kind}] ${suite.tool.padEnd(16)} ` +
@@ -126,11 +136,13 @@ for (const suite of suites) {
 
 const invoke = results.filter((r) => r.kind === "invoke");
 const skip = results.filter((r) => r.kind === "skip");
+const sib = results.filter((r) => r.kind === "sibling");
 const summary = {
   suites: suites.map((s) => s.tool),
   runs,
   invoked: `${invoke.filter((r) => r.ok).length}/${invoke.length}`,
   skipped: `${skip.filter((r) => r.ok).length}/${skip.length}`,
+  sibling: sib.length ? `${sib.filter((r) => r.ok).length}/${sib.length}` : "n/a",
   costUsd: Math.round(spend * 100) / 100,
 };
 fs.writeFileSync(
