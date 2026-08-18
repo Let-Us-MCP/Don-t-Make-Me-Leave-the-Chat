@@ -64,6 +64,9 @@ jobs:
       - name: Prose density against the framing text
         run: python3 tools/audit_density.py
 
+      - name: No deferrals, and contrastive phrasing within budget
+        run: python3 tools/audit_style.py
+
       - name: Appendix B is generated, not hand-edited
         run: |
           python3 tools/build_matrix.py
