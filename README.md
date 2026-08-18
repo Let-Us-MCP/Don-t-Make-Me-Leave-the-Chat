@@ -30,9 +30,9 @@ Four laws follow from that, and they are on
 |---|---|
 | **13 chapters + 4 appendices**, four parts | ~32,000 words |
 | **[`gallery/`](gallery/)** | One MCP server, 16 apps, no runtime dependencies |
-| **20 annotated renders** | Captured headlessly from the gallery, regenerate with one command |
+| **23 annotated renders** | Captured headlessly from the gallery, regenerate with one command |
 | **16 drawn figures** | matplotlib, generated from `figures-src/` |
-| **Model-as-user checks** | 21 tools checked in under a second |
+| **Model-as-user checks** | 22 tools checked in under a second |
 
 ## Quick start
 

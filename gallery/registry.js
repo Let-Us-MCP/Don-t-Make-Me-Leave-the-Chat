@@ -557,6 +557,21 @@ export const APPS = [
     },
   },
   {
+    name: "expense_wizard",
+    archetype: "form",
+    variant: "before",
+    title: "Expense wizard",
+    description: "Walk the user through filing an expense in three steps.",
+    ui: "flow/wizard.html",
+    inputSchema: { type: "object", properties: {} },
+    run() {
+      return {
+        content: [{ type: "text", text: "Expense wizard opened at step 1 of 3." }],
+        structuredContent: { draft: { ...EXPENSE_DRAFT } },
+      };
+    },
+  },
+  {
     name: "session_check",
     archetype: "trust",
     variant: "before",

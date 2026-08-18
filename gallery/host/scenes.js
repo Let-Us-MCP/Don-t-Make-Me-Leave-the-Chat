@@ -300,4 +300,84 @@ export const SCENES = [
       },
     ],
   },
+  {
+    id: "decompose", figure: "5-3", group: "Chapter 5", variant: "after",
+    title: "One over-built widget, decomposed",
+    call: "ops_overview",
+    args: {},
+    rungs: [
+      {
+        label: "One widget",
+        note: "Twelve tiles trying to be a dashboard, a drill-down, and a report at once.",
+        call: "ops_overview",
+        height: 280,
+      },
+      {
+        label: "Widget one",
+        note: "The verdict, which is what the question asked for.",
+        call: "service_status",
+        height: 220,
+      },
+      {
+        label: "Widget two",
+        note: "Called only when somebody asks about a release. A separate question, a separate render.",
+        call: "deploy_status",
+        args: { release: "api-2026.8.14" },
+        height: 240,
+      },
+      {
+        label: "And a sentence",
+        note: "The rest of the metrics, answered in text when anybody asks for them.",
+        prose: "Cache hit ratio is 88%, queue depth 1.4k, 24 pods with 2 restarts in the last hour, and about $41 an hour. Nothing there is outside its normal range.",
+      },
+    ],
+  },
+  {
+    id: "form-failures", figure: "9-2", group: "Chapter 9", variant: "before",
+    title: "One form, four failures",
+    steps: [
+      { user: "Here's the receipt: Blue Bottle, $62.40, on the 14th. File it against my usual cost centre." },
+      { call: "new_expense", args: {}, height: 470 },
+    ],
+    showContext: true,
+    annotations: [
+      { sel: "label", text: "ONE. Seven of these nine fields hold values the model could have passed. The schema is empty, so it passed none." },
+      { sel: "select", text: "TWO. Category is a free dropdown here and an enum on the server. The model can send 'Food & Bev' and find out at submit time." },
+      { sel: "textarea", text: "THREE. The $500 justification rule exists on the server and appears nowhere on this form until it refuses you." },
+      { sel: "button", text: "FOUR. Submits, shows a tick, and writes nothing back. Three turns later, 'did that go through' has no answer." },
+    ],
+  },
+  {
+    id: "flow-shapes", figure: "8-3", group: "Chapter 8", variant: "after",
+    title: "One flow, three shapes",
+    call: "confirm_expense",
+    args: { merchant: "Blue Bottle Coffee", amount: 62.4, date: "2026-08-14", category: "Meals" },
+    rungs: [
+      {
+        label: "A wizard",
+        note: "One render, three internal steps, a Back button you had to write. The model sees one tool call.",
+        call: "expense_wizard",
+        args: {},
+        height: 300,
+      },
+      {
+        label: "Three renders",
+        note: "Step one of three, in the transcript. Each step is a tool with arguments, so the user can go back by asking.",
+        call: "pick_flight",
+        args: { origin: "SFO", destination: "JFK", date: "2026-08-20" },
+        height: 270,
+      },
+      {
+        label: "One card",
+        note: "It was never a flow. One decision, four assumptions shown, corrections behind a disclosure.",
+        call: "confirm_expense",
+        height: 300,
+      },
+      {
+        label: "The test",
+        prose: "Can the user do the steps in any order? Yes: one card. No, and each step matters alone: three renders. No, and the steps are meaningless apart: one widget, writing back at every step.",
+        note: "Which one you owe the reader.",
+      },
+    ],
+  },
 ];

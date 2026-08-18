@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Expense wizard</title>
+<style>/*@include _base.css*/</style>
+<style>
+  .steps { display:flex; gap:6px; margin-bottom:10px; }
+  .steps span { flex:1; height:3px; border-radius:2px; background:var(--rule); }
+  .steps span.on { background:var(--accent); }
+  .stepno { font-size:11px; color:var(--muted); margin-bottom:2px; }
+  .nav { display:flex; gap:8px; margin-top:12px; align-items:center; }
+  .f { margin-bottom:8px; }
+</style></head>
+<body>
+<div class="card">
+  <div class="steps"><span class="on" id="s1"></span><span id="s2"></span><span id="s3"></span></div>
+  <p class="stepno">Step <span id="n">1</span> of 3</p>
+  <h1 id="head">What did you buy?</h1>
+
+  <div id="body">
+    <div class="f"><label for="merchant">Merchant</label><input id="merchant"></div>
+    <div class="f"><label for="amount">Amount</label><input id="amount" type="number" step="0.01"></div>
+  </div>
+
+  <div class="nav">
+    <button class="quiet" id="back" disabled>Back</button>
+    <button id="next">Next</button>
+    <span class="small muted grow" id="hint"></span>
+  </div>
+  <div class="origin"><span>Three steps, one render, and one tool call the model can see.</span></div>
+</div>
+<script>/*@include _bridge.js*/</script>
+<script>
+  /* The wizard shape from Chapter 8. It works, and its cost is visible in the
+   * transcript pane beside it: the model sees one tool call and one result, so
+   * unless every step writes back, it has no idea anybody is on step two. */
+  var app = new App({ name: "Expense wizard", version: "1.0.0" });
+  var step = 1;
+  var draft = {};
+
+  var STEPS = [
+    { head: "What did you buy?", hint: "" },
+    { head: "When, and what kind?", hint: "" },
+    { head: "Check and submit", hint: "" },
+  ];
+
+  function paint() {
+    document.getElementById("n").textContent = step;
+    document.getElementById("head").textContent = STEPS[step - 1].head;
+    document.getElementById("s1").className = step >= 1 ? "on" : "";
+    document.getElementById("s2").className = step >= 2 ? "on" : "";
+    document.getElementById("s3").className = step >= 3 ? "on" : "";
+    document.getElementById("back").disabled = step === 1;
+    document.getElementById("next").textContent = step === 3 ? "Submit" : "Next";
+
+    var body = document.getElementById("body");
+    if (step === 1) {
+      body.innerHTML =
+        '<div class="f"><label for="merchant">Merchant</label>' +
+        '<input id="merchant" value="' + (draft.merchant || "") + '"></div>' +
+        '<div class="f"><label for="amount">Amount</label>' +
+        '<input id="amount" type="number" step="0.01" value="' + (draft.amount || "") + '"></div>';
+    } else if (step === 2) {
+      body.innerHTML =
+        '<div class="f"><label for="date">Date</label>' +
+        '<input id="date" type="date" value="' + (draft.date || "") + '"></div>' +
+        '<div class="f"><label for="cat">Category</label><select id="cat">' +
+        ["Travel", "Meals", "Software", "Other"].map(function (c) {
+          return '<option' + (draft.category === c ? " selected" : "") + ">" + c + "</option>";
+        }).join("") + "</select></div>";
+    } else {
+      body.innerHTML =
+        '<p class="small">' + (draft.merchant || "?") + ", $" + (draft.amount || "?") +
+        ", " + (draft.date || "?") + ", " + (draft.category || "?") + ".</p>";
+    }
+
+    /* Write back on every step, because the end may never arrive. */
+    app.setContext(
+      "Expense wizard on step " + step + " of 3. So far: " +
+        JSON.stringify(draft) + ".",
+      { step: step, of: 3, draft: draft }
+    );
+    app.reportSize();
+  }
+
+  function capture() {
+    if (step === 1) {
+      draft.merchant = (document.getElementById("merchant") || {}).value || draft.merchant;
+      draft.amount = Number((document.getElementById("amount") || {}).value) || draft.amount;
+    } else if (step === 2) {
+      draft.date = (document.getElementById("date") || {}).value || draft.date;
+      draft.category = (document.getElementById("cat") || {}).value || draft.category;
+    }
+  }
+
+  document.getElementById("next").onclick = function () {
+    capture();
+    if (step < 3) { step++; paint(); return; }
+    app.callServerTool({ name: "submit_expense", arguments: draft });
+  };
+  document.getElementById("back").onclick = function () {
+    capture();
+    step = Math.max(1, step - 1);
+    paint();
+  };
+
+  app.ontoolresult = function (result) {
+    draft = Object.assign({}, (result.structuredContent || {}).draft);
+    paint();
+  };
+  app.connect();
+</script>
+</body></html>

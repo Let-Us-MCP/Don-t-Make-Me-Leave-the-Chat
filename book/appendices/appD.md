@@ -6,7 +6,7 @@ slug: appendix-d
 summary: "Every figure traced to the app and the command that produced it."
 ---
 
-The gallery is one MCP server with sixteen apps, eight of them deliberately
+The gallery is one MCP server with seventeen apps, eight of them deliberately
 over-built so the teardowns have something to tear down. It has no runtime
 dependencies. Node 18 or later is the whole requirement.
 
@@ -77,11 +77,14 @@ the argument to the camera.
 | 4-2 | `form-after` | `confirm_expense` | One question, four facts shown |
 | 5-1 | `picker-before` | `search_flights` | A web page wearing a chat costume |
 | 5-2 | `picker-after` | `pick_flight` | Three options, one tap |
+| 5-3 | `decompose` | four tools | One widget becomes two and a sentence |
 | 7-1 | `tracker-before` | `deploy_tracker` | A tracker that quietly lies |
 | 7-2 | `tracker-after` | `deploy_status` | Read time, refresh, write-back |
 | 8-1 | `viewer-before` | `open_document` | A browser rebuilt in a paragraph |
 | 8-2 | `viewer-after` | `find_clause` | Navigation resolved before the render |
+| 8-3 | `flow-shapes` | three tools | One flow in all three shapes |
 | 9-1 | `form-validation` | `confirm_expense` | Validation stated before it is enforced |
+| 9-2 | `form-failures` | `new_expense` | One form, four annotated failures |
 | 10-1 | `trust-before` | `session_check` | A widget shaped like phishing, inert |
 | 10-2 | `trust-after` | `reconnect_billing` | The trustworthy twin |
 | 12-1 | `ladder` | `deploy_status` | One widget on four host capability sets |
@@ -104,8 +107,12 @@ flights and `2026-01-01` throws.
 
 ## How the capability ladder works
 
-Figure 12-1 is four copies of one widget under four capability sets. A scene with
-a `rungs` array runs each rung in its own `MiniHost`, constructed with the
+Figures 5-3, 8-3, 12-1, and 3-3 are all built from one mechanism. A scene with a
+`rungs` array runs each rung in its own `MiniHost`, and a rung may vary the
+capabilities the host claims (Figure 12-1), the tool arguments (Figure 3-3), the
+tool itself (Figures 5-3 and 8-3), or drop the frame entirely and print prose.
+
+For the capability ladder specifically, each `MiniHost` is constructed with the
 capabilities that rung claims, so the app finds out what it can do the same way
 it would in a real client: from the `ui/initialize` response. The static-preview
 rung passes `freeze`, which delivers the tool arguments and stops there, and the

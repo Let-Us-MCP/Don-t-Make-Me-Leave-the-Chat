@@ -56,7 +56,7 @@ specification, the specification is right.
 
 ## House rules
 
-**Everything runs.** The gallery is a working MCP server with sixteen apps, no
+**Everything runs.** The gallery is a working MCP server with seventeen apps, no
 runtime dependencies, and a mini host that renders them. Every annotated figure
 in this book is captured from it headlessly, by a script in the repository, and
 regenerates with one command.

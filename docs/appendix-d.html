@@ -156,7 +156,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
 </nav>
 <main>
-<p class="eyebrow">Appendix D</p><h1>Gallery Repository Map</h1><p class="summary">Every figure traced to the app and the command that produced it.</p><p>The gallery is one MCP server with sixteen apps, eight of them deliberately over-built so the teardowns have something to tear down. It has no runtime dependencies. Node 18 or later is the whole requirement.</p>
+<p class="eyebrow">Appendix D</p><h1>Gallery Repository Map</h1><p class="summary">Every figure traced to the app and the command that produced it.</p><p>The gallery is one MCP server with seventeen apps, eight of them deliberately over-built so the teardowns have something to tear down. It has no runtime dependencies. Node 18 or later is the whole requirement.</p>
 <h2 id="running-it">Running it</h2>
 <p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="bash"><code>node gallery/serve.js               # mini host at :8931, MCP at /mcp
 node gallery/stdio.js               # the same server over stdio
@@ -274,6 +274,12 @@ python3 tools/build_site.py         # rebuild the website</code></pre>
 <td>Three options, one tap</td>
 </tr>
 <tr>
+<td>5-3</td>
+<td><code>decompose</code></td>
+<td>four tools</td>
+<td>One widget becomes two and a sentence</td>
+</tr>
+<tr>
 <td>7-1</td>
 <td><code>tracker-before</code></td>
 <td><code>deploy_tracker</code></td>
@@ -298,10 +304,22 @@ python3 tools/build_site.py         # rebuild the website</code></pre>
 <td>Navigation resolved before the render</td>
 </tr>
 <tr>
+<td>8-3</td>
+<td><code>flow-shapes</code></td>
+<td>three tools</td>
+<td>One flow in all three shapes</td>
+</tr>
+<tr>
 <td>9-1</td>
 <td><code>form-validation</code></td>
 <td><code>confirm_expense</code></td>
 <td>Validation stated before it is enforced</td>
+</tr>
+<tr>
+<td>9-2</td>
+<td><code>form-failures</code></td>
+<td><code>new_expense</code></td>
+<td>One form, four annotated failures</td>
 </tr>
 <tr>
 <td>10-1</td>
@@ -328,7 +346,8 @@ python3 tools/build_site.py         # rebuild the website</code></pre>
 <p>The drawn figures live in <code>figures-src/</code>. Cartoons are <code>figures-src/xkcd/*.py</code>, mechanism diagrams are <code>figures-src/diagrams/*.py</code>, and the cover is <code>figures-src/cover.py</code>. All of them take an output path as their one argument, so any of them runs on its own.</p>
 <p>Two of those scenes render four columns rather than one. Figure 3-3 varies the tool arguments per column, using two fixture dates that exist so the empty and failed states can be photographed rather than described: <code>2026-12-25</code> returns no flights and <code>2026-01-01</code> throws.</p>
 <h2 id="how-the-capability-ladder-works">How the capability ladder works</h2>
-<p>Figure 12-1 is four copies of one widget under four capability sets. A scene with a <code>rungs</code> array runs each rung in its own <code>MiniHost</code>, constructed with the capabilities that rung claims, so the app finds out what it can do the same way it would in a real client: from the <code>ui/initialize</code> response. The static-preview rung passes <code>freeze</code>, which delivers the tool arguments and stops there, and the text rung skips the frame entirely and prints the tool’s <code>content</code>.</p>
+<p>Figures 5-3, 8-3, 12-1, and 3-3 are all built from one mechanism. A scene with a <code>rungs</code> array runs each rung in its own <code>MiniHost</code>, and a rung may vary the capabilities the host claims (Figure 12-1), the tool arguments (Figure 3-3), the tool itself (Figures 5-3 and 8-3), or drop the frame entirely and print prose.</p>
+<p>For the capability ladder specifically, each <code>MiniHost</code> is constructed with the capabilities that rung claims, so the app finds out what it can do the same way it would in a real client: from the <code>ui/initialize</code> response. The static-preview rung passes <code>freeze</code>, which delivers the tool arguments and stops there, and the text rung skips the frame entirely and prints the tool’s <code>content</code>.</p>
 <p>Making the host able to lie is what turns the fallback ladder from a diagram into a photograph, and it is also the fastest way to find out that your app never checked.</p>
 <h2 id="how-the-annotations-work">How the annotations work</h2>
 <p>The camera cannot read into a sandboxed iframe, and it should not be able to. So it asks. The gallery’s bridge answers a development-only <code>ui/measure</code> request with an element’s bounding box, and the camera draws the callout and the leader line in the parent document.</p>

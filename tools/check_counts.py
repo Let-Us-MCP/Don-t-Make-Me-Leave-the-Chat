@@ -92,6 +92,20 @@ def as_int(token: str) -> int | None:
     return None
 
 
+FENCE = re.compile(r"```.*?```", re.S)
+
+
+def prose_only(text: str) -> str:
+    """Blank out fenced blocks, preserving line numbers.
+
+    Captured output is a record of a moment and is allowed to disagree with the
+    present: the eval run quoted in Chapter 11 reported twenty errors, and those
+    errors are fixed, which is the point of quoting it. Live claims live in the
+    prose, and that is what this checks.
+    """
+    return FENCE.sub(lambda m: re.sub(r"[^\n]", " ", m.group(0)), text)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--show", action="store_true")
@@ -104,11 +118,11 @@ def main() -> int:
         return 0
 
     text_by_file = {
-        p.name: p.read_text(encoding="utf-8")
+        p.name: prose_only(p.read_text(encoding="utf-8"))
         for sub in ("chapters", "appendices", "frontmatter")
         for p in (BOOK / sub).glob("*.md")
     }
-    text_by_file["README.md"] = (ROOT / "README.md").read_text()
+    text_by_file["README.md"] = prose_only((ROOT / "README.md").read_text())
 
     bad = checked = 0
     for fact, pattern in ASSERTIONS:

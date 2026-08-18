@@ -58,6 +58,8 @@ svg.leads{position:absolute;inset:0;overflow:visible;pointer-events:none}
 .rung .frame{background:var(--wash);border:1px solid var(--rule);border-radius:12px;padding:10px}
 .rung.text .frame{font-family:var(--mono);font-size:11px;line-height:1.5;white-space:pre-wrap;
   color:var(--ink);background:#111;color:#ddd;border-color:#333}
+.rung .frame.prose{font-family:var(--serif,Georgia,serif);font-size:13.5px;line-height:1.55;
+  background:var(--paper);border-style:dashed}
 </style>
 </head>
 <body>
@@ -131,9 +133,16 @@ async function runLadder() {
     col.appendChild(frame);
     host.appendChild(col);
 
+    if (rung.prose) {
+      frame.className = "frame prose";
+      frame.textContent = rung.prose;
+      continue;
+    }
+
     if (rung.textOnly) {
       const r = await new MiniHost({ transcript: document.createElement("div") })
-        .rpc("tools/call", { name: scene.call, arguments: rung.args || scene.args || {} });
+        .rpc("tools/call",
+             { name: rung.call || scene.call, arguments: rung.args || scene.args || {} });
       frame.textContent = (r.content || []).map((c) => c.text).join("\n");
       continue;
     }
@@ -143,7 +152,9 @@ async function runLadder() {
       capabilities: rung.capabilities,
       onContext: function () {},
     });
-    await h.render(scene.call, rung.args || scene.args || {},
+    /* A rung may swap the tool as well as the arguments, which is what turns
+     * the ladder into a decomposition: same task, different renders. */
+    await h.render(rung.call || scene.call, rung.args || scene.args || {},
                    { height: rung.height || 210, freeze: rung.freeze });
   }
   await new Promise((r) => setTimeout(r, 700));
