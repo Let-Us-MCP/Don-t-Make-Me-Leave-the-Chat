@@ -24,13 +24,14 @@
   <div class="row stale" id="stale">
     <span class="pill warm">may be out of date</span>
     <button class="ghost small" id="refresh">Check now</button>
+    <span class="small muted" id="staleWhy"></span>
   </div>
   <div class="origin"><span id="asof">&nbsp;</span></div>
 </div>
 <script>/*@include _bridge.js*/</script>
 <script>
   var app = new App({ name: "Deploy status", version: "1.0.0" });
-  var release = null, lastFetch = 0;
+  var release = null, lastFetch = 0, canRefresh = true;
   var STALE_AFTER_MS = 20000;
 
   function paint(d) {
@@ -50,6 +51,8 @@
     }).join("");
     document.getElementById("asof").textContent = "Read from the deploy API at " + d.asOf + ".";
     document.getElementById("stale").classList.remove("show");
+    document.getElementById("staleWhy").textContent = canRefresh
+      ? "" : " This host does not let apps refresh; ask me to check.";
 
     /* Persisted so "show me that deploy again" re-renders the same tracker,
      * and so the model can answer questions about it without another call. */
@@ -77,7 +80,29 @@
     }
   }, 2000);
 
+  /* The static-preview rung: this is the only screen some hosts ever show, and
+   * the arguments already name the release, so draw that rather than nothing. */
+  app.ontoolinput = function (params) {
+    var a = params.arguments || {};
+    document.getElementById("rel").textContent = a.release || "";
+    document.getElementById("since").textContent = "Reading the deploy API...";
+    document.getElementById("steps").innerHTML =
+      ["build", "tests", "canary", "rollout", "smoke checks"].map(function (n) {
+        return '<li><span class="dot"></span><span class="grow">' + n +
+               '</span><span class="small muted">&mdash;</span></li>';
+      }).join("");
+    app.reportSize();
+  };
+
   app.ontoolresult = function (result) { paint(result.structuredContent || {}); };
-  app.connect();
+
+  app.connect().then(function (host) {
+    /* A refresh button in a host that refuses tool calls is a button that lies.
+     * Hide it, and say why once, rather than failing on click. */
+    if (!(host.capabilities || {}).toolCalls) {
+      canRefresh = false;
+      document.getElementById("refresh").remove();
+    }
+  });
 </script>
 </body></html>

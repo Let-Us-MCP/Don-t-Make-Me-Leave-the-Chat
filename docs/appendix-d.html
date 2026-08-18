@@ -303,11 +303,20 @@ python3 tools/build_site.py         # rebuild the website</code></pre>
 <td><code>reconnect_billing</code></td>
 <td>The trustworthy twin</td>
 </tr>
+<tr>
+<td>12-1</td>
+<td><code>ladder</code></td>
+<td><code>deploy_status</code></td>
+<td>One widget on four host capability sets</td>
+</tr>
 </tbody>
 </table></div>
 <p>Regenerate one:</p>
 <pre class="bash"><code>node tools/capture_figures.mjs rate-after</code></pre>
 <p>The drawn figures live in <code>figures-src/</code>. Cartoons are <code>figures-src/xkcd/*.py</code>, mechanism diagrams are <code>figures-src/diagrams/*.py</code>, and the cover is <code>figures-src/cover.py</code>. All of them take an output path as their one argument, so any of them runs on its own.</p>
+<h2 id="how-the-capability-ladder-works">How the capability ladder works</h2>
+<p>Figure 12-1 is four copies of one widget under four capability sets. A scene with a <code>rungs</code> array runs each rung in its own <code>MiniHost</code>, constructed with the capabilities that rung claims, so the app finds out what it can do the same way it would in a real client: from the <code>ui/initialize</code> response. The static-preview rung passes <code>freeze</code>, which delivers the tool arguments and stops there, and the text rung skips the frame entirely and prints the tool’s <code>content</code>.</p>
+<p>Making the host able to lie is what turns the fallback ladder from a diagram into a photograph, and it is also the fastest way to find out that your app never checked.</p>
 <h2 id="how-the-annotations-work">How the annotations work</h2>
 <p>The camera cannot read into a sandboxed iframe, and it should not be able to. So it asks. The gallery’s bridge answers a development-only <code>ui/measure</code> request with an element’s bounding box, and the camera draws the callout and the leader line in the parent document.</p>
 <p>This is the same constraint the book keeps describing, showing up in the tooling: everything crosses the boundary as a message, or it does not cross.</p>

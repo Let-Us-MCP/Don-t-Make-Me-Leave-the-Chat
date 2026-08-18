@@ -88,7 +88,29 @@ On the first run this reported **20 errors and 15 warnings**, against tools
 written by somebody who had just finished writing the chapters telling you not
 to make those mistakes. Chapter 11 lists what it found.
 
-## 6. Every figure regenerates
+## 6. Building a figure found three more bugs
+
+Figure 12-1 renders one widget under four host capability sets, which required
+teaching the mini host to claim less than it supports. Producing it found three
+defects in the gallery, all of them invisible until something looked:
+
+- **The tracker had no skeleton.** It never handled `ui/tool-input`, so the
+  static-preview rung rendered an empty card. Fixed by drawing the release name
+  and the step list from the arguments, which the app already had.
+- **The tracker never checked `toolCalls`.** Its refresh button would have
+  failed silently in a host that refuses app-initiated calls. It now removes the
+  button and says why.
+- **A zero-height report collapsed a working widget.** An iframe appended and
+  measured in the same tick can report `scrollHeight` of 0, and the host
+  honoured it, shrinking a rendered card to six pixels. The bridge now measures
+  after a frame and never reports zero; the host clamps to a floor regardless,
+  because a host should not trust a guest's arithmetic.
+
+The third one is the interesting one, because it was intermittent: the first
+frame on a page was always fine and later frames were not, which is exactly the
+shape of bug that survives manual testing.
+
+## 7. Every figure regenerates
 
 ```
 $ node tools/capture_figures.mjs

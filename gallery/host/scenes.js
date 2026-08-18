@@ -237,4 +237,36 @@ export const SCENES = [
       { good: true, sel: "#just", text: "The same rule is declared on the server, so the model is stopped by the constraint that stops the human." },
     ],
   },
+  {
+    id: "ladder", figure: "12-1", group: "Chapter 12", variant: "after",
+    title: "One widget, four rungs",
+    call: "deploy_status",
+    args: { release: "api-2026.8.14" },
+    rungs: [
+      {
+        label: "Full app",
+        note: "Renders, calls tools, complete theme. Refresh works.",
+        capabilities: { toolCalls: {}, context: {}, openLink: {} },
+        height: 230,
+      },
+      {
+        label: "No callbacks",
+        note: "Renders, but the host refuses tool calls. The refresh button is now a lie unless the app checks.",
+        capabilities: { context: {} },
+        height: 230,
+      },
+      {
+        label: "Static preview",
+        note: "First render only, before any result. This is the screen your skeleton has to be.",
+        capabilities: { toolCalls: {}, context: {} },
+        freeze: true,
+        height: 150,
+      },
+      {
+        label: "Content text",
+        note: "No app at all. This is what most of the ecosystem gets.",
+        textOnly: true,
+      },
+    ],
+  },
 ];

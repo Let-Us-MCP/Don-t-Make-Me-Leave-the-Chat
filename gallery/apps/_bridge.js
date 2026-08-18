@@ -52,8 +52,19 @@
   /* Tell the host how tall we are. Guests do not get to pick their own
    * viewport, but they are expected to say how much of it they need. */
   App.prototype.reportSize = function () {
-    var h = Math.ceil(document.documentElement.scrollHeight);
-    this._notify("ui/size-changed", { height: h });
+    /* Measured after a frame, because an iframe appended and measured in the
+     * same tick can report zero, and a host that believes a zero collapses
+     * your widget to a sliver. Both sides guard against it; this is the side
+     * that knows the real answer. */
+    var self = this;
+    requestAnimationFrame(function () {
+      var h = Math.max(
+        document.documentElement ? document.documentElement.scrollHeight : 0,
+        document.body ? document.body.scrollHeight : 0,
+        document.body ? Math.ceil(document.body.getBoundingClientRect().height) : 0
+      );
+      if (h > 0) self._notify("ui/size-changed", { height: Math.ceil(h) });
+    });
   };
 
   App.prototype.callServerTool = function (params) {

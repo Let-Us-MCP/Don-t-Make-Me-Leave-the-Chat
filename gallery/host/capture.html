@@ -50,10 +50,19 @@ svg.leads{position:absolute;inset:0;overflow:visible;pointer-events:none}
 .ctxpane .entry .k{display:block;font-family:var(--sans);font-size:9px;text-transform:uppercase;
   letter-spacing:.06em;color:var(--muted)}
 .ctxpane .empty{font-size:11.5px;color:var(--danger);font-style:italic}
+.rungs{display:flex;gap:12px;align-items:flex-start}
+.rung{width:300px;flex:0 0 300px}
+.rung .cap{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);margin:0 0 2px}
+.rung .note{font-size:11.5px;color:var(--ink);margin:0 0 8px;line-height:1.4;min-height:32px}
+.rung .frame{background:var(--wash);border:1px solid var(--rule);border-radius:12px;padding:10px}
+.rung.text .frame{font-family:var(--mono);font-size:11px;line-height:1.5;white-space:pre-wrap;
+  color:var(--ink);background:#111;color:#ddd;border-color:#333}
 </style>
 </head>
 <body>
 <div id="shot">
+  <div class="rungs" id="rungs" style="display:none"></div>
   <div class="stage">
     <div class="phone"><div class="chat" id="chat"></div></div>
     <div class="gutter" id="gutter"><svg class="leads" id="leads"></svg></div>
@@ -106,6 +115,39 @@ async function measure(frame, selector) {
     );
     setTimeout(() => resolve(null), 900);
   });
+}
+
+async function runLadder() {
+  document.querySelector(".stage").remove();
+  var host = document.getElementById("rungs");
+  host.style.display = "flex";
+  for (const rung of scene.rungs) {
+    const col = document.createElement("div");
+    col.className = "rung" + (rung.textOnly ? " text" : "");
+    col.innerHTML = '<p class="cap">' + rung.label + "</p>" +
+                    '<p class="note">' + rung.note + "</p>";
+    const frame = document.createElement("div");
+    frame.className = "frame";
+    col.appendChild(frame);
+    host.appendChild(col);
+
+    if (rung.textOnly) {
+      const r = await new MiniHost({ transcript: document.createElement("div") })
+        .rpc("tools/call", { name: scene.call, arguments: scene.args || {} });
+      frame.textContent = (r.content || []).map((c) => c.text).join("\n");
+      continue;
+    }
+
+    const h = new MiniHost({
+      transcript: frame,
+      capabilities: rung.capabilities,
+      onContext: function () {},
+    });
+    await h.render(scene.call, scene.args || {},
+                   { height: rung.height || 210, freeze: rung.freeze });
+  }
+  await new Promise((r) => setTimeout(r, 700));
+  window.__ready = true;
 }
 
 async function run() {
@@ -182,7 +224,8 @@ async function run() {
   window.__ready = true;
 }
 
-if (scene) run();
+if (scene && scene.rungs) runLadder();
+else if (scene) run();
 else window.__ready = true;
 </script>
 </body>

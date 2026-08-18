@@ -15,6 +15,10 @@ export class MiniHost {
     this.transcript = opts.transcript;
     this.onContext = opts.onContext || (() => {});
     this.theme = opts.theme || { mode: "light" };
+    /* A host that can be told to support less. Figure 12-2 is four copies of
+     * one widget under four capability sets, and the only way to produce that
+     * honestly is to make the host lie on purpose. */
+    this.capabilities = opts.capabilities || { toolCalls: {}, context: {}, openLink: {} };
     this.frames = new Map();
     this.nextFrame = 0;
     window.addEventListener("message", (e) => this.route(e));
@@ -82,6 +86,10 @@ export class MiniHost {
      * to draw its skeleton from what is already known. */
     this.post(frame, { jsonrpc: "2.0", method: "ui/tool-input", params: { arguments: args } });
 
+    /* A static preview is this moment and no further: arguments delivered, no
+     * result yet. Figure 12-1's third column is captured here on purpose. */
+    if (opts.freeze) return { bubble, frame, result: null };
+
     const result = await this.rpc("tools/call", { name: toolName, arguments: args });
     this.post(frame, { jsonrpc: "2.0", method: "ui/tool-result", params: result });
     return { bubble, frame, result };
@@ -123,18 +131,27 @@ export class MiniHost {
         rec.resolveReady && rec.resolveReady();
         reply({
           hostInfo: { name: "gallery-mini-host", version: "1.0.0" },
-          capabilities: { toolCalls: {}, context: {}, openLink: {} },
+          capabilities: this.capabilities,
           theme: this.theme,
         });
         break;
 
-      case "ui/size-changed":
-        /* Guests ask, hosts decide. This host grants the request up to a cap,
-         * which is roughly what shipping hosts do. */
-        rec.frame.style.height = Math.min(msg.params.height + 6, 640) + "px";
+      case "ui/size-changed": {
+        /* Guests ask, hosts decide. This host grants the request between a
+         * floor and a cap, which is roughly what shipping hosts do. The floor
+         * matters: a guest that measures itself too early reports zero, and
+         * honouring that would collapse a working widget to a sliver. */
+        const asked = Number(msg.params && msg.params.height);
+        if (!Number.isFinite(asked) || asked <= 0) break;
+        rec.frame.style.height = Math.max(48, Math.min(asked + 6, 640)) + "px";
         break;
+      }
 
       case "tools/call":
+        if (!this.capabilities.toolCalls) {
+          failWith("this host does not allow apps to call tools");
+          break;
+        }
         try {
           const result = await this.rpc("tools/call", msg.params);
           this.onContext({

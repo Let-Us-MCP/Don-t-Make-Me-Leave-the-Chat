@@ -80,6 +80,7 @@ the argument to the camera.
 | 9-1 | `form-validation` | `confirm_expense` | Validation stated before it is enforced |
 | 10-1 | `trust-before` | `session_check` | A widget shaped like phishing, inert |
 | 10-2 | `trust-after` | `reconnect_billing` | The trustworthy twin |
+| 12-1 | `ladder` | `deploy_status` | One widget on four host capability sets |
 
 Regenerate one:
 
@@ -91,6 +92,19 @@ The drawn figures live in `figures-src/`. Cartoons are `figures-src/xkcd/*.py`,
 mechanism diagrams are `figures-src/diagrams/*.py`, and the cover is
 `figures-src/cover.py`. All of them take an output path as their one argument,
 so any of them runs on its own.
+
+## How the capability ladder works
+
+Figure 12-1 is four copies of one widget under four capability sets. A scene with
+a `rungs` array runs each rung in its own `MiniHost`, constructed with the
+capabilities that rung claims, so the app finds out what it can do the same way
+it would in a real client: from the `ui/initialize` response. The static-preview
+rung passes `freeze`, which delivers the tool arguments and stops there, and the
+text rung skips the frame entirely and prints the tool's `content`.
+
+Making the host able to lie is what turns the fallback ladder from a diagram
+into a photograph, and it is also the fastest way to find out that your app
+never checked.
 
 ## How the annotations work
 
