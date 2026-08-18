@@ -28,9 +28,9 @@ Four laws follow from that, and they are on
 
 | | |
 |---|---|
-| **13 chapters + 4 appendices**, four parts | ~32,000 words |
+| **13 chapters + 5 appendices**, four parts | ~36,000 words |
 | **[`gallery/`](gallery/)** | One MCP server, 16 apps, no runtime dependencies |
-| **23 annotated renders** | Captured headlessly from the gallery, regenerate with one command |
+| **25 annotated renders** | Captured headlessly from the gallery, regenerate with one command |
 | **16 drawn figures** | matplotlib, generated from `figures-src/` |
 | **Model-as-user checks** | 22 tools checked in under a second |
 
@@ -87,6 +87,9 @@ half that is new: does the model invoke your app, pass what it knows, and
 answer afterwards. Then the host compatibility reality.
 
 **Part 4, Larger Concerns.** Distribution, and the laws on one page.
+
+**Appendix E** builds one app from nothing, applying every decision in the book
+in the order you meet them.
 
 ## Building
 

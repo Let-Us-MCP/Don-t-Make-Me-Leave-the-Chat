@@ -1,0 +1,108 @@
+{
+  "summary": {
+    "suites": [
+      "service_status"
+    ],
+    "runs": 1,
+    "invoked": "5/5",
+    "skipped": "2/3",
+    "costUsd": 1.14
+  },
+  "results": [
+    {
+      "suite": "service_status",
+      "pass": 1,
+      "kind": "invoke",
+      "prompt": "How are things looking?",
+      "called": [
+        "service_status"
+      ],
+      "ok": true
+    },
+    {
+      "suite": "service_status",
+      "pass": 1,
+      "kind": "invoke",
+      "prompt": "Is anything down right now?",
+      "called": [
+        "service_status"
+      ],
+      "ok": true
+    },
+    {
+      "suite": "service_status",
+      "pass": 1,
+      "kind": "invoke",
+      "prompt": "Give me a quick health check.",
+      "called": [
+        "service_status"
+      ],
+      "ok": true
+    },
+    {
+      "suite": "service_status",
+      "pass": 1,
+      "kind": "invoke",
+      "prompt": "Are we having problems with checkout?",
+      "called": [
+        "service_status"
+      ],
+      "ok": true
+    },
+    {
+      "suite": "service_status",
+      "pass": 1,
+      "kind": "invoke",
+      "prompt": "Status?",
+      "called": [
+        "service_status"
+      ],
+      "ok": true
+    },
+    {
+      "suite": "service_status",
+      "pass": 1,
+      "kind": "skip",
+      "prompt": "Deploy the latest build.",
+      "called": [
+        "deploy_tracker"
+      ],
+      "ok": true
+    },
+    {
+      "suite": "service_status",
+      "pass": 1,
+      "kind": "skip",
+      "prompt": "What was our uptime last quarter?",
+      "called": [
+        "ops_overview",
+        "service_status"
+      ],
+      "ok": false
+    },
+    {
+      "suite": "service_status",
+      "pass": 1,
+      "kind": "skip",
+      "prompt": "Who is on call tonight?",
+      "called": [
+        "ops_overview"
+      ],
+      "ok": true
+    },
+    {
+      "suite": "service_status",
+      "pass": 1,
+      "kind": "readback",
+      "prompt": "What is the error rate?",
+      "answer": "**Status: degraded — nothing is down, but checkout is slow.** (as of 09:41 UTC)\n\nOne dependency is timing out on ~4% of calls; everything else is nominal.\n\n| Service | Error rate | p99 |\n|---|---|---|\n| checkout | 4.1% | 2410 ms |\n| catalog | 0.2% | 190 ms |\n| payments | 0% | 240 ms |\n| search | 0.1% | 320 ms |\n\nPlatform-wide: 18.2k req/min, p50 180ms, p95 1.2s, p99 2.4s, CPU 62%, mem 71%, queue 1"
+    },
+    {
+      "suite": "service_status",
+      "pass": 1,
+      "kind": "readback",
+      "prompt": "When was that reading taken?",
+      "answer": "**Degraded, but nothing is down.** Checkout is slow — one dependency is timing out on ~4% of calls; everything else is nominal.\n\n| Service | Error rate | p99 |\n|---|---|---|\n| checkout | 4.1% ⚠️ | 2410 ms ⚠️ |\n| catalog | 0.2% | 190 ms |\n| payments | 0.0% | 240 ms |\n| search | 0.1% | 320 ms |\n\nPlatform-wide: 18.2k req/min, p50 180ms / p95 1.2s / p99 2.4s, CPU 62%, mem 71%, queue depth 1.4k, cache "
+    }
+  ]
+}

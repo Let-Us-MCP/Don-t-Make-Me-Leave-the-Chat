@@ -152,6 +152,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <a href="appendix-b.html">Appendix B. The Host Capability Matrix, Generated</a>
 <a href="appendix-c.html">Appendix C. The Ten-Prompt Test Kit</a>
 <a href="appendix-d.html">Appendix D. Gallery Repository Map</a>
+<a href="appendix-e.html">Appendix E. One App, End to End</a>
 <div class="part">End matter</div>
 <a href="about.html">About</a>
 <div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
@@ -265,6 +266,11 @@ registerAppResource(server, &quot;ui://rate-compare/after&quot;, &quot;ui://rate
   };
 }</code></pre>
 <p>The <code>content</code> string is written for a reader. It says what happened, what the answer is, and what the human can do next, so a model that never renders your app can still answer questions from that one sentence, which is exactly what happens in hosts without the extension. The <code>structuredContent</code> object is written for your app and is deliberately <em>complete</em>, including the eight horizons the user has not selected, so the slider needs no round trip and no arithmetic happens in two places.</p>
+<figure>
+<img src="figures/fig-6-2.png" alt="Figure 6-2. One tool call, both channels, and the moment between them." />
+<figcaption aria-hidden="true">Figure 6-2. One tool call, both channels, and the moment between them.</figcaption>
+</figure>
+<p>The third column of that figure is the one worth staring at. It is the same app a few hundred milliseconds earlier, with the arguments delivered and the result still in flight, and it exists because the host renders your template before anything has been computed. Whatever is on screen at that moment is a screen you either designed or did not.</p>
 <p>Three rules prevent most of the pain here. Compute once, deriving both from the same call. Write <code>content</code> for a reader rather than a log, because “Loan analytics suite opened.” tells the model nothing it can use. And put into <code>structuredContent</code> what the app needs plus what the model will be asked about, which is why Figure 5-2 drops seven columns from the pixels and keeps them in the data.</p>
 <h2 id="what-is-deliberately-not-here">What is deliberately not here</h2>
 <p>To keep the promise at the top of this chapter, here is what this book will not explain and where it lives. Transport, framing, and session mechanics are in <em>High-Performance MCP Applications</em>, Chapters 2 and 3. Authorization flows are in its Chapter 4, the Tasks extension and long-running work in its Chapter 9. Fleet-scale concerns, versioning at scale, and multi-server hosts are in <em>Patterns of MCP App Architecture</em>. And the exact field names under <code>_meta.ui</code> are in the ext-apps specification, which is the normative document and which moves faster than any book.</p>

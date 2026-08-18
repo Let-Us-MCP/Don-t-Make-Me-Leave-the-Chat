@@ -1,0 +1,65 @@
+{
+  "note": "The ten-prompt method from Chapter 11, as data. Each suite names the tool it is about, five phrasings that should invoke it, three that should not, and two readback questions asked after a successful render. Run with gallery/evals/model.mjs.",
+  "suites": [
+    {
+      "tool": "compare_rates",
+      "context": "I've got three quotes on a $30,000 loan: Northbank 6.24% with no fee, Cedar Credit Union 4.35% with a $1,400 fee, and Harbor Direct 5.6% with a $500 fee.",
+      "invoke": [
+        "Which of these is cheapest over five years?",
+        "Work out the real cost of each of these.",
+        "I want to see how the answer changes if I pay it off early.",
+        "Sort out which loan I should take, assuming I keep it the full term.",
+        "Compare those three properly, not just by rate."
+      ],
+      "skip": [
+        "What does APR actually mean?",
+        "Email these three quotes to my accountant.",
+        "What's a typical car loan rate this year?"
+      ],
+      "readback": [
+        "Which lender won, and by how much?",
+        "What was Cedar's monthly payment?"
+      ]
+    },
+    {
+      "tool": "find_clause",
+      "context": "I have a Master Services Agreement with Northwind loaded.",
+      "invoke": [
+        "What does the contract say about getting out of it early?",
+        "How much notice do I need to give to cancel?",
+        "Is there a termination for convenience clause?",
+        "Check the termination terms for me.",
+        "What happens to prepaid fees if we walk away?"
+      ],
+      "skip": [
+        "Draft an email terminating the contract.",
+        "How long is this document?",
+        "What is a master services agreement?"
+      ],
+      "readback": [
+        "What page is that clause on?",
+        "How many days notice does it require?"
+      ]
+    },
+    {
+      "tool": "service_status",
+      "context": "You have access to our platform's operations tools.",
+      "invoke": [
+        "How are things looking?",
+        "Is anything down right now?",
+        "Give me a quick health check.",
+        "Are we having problems with checkout?",
+        "Status?"
+      ],
+      "skip": [
+        "Deploy the latest build.",
+        "What was our uptime last quarter?",
+        "Who is on call tonight?"
+      ],
+      "readback": [
+        "What is the error rate?",
+        "When was that reading taken?"
+      ]
+    }
+  ]
+}

@@ -56,8 +56,8 @@ svg.leads{position:absolute;inset:0;overflow:visible;pointer-events:none}
   color:var(--muted);margin:0 0 2px}
 .rung .note{font-size:11.5px;color:var(--ink);margin:0 0 8px;line-height:1.4;min-height:32px}
 .rung .frame{background:var(--wash);border:1px solid var(--rule);border-radius:12px;padding:10px}
-.rung.text .frame{font-family:var(--mono);font-size:11px;line-height:1.5;white-space:pre-wrap;
-  color:var(--ink);background:#111;color:#ddd;border-color:#333}
+.rung.text .frame{font-family:var(--mono);font-size:10.5px;line-height:1.5;white-space:pre-wrap;
+  background:#111;color:#ddd;border-color:#333}
 .rung .frame.prose{font-family:var(--serif,Georgia,serif);font-size:13.5px;line-height:1.55;
   background:var(--paper);border-style:dashed}
 </style>
@@ -125,13 +125,29 @@ async function runLadder() {
   host.style.display = "flex";
   for (const rung of scene.rungs) {
     const col = document.createElement("div");
-    col.className = "rung" + (rung.textOnly ? " text" : "");
+    col.className = "rung";
     col.innerHTML = '<p class="cap">' + rung.label + "</p>" +
-                    '<p class="note">' + rung.note + "</p>";
+                    '<p class="note">' + (rung.note || "") + "</p>";
     const frame = document.createElement("div");
     frame.className = "frame";
     col.appendChild(frame);
     host.appendChild(col);
+
+    /* The model's view of the storefront: the strings it actually chooses
+     * between, pulled live from tools/list so the figure cannot drift from the
+     * server. */
+    if (rung.tools) {
+      col.classList.add("text");
+      const host = new MiniHost({ transcript: document.createElement("div") });
+      const all = (await host.rpc("tools/list")).tools;
+      frame.textContent = rung.tools.map((n) => {
+        const t = all.find((x) => x.name === n);
+        return t.name + "\n  " + (t.description || "").replace(/(.{46}\s)/g, "$1\n  ") +
+               "\n  inputSchema: " +
+               (Object.keys((t.inputSchema || {}).properties || {}).join(", ") || "(none)");
+      }).join("\n\n");
+      continue;
+    }
 
     if (rung.prose) {
       frame.className = "frame prose";
@@ -140,6 +156,7 @@ async function runLadder() {
     }
 
     if (rung.textOnly) {
+      col.classList.add("text");
       const r = await new MiniHost({ transcript: document.createElement("div") })
         .rpc("tools/call",
              { name: rung.call || scene.call, arguments: rung.args || scene.args || {} });

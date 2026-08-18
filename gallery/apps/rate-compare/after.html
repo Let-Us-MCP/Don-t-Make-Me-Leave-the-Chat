@@ -83,6 +83,22 @@
     app.reportSize();
   }
 
+  /* The static-preview rung. All we know before the result lands is the
+   * horizon, so draw that and the shape of three rows. */
+  app.ontoolinput = function (params) {
+    var y = (params.arguments || {}).horizonYears || years;
+    document.getElementById("best").textContent = "\u2014";
+    document.getElementById("headline").textContent =
+      "Pricing three offers over " + y + " years.";
+    document.getElementById("term").value = y;
+    document.getElementById("termOut").textContent = y;
+    document.getElementById("offers").innerHTML =
+      ['<div class="offer"><span class="skeleton" style="width:52%"></span></div>',
+       '<div class="offer"><span class="skeleton" style="width:44%"></span></div>',
+       '<div class="offer"><span class="skeleton" style="width:48%"></span></div>'].join("");
+    app.reportSize();
+  };
+
   app.ontoolresult = function (result) {
     var data = result.structuredContent || {};
     offers = data.offers || [];

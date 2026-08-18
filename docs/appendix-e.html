@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Appendix E. One App, End to End &middot; Don&#x27;t Make Me Leave the Chat</title>
+<meta name="description" content="The rate comparison built from nothing, with every decision in this book applied in order.">
+<meta property="og:title" content="Appendix E. One App, End to End">
+<meta property="og:description" content="The rate comparison built from nothing, with every decision in this book applied in order.">
+<style>
+:root{
+  --ink:#15181D; --muted:#5B6472; --rule:#D8DDE4; --wash:#F5F6F8;
+  --paper:#FFFFFF; --accent:#0F5C8C; --accent-soft:#E7F0F6;
+  --warm:#B4531A; --warm-soft:#FBF0E7; --good:#2C6E49; --good-soft:#E9F2EC;
+  --danger:#9B2226; --danger-soft:#FAECEC;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#E7EAEE; --muted:#98A2B0; --rule:#2C333D; --wash:#171B21;
+    --paper:#0F1216; --accent:#63AEDC; --accent-soft:#14232E;
+    --warm:#E08B4F; --warm-soft:#2A1D13; --good:#6FBF8E; --good-soft:#13221A;
+    --danger:#E4796F; --danger-soft:#291516;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:18px;line-height:1.62;
+  -webkit-text-size-adjust:100%}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);
+  max-width:1280px;margin:0 auto}
+nav.toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 20px 60px;
+  border-right:1px solid var(--rule);font-family:var(--sans);font-size:14px}
+nav.toc .brand{display:block;font-weight:700;font-size:16px;color:var(--ink);
+  text-decoration:none;line-height:1.3;margin-bottom:4px}
+nav.toc .tagline{color:var(--muted);font-size:12.5px;margin:0 0 18px;line-height:1.45}
+nav.toc .part{margin:18px 0 6px;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:700}
+nav.toc a{display:block;padding:4px 8px;margin-left:-8px;border-radius:5px;
+  color:var(--muted);text-decoration:none}
+nav.toc a:hover{background:var(--wash);color:var(--ink)}
+nav.toc a.current{background:var(--accent-soft);color:var(--accent);font-weight:600}
+main{padding:44px 52px 120px;min-width:0;max-width:78ch}
+h1,h2,h3,h4{font-family:var(--sans);line-height:1.25;color:var(--ink)}
+h1{font-size:2.05em;margin:0 0 .2em;letter-spacing:-.015em}
+h2{font-size:1.42em;margin:2em 0 .5em;padding-top:.35em}
+h3{font-size:1.14em;margin:1.7em 0 .4em}
+p{margin:0 0 1.05em}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 .5em;font-weight:700}
+.summary{font-family:var(--sans);font-size:15px;color:var(--muted);
+  margin:0 0 2.2em;line-height:1.5}
+code{font-family:var(--mono);font-size:.855em;background:var(--wash);
+  padding:.12em .36em;border-radius:4px;word-break:break-word}
+pre{background:var(--wash);border-left:3px solid var(--rule);
+  border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
+  font-size:13.5px;line-height:1.5;margin:1.3em 0}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.provenance{font-family:var(--sans);font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--muted);margin:1.3em 0 -1.05em;font-weight:700}
+.provenance code{font-size:11px;text-transform:none;letter-spacing:0;
+  background:none;padding:0;color:var(--muted)}
+.provenance.captured{color:var(--good)}
+.provenance.historical{color:var(--accent)}
+.provenance.illustrative{color:var(--warm)}
+aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
+  padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
+aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.4em}
+aside.law p{margin:0;font-family:var(--sans);font-size:1.16em;font-weight:700;
+  line-height:1.35}
+blockquote{border-left:3px solid var(--warm);background:var(--warm-soft);
+  margin:1.5em 0;padding:12px 18px;border-radius:0 6px 6px 0;font-size:.98em}
+blockquote p:last-child{margin-bottom:0}
+figure{margin:2.2em 0;text-align:center}
+figure img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}
+@media (prefers-color-scheme: dark){
+  figure img{background:#fff;padding:8px}
+}
+figcaption{font-family:var(--sans);font-size:13.5px;color:var(--muted);
+  margin-top:.7em;text-align:left;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:1.5em 0}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);
+  vertical-align:top}
+thead th{border-bottom:2px solid var(--rule);font-weight:700}
+ul,ol{padding-left:1.35em;margin:0 0 1.05em}
+li{margin-bottom:.32em}
+hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:4em;
+  padding-top:1.4em;border-top:1px solid var(--rule);font-family:var(--sans);
+  font-size:14px}
+.pager a{text-decoration:none;max-width:46%}
+.pager .dir{display:block;font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted)}
+.hero{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;
+  align-items:start;margin-bottom:2.4em}
+.hero img{width:100%;border-radius:10px;border:1px solid var(--rule)}
+.hero h1{margin-bottom:.15em}
+.hero .sub{font-family:var(--sans);color:var(--muted);font-size:16px;
+  margin:0 0 1em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;margin:1.6em 0}
+.cards a{display:block;border:1px solid var(--rule);border-radius:9px;
+  padding:12px 14px;text-decoration:none;color:var(--ink);font-family:var(--sans)}
+.cards a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.cards .n{font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700}
+.cards .t{font-weight:600;font-size:15px;margin:.15em 0 .25em}
+.cards .s{font-size:12.5px;color:var(--muted);line-height:1.45}
+.menu{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  main{padding:28px 20px 80px}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero img{max-width:220px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><a class="brand" href="index.html">Don&#x27;t Make Me Leave the Chat</a>
+<p class="tagline">A common sense approach to MCP Apps</p>
+<div class="part">Front matter</div>
+<a href="preface.html">Preface</a>
+<a href="how-to-read.html">How to Read This Book</a>
+<div class="part">Part 1 - Guiding Principles</div>
+<a href="ch01.html">1. Don&#x27;t Make Me Leave the Chat</a>
+<a href="ch02.html">2. Your App Has Two Users</a>
+<a href="ch03.html">3. How People Actually Use Apps in Chat</a>
+<a href="ch04.html">4. Never Ask What the Conversation Already Knows</a>
+<a href="ch05.html">5. Omit Needless Widgets</a>
+<div class="part">Part 2 - Things You Need to Get Right</div>
+<a href="ch06.html">6. The Machinery, Briefly</a>
+<a href="ch07.html">7. State, or Knowledge in the World versus in the Head</a>
+<a href="ch08.html">8. Navigation in Someone Else&#x27;s House</a>
+<a href="ch09.html">9. Forms and Actions</a>
+<a href="ch10.html">10. Trust, Courtesy, and the Sandbox</a>
+<div class="part">Part 3 - Making Sure You Got It Right</div>
+<a href="ch11.html">11. Testing on Ten Prompts a Day</a>
+<a href="ch12.html">12. Hosts Are the New Browsers</a>
+<div class="part">Part 4 - Larger Concerns</div>
+<a href="ch13.html">13. Distribution, or Your Server Is Your Storefront</a>
+<div class="part">Appendices</div>
+<a href="appendix-a.html">Appendix A. The Laws, on One Page</a>
+<a href="appendix-b.html">Appendix B. The Host Capability Matrix, Generated</a>
+<a href="appendix-c.html">Appendix C. The Ten-Prompt Test Kit</a>
+<a href="appendix-d.html">Appendix D. Gallery Repository Map</a>
+<a href="appendix-e.html" class="current">Appendix E. One App, End to End</a>
+<div class="part">End matter</div>
+<a href="about.html">About</a>
+<div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
+</nav>
+<main>
+<p class="eyebrow">Appendix E</p><h1>One App, End to End</h1><p class="summary">The rate comparison built from nothing, with every decision in this book applied in order.</p><p>Everything in this book is a rule about one decision. This appendix makes all of them at once, on one app, in the order you would actually meet them. The result is the <code>compare_rates</code> app in the gallery, so every step here is checkable against a file.</p>
+<p>The task: somebody is comparing three loan quotes and wants to know which is cheapest.</p>
+<h2 id="should-this-exist-at-all">1. Should this exist at all</h2>
+<p>Chapter 1’s three questions, answered honestly before anything is built.</p>
+<p><em>Does it need to be seen or read?</em> The answer is a ranking, which is a computation rather than a picture, so the first question says write a sentence. That is a real answer and it is worth pausing on: the first pass at this app should be a tool with no UI at all.</p>
+<p><em>Will the user act on it?</em> Here is where it turns. The ranking depends on a horizon nobody stated precisely, and the ranking <em>changes</em> with it: Northbank is cheapest for three years, Cedar from four. A user who reads “cheapest over five years” will immediately want to know about three, and asking costs a turn, a tool call, and a wait, every time.</p>
+<p><em>Does the conversation already contain the answer?</em> Partly. The rates, the fees, and the principal were all in the user’s message. The horizon was an assumption.</p>
+<p>Two out of three, with the middle one carrying real weight. Render, and the render is going to be small.</p>
+<p>So the server ships two tools. <code>compare_rates_text</code> answers in prose, because that is genuinely the right answer to a one-shot question and Chapter 12’s text rung has to work anyway. <code>compare_rates</code> renders, because the horizon is worth poking at.</p>
+<h2 id="what-the-model-needs">2. What the model needs</h2>
+<p>Chapter 2, and this is where most of the work is, which surprises people.</p>
+<p>The name is <code>compare_rates</code>: verb, object, guessable from the task. Not <code>loan_analytics</code>, which names a product, and not <code>compare_rates_v2</code>, which invites the model to wonder about v1.</p>
+<p>The description is three sentences by the formula, and the second is the one that matters:</p>
+<p class="provenance captured">Captured output from <code>tools/list</code></p><pre><code>Show a comparison of the loan offers under discussion, ranked by total
+cost over a horizon the user can adjust. Use when the user asks which
+loan is cheapest, or wants to see how the answer changes if they pay
+it off early.</code></pre>
+<p>That second sentence is what makes the tool reachable. Without it the model has a definition and no trigger, and the app renders in demos and never in use.</p>
+<p>The schema declares the one thing the tool can be asked for:</p>
+<pre class="javascript"><code>inputSchema: {
+  type: &quot;object&quot;,
+  properties: {
+    horizonYears: {
+      type: &quot;integer&quot;, minimum: 1, maximum: 10, default: 5,
+      description: &quot;Starting comparison horizon. The user can change it in the app.&quot;,
+    },
+  },
+}</code></pre>
+<p>Four decisions in six lines. The type and bounds stop a nonsense call before it happens. The default means nobody is ever asked. And the description’s last clause tells the model not to re-call the tool when the user says “what about four years”, because the widget can handle that itself. That clause saves a turn on most conversations this app appears in.</p>
+<h2 id="compute-once">3. Compute once</h2>
+<p>Chapter 2’s mechanical rule, and the reason this app has almost no JavaScript.</p>
+<p>The server prices every horizon from one to ten years in one pass, and puts the whole table in <code>structuredContent</code>:</p>
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="javascript"><code>export function priceOffers(offers = OFFERS, principal = PRINCIPAL) {
+  return offers.map((o) =&gt; {
+    const totals = {};
+    for (let y = 1; y &lt;= 10; y++) totals[y] = totalOver(o, y, principal);
+    return { lender: o.lender, apr: o.apr, fees: o.fees, monthly: ..., totals };
+  });
+}</code></pre>
+<p>Two consequences follow. The slider needs no round trip, because every value it can select is already on the client. And no arithmetic happens twice, so the number in the pixels and the number in the model’s context are the same number by construction rather than by discipline.</p>
+<p>The <code>content</code> string is written from the same ranking, for a reader:</p>
+<pre class="javascript"><code>text: `Comparing ${offers.length} offers over ${horizonYears} years. ` +
+      `${ranked[0].lender} is cheapest at ${money(ranked[0].total)}. ` +
+      `The user can change the horizon in the app.`,</code></pre>
+<p>Read that as somebody with no pixels. It contains the answer, the winner, the number, and what the human can do next. In Claude Code, which does not render apps, that sentence is the entire product, and Chapter 12 argues it deserves the same care as the card.</p>
+<h2 id="what-the-human-sees">4. What the human sees</h2>
+<p>Chapter 3’s hierarchy, in three levels and nothing more.</p>
+<p>Level one is the lender name, in the largest type on the card, with a <code>cheapest</code> pill beside it. Level two is one line: the total, the horizon, and the fact that fees and payoff are included, because that is what makes the number trustworthy. Level three is the three rows, each carrying APR, monthly payment, and fees as a subtitle, available to anyone who cares and invisible to anyone who does not.</p>
+<p>The skeleton is drawn from the arguments, because the template renders before the data exists:</p>
+<pre class="javascript"><code>app.ontoolinput = function (params) {
+  var y = (params.arguments || {}).horizonYears || years;
+  document.getElementById(&quot;headline&quot;).textContent =
+    &quot;Pricing three offers over &quot; + y + &quot; years.&quot;;
+  // three placeholder rows at the right height
+};</code></pre>
+<p>That handler was missing from the first version of this app, and the omission was invisible until Figure 6-2 photographed the moment it covers. A skeleton bug does not throw; it just shows somebody an empty card for a second.</p>
+<h2 id="the-one-control">5. The one control</h2>
+<p>Chapter 4 and Chapter 5, arriving at the same answer from opposite directions.</p>
+<p>Chapter 4 says the rates, fees, and principal came from the conversation, so they are shown as facts rather than asked as fields, and a line at the bottom says where they came from. Chapter 5 says every control has to earn its place, and exactly one does: the horizon slider, because the user will act on it repeatedly and the alternative costs a conversational turn each time.</p>
+<p>Everything else that a loan tool might plausibly offer, an export button, an amortisation tab, a currency selector, a date range, fails one of those two tests. The over-built version in Figure 1-2 has all of them.</p>
+<h2 id="telling-the-other-user">6. Telling the other user</h2>
+<p>Chapter 2’s feedback rule, in eleven lines, and the difference between an app people call smart and one they call broken.</p>
+<pre class="javascript"><code>app.setContext(
+  &quot;Comparing over &quot; + years + &quot; years: &quot; + best.o.lender + &quot; is cheapest at &quot; +
+    money(best.total) + &quot; total.&quot;,
+  { horizonYears: years, cheapest: best.o.lender, totalCost: best.total }
+);</code></pre>
+<p>Called on every render and on every slider change, because moving the slider is something a person would say out loud. Now “so the credit union then?” three turns later is answerable, and so is “draft the email with those numbers”.</p>
+<p>Note what is not written back: the slider’s pixel position, whether the card has focus, or how many times it moved. Chapter 7’s split, applied.</p>
+<h2 id="making-it-re-summonable">7. Making it re-summonable</h2>
+<p>Chapter 7’s contract and Chapter 8’s addressing, which turn out to be the same requirement.</p>
+<p><code>horizonYears</code> is an argument, so “compare those at three years” is expressible. The model knows the current value, because it was written back. Together those two facts mean the app can be re-summoned in the state the user left it, without a URL, a route, or a back button, by somebody saying so.</p>
+<p>This is the step that is easiest to skip and most expensive to retrofit, because retrofitting it means changing a tool’s schema, which Chapter 13 lists as a breaking change to your address space.</p>
+<h2 id="proving-it">8. Proving it</h2>
+<p>Chapter 11, in three tiers, all of which this app passes and one of which it failed on the first run.</p>
+<p>The static checks want a trigger clause, a non-empty schema, a <code>content</code> string longer than a log line, and a <code>setContext</code> call somewhere in an app that binds interactions. On the very first run this app was fine and eight of its neighbours were not.</p>
+<p>The widget checks want it to parse, connect, and answer the four states. The skeleton state is the one it failed, and Figure 6-2 is what found it.</p>
+<p>The model-in-the-loop suite wants the right tool chosen for the right phrasing, and this is where the app taught the book something. Asked <em>which of these is cheapest over five years</em>, the model called <code>compare_rates_text</code>, not the app. The eval scored that a failure. The eval was wrong: a one-shot question with no follow-up is exactly the case where Chapter 1 says prose wins, and the model was applying the book’s own first law more faithfully than the test suite that was grading it. Asked <em>I want to see how the answer changes if I pay it off early</em>, it called the app.</p>
+<p>Which is the outcome to design for. Two tools, one prose and one rendered, and a model that picks between them on whether the user is going to act.</p>
+<h2 id="shipping-it">9. Shipping it</h2>
+<p>Chapter 10 and Chapter 13, briefly, because most of it is already done.</p>
+<p>The UI resource declares no external origins and no permissions, and asks for a border, so the sentence <em>this app cannot send anything anywhere</em> is true and a reviewer can verify it in one command without calling the tool. The app names its source in the interface. Nothing about it resembles host chrome.</p>
+<p>And the listing sells the job rather than the product: <em>compare loan offers by total cost</em>, in the words somebody would use to ask.</p>
+<h2 id="the-whole-thing-in-order">The whole thing, in order</h2>
+<ol type="1">
+<li>Answer the three questions. Accept a “no” if you get one.</li>
+<li>Write the description before the widget, with a sentence saying when.</li>
+<li>Put in the schema every field the model could fill.</li>
+<li>Compute the fact once, on the server, and return both renderings.</li>
+<li>Draw the skeleton from the arguments.</li>
+<li>Show the answer at level one, the reason at level two, and hide the rest.</li>
+<li>Keep one control, and only if the user will act on it.</li>
+<li>Write back what a person would have said out loud.</li>
+<li>Make it re-summonable: argument in the schema, value in the context.</li>
+<li>Run the static checks, the widget checks, and ten prompts.</li>
+</ol>
+<p>Ten steps, one card, and about two hundred lines of code including the HTML.</p>
+
+<div class="pager"><a href="appendix-d.html"><span class="dir">Previous</span>Appendix D. Gallery Repository Map</a><a href="about.html" style="text-align:right"><span class="dir">Next</span>About</a></div>
+</main>
+</div>
+</body>
+</html>

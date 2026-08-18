@@ -380,4 +380,59 @@ export const SCENES = [
       },
     ],
   },
+  {
+    id: "two-channels", figure: "6-2", group: "Chapter 6", variant: "after",
+    title: "One result, both channels",
+    call: "compare_rates",
+    args: { horizonYears: 5 },
+    rungs: [
+      {
+        label: "What the human gets",
+        note: "structuredContent, rendered. Every horizon is in there; the slider needs no round trip.",
+        height: 260,
+      },
+      {
+        label: "What the model gets",
+        note: "content, as text. Same computation, different rendering, and the only thing that survives a host without the extension.",
+        textOnly: true,
+      },
+      {
+        label: "The lifecycle, mid-flight",
+        note: "Arguments delivered, result not yet. The template renders before the data exists, so this is a screen somebody sees.",
+        freeze: true,
+        height: 170,
+      },
+      {
+        label: "One source",
+        prose: "priceOffers() in gallery/fixtures.js prices every horizon once. The handler puts that table in structuredContent and writes the sentence from the same ranking, so the number on screen and the number in the transcript cannot disagree.",
+      },
+    ],
+  },
+  {
+    id: "storefront", figure: "13-1", group: "Chapter 13", variant: "after",
+    title: "The storefront the model reads",
+    call: "compare_rates",
+    args: { horizonYears: 5 },
+    rungs: [
+      {
+        label: "What a human installs",
+        note: "One render, once, and then mostly forgotten.",
+        height: 250,
+      },
+      {
+        label: "What the model chooses between, badly",
+        note: "Names a product and a verb nobody wants. No trigger, no arguments, one address.",
+        tools: ["compare_rates_suite", "ops_overview", "open_document"],
+      },
+      {
+        label: "The same three, fixed",
+        note: "Verb plus object, a sentence saying when, and arguments that give the tool an address space.",
+        tools: ["compare_rates", "service_status", "find_clause"],
+      },
+      {
+        label: "The asymmetry",
+        prose: "A human reads the listing once. The model reads these strings on every turn, for months, choosing among them. Half your storefront is invisible to human shoppers and decisive for the other user, and it is the half nobody reviews before launch.",
+      },
+    ],
+  },
 ];

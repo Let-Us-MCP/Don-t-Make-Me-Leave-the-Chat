@@ -25,7 +25,9 @@ the compatibility reality.
 **The afternoon.** Chapter 1, Chapter 2, Appendix A. About forty minutes, and it
 is most of the argument.
 
-**The build.** Read Part 1 in order, then Chapter 6, then the chapter matching
+**The build.** Read Appendix E first, which builds one app from nothing with
+every decision in this book applied in order and a pointer to the file each one
+lands in. Then Part 1 in order, then Chapter 6, then the chapter matching
 the archetype you are building: forms is 9, dashboards is 3, anything with state
 is 7, anything with navigation is 8. Then Chapter 11 before you ship.
 
