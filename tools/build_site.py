@@ -120,6 +120,13 @@ def transform(body: str) -> str:
             f'<figcaption>{caption}</figcaption></figure>'
         )
 
+    # Pandoc emits row classes and colgroups that differ between versions, and
+    # the CI check compares committed HTML byte for byte. Neither is used by the
+    # stylesheet, so both are removed and the output stops depending on which
+    # pandoc built it.
+    body = re.sub(r'<colgroup>.*?</colgroup>\s*', "", body, flags=re.S)
+    body = re.sub(r'<tr class="(?:header|odd|even)">', "<tr>", body)
+
     body = LAW_RE.sub(law, body)
     body = FIG_RE.sub(figure, body)
     body = body.replace("<table>", '<div class="table-wrap"><table>')
