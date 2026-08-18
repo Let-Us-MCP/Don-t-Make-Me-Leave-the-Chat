@@ -60,6 +60,12 @@ pre{background:var(--wash);border-left:3px solid var(--rule);
   border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
   font-size:13.5px;line-height:1.5;margin:1.3em 0}
 pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.provenance{font-family:var(--sans);font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--muted);margin:1.3em 0 -1.05em;font-weight:700}
+.provenance code{font-size:11px;text-transform:none;letter-spacing:0;
+  background:none;padding:0;color:var(--muted)}
+.provenance.captured{color:var(--good)}
+.provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
 aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
@@ -152,7 +158,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <main>
 <p class="eyebrow">Appendix D</p><h1>Gallery Repository Map</h1><p class="summary">Every figure traced to the app and the command that produced it.</p><p>The gallery is one MCP server with sixteen apps, eight of them deliberately over-built so the teardowns have something to tear down. It has no runtime dependencies. Node 18 or later is the whole requirement.</p>
 <h2 id="running-it">Running it</h2>
-<pre class="bash"><code>node gallery/serve.js               # mini host at :8931, MCP at /mcp
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="bash"><code>node gallery/serve.js               # mini host at :8931, MCP at /mcp
 node gallery/stdio.js               # the same server over stdio
 node gallery/evals/run.js --all     # the model-as-user checks
 node gallery/probe/probe.js         # probe any server for apps support
@@ -161,11 +167,11 @@ node tools/capture_figures.mjs      # regenerate every annotated render
 python3 tools/build_figures.py      # regenerate every drawn figure
 python3 tools/build_site.py         # rebuild the website</code></pre>
 <p>With Claude Code, from the repository root, using the checked-in <code>.mcp.json</code>:</p>
-<pre class="bash"><code>claude -p &quot;Which of those loans is cheapest over five years?&quot; \
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="bash"><code>claude -p &quot;Which of those loans is cheapest over five years?&quot; \
   --allowedTools &quot;mcp__gallery__compare_rates_text&quot;</code></pre>
 <p><code>gallery/VERIFICATION.md</code> records what that produced, and what is not verified.</p>
 <h2 id="layout">Layout</h2>
-<pre><code>gallery/
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre><code>gallery/
   fixtures.js       every number the gallery shows, and the loan pricing maths
   registry.js       one entry per tool: description, schema, handler, ui path
   mcp.js            the protocol slice: initialize, discover, list, call, read

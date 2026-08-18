@@ -12,6 +12,7 @@ dependencies. Node 18 or later is the whole requirement.
 
 ## Running it
 
+<!-- listing: illustrative -->
 ```bash
 node gallery/serve.js               # mini host at :8931, MCP at /mcp
 node gallery/stdio.js               # the same server over stdio
@@ -25,6 +26,7 @@ python3 tools/build_site.py         # rebuild the website
 
 With Claude Code, from the repository root, using the checked-in `.mcp.json`:
 
+<!-- listing: illustrative -->
 ```bash
 claude -p "Which of those loans is cheapest over five years?" \
   --allowedTools "mcp__gallery__compare_rates_text"
@@ -34,6 +36,7 @@ claude -p "Which of those loans is cheapest over five years?" \
 
 ## Layout
 
+<!-- listing: illustrative -->
 ```
 gallery/
   fixtures.js       every number the gallery shows, and the loan pricing maths

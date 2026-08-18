@@ -43,15 +43,27 @@ try {
   console.log(`${UI}  ${declared ? "declared" : "NOT declared"}`);
   console.log(`tools         ${tools.length} (${apps.length} carry a ui:// resource)`);
 
+  /* `csp` and `permissions` live on the UI resource, not on the tool, so a
+   * probe that reads the tool learns nothing about the security posture. The
+   * inspector's --app-info makes the same round trip for the same reason. */
   let noText = 0;
   for (const t of apps) {
     const uri = t._meta.ui.resourceUri;
     if (!uri.startsWith("ui://")) console.log(`  ! ${t.name}: resourceUri is not ui://`);
-    const csp = t._meta.ui.csp;
+    const res = await rpc("resources/read", { uri }).catch(() => null);
+    const meta = res && res.contents && res.contents[0] && res.contents[0]._meta;
+    const ui = (meta && meta.ui) || {};
+    const csp = ui.csp;
     const reach = csp
       ? [...(csp.connectDomains || []), ...(csp.resourceDomains || [])]
-      : ["<undeclared>"];
-    console.log(`  ${t.name.padEnd(22)} ${uri}  reaches: ${reach.length ? reach.join(", ") : "nothing"}`);
+      : null;
+    const perms = Object.keys(ui.permissions || {}).filter((k) => ui.permissions[k]);
+    console.log(
+      `  ${t.name.padEnd(22)} ${uri}\n` +
+      `    reaches: ${reach === null ? "<no csp declared>" : reach.length ? reach.join(", ") : "nothing"}` +
+      `   permissions: ${perms.length ? perms.join(", ") : "none"}` +
+      `   border: ${ui.prefersBorder ? "requested" : "not requested"}`
+    );
   }
 
   /* The question that decides how the server behaves in a host with no app

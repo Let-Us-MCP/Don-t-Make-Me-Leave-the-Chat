@@ -60,20 +60,12 @@ function toolDescriptor(app) {
     description: app.description,
     inputSchema: app.inputSchema,
   };
+  /* The tool carries only the pointer. `csp`, `permissions`, and `domain` live
+   * on the UI resource, because a host reads them before it ever calls the
+   * tool. This codebase got it backwards once: an inspector probing the tool
+   * with --app-info would have found no policy at all. */
   if (app.ui) {
-    tool._meta = {
-      ui: {
-        resourceUri: uiResourceUri(app),
-        /* Declaring no external origins is a promise the user can feel: this
-         * app cannot phone anywhere. Chapter 10 argues that this is a design
-         * decision rather than a security checkbox. */
-        /* Field shape per the ext-apps specification. Empty lists mean this
-         * app may not reach any external origin, which is a promise the host
-         * enforces and the user can be told about. */
-        csp: { connectDomains: [], resourceDomains: [] },
-        preferredFrameSize: ["380px", "auto"],
-      },
-    };
+    tool._meta = { ui: { resourceUri: uiResourceUri(app) } };
   }
   return tool;
 }
@@ -82,12 +74,35 @@ export function listTools() {
   return APPS.map(toolDescriptor);
 }
 
+/* The security posture of an app, declared where the host looks for it.
+ *
+ * Empty `connectDomains` means this app may not reach any external origin,
+ * which is a promise the host enforces and the user can be shown. Chapter 10
+ * argues that declaring less is a design decision rather than a checkbox.
+ * `prefersBorder` asks the host to draw a boundary around the frame, which is
+ * the same chapter's "never look like the host" rule expressed as a field.
+ */
+export function uiResourceMeta(app) {
+  return {
+    ui: {
+      csp: { connectDomains: [], resourceDomains: [] },
+      permissions: {},
+      /* The phishing exhibit declines the border on purpose, because blending
+       * into the host is the whole of the attack. Every other app asks for it.
+       * A probe can therefore see the difference without rendering anything,
+       * which is the point Chapter 10 makes about declarations being public. */
+      prefersBorder: app ? app.name !== "session_check" : true,
+    },
+  };
+}
+
 export function listResources() {
   return APPS.filter((a) => a.ui).map((a) => ({
     uri: uiResourceUri(a),
     name: a.title,
     description: `User interface for ${a.name}.`,
     mimeType: "text/html;profile=mcp-app",
+    _meta: uiResourceMeta(a),
   }));
 }
 
@@ -100,7 +115,12 @@ export function readResource(uri) {
   }
   return {
     contents: [
-      { uri, mimeType: "text/html;profile=mcp-app", text: renderApp(app.ui) },
+      {
+        uri,
+        mimeType: "text/html;profile=mcp-app",
+        text: renderApp(app.ui),
+        _meta: uiResourceMeta(app),
+      },
     ],
   };
 }

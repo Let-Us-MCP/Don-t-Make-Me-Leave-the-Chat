@@ -60,6 +60,12 @@ pre{background:var(--wash);border-left:3px solid var(--rule);
   border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
   font-size:13.5px;line-height:1.5;margin:1.3em 0}
 pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.provenance{font-family:var(--sans);font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--muted);margin:1.3em 0 -1.05em;font-weight:700}
+.provenance code{font-size:11px;text-transform:none;letter-spacing:0;
+  background:none;padding:0;color:var(--muted)}
+.provenance.captured{color:var(--good)}
+.provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
 aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
@@ -168,16 +174,24 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>The gallery’s bridge gives you two callbacks and most apps only wire the second one. Wiring both looks like this:</p>
 <pre class="javascript"><code>app.ontoolinput = function (params) {
   var a = params.arguments || {};
-  title.textContent = &quot;Three nonstops, &quot; + a.date;
-  sub.textContent = a.origin + &quot; to &quot; + a.destination + &quot;, &quot; + a.cabin;
-  opts.innerHTML = row() + row() + row();      // three grey placeholders
+  document.getElementById(&quot;title&quot;).textContent = &quot;Looking for nonstops, &quot; + (a.date || &quot;&quot;);
+  document.getElementById(&quot;sub&quot;).textContent =
+    (a.origin || &quot;&quot;) + &quot; to &quot; + (a.destination || &quot;&quot;) + &quot;, &quot; +
+    (a.passengers || 1) + &quot; passenger, &quot; + (a.cabin || &quot;economy&quot;) + &quot;.&quot;;
+  document.getElementById(&quot;opts&quot;).innerHTML =
+    &#39;&lt;div class=&quot;opt&quot;&gt;&lt;span class=&quot;skeleton&quot; style=&quot;width:60%&quot;&gt;&lt;/span&gt;&lt;/div&gt;&#39; +
+    &#39;&lt;div class=&quot;opt&quot;&gt;&lt;span class=&quot;skeleton&quot; style=&quot;width:52%&quot;&gt;&lt;/span&gt;&lt;/div&gt;&#39; +
+    &#39;&lt;div class=&quot;opt&quot;&gt;&lt;span class=&quot;skeleton&quot; style=&quot;width:56%&quot;&gt;&lt;/span&gt;&lt;/div&gt;&#39;;
+  app.reportSize();
 };
 
 app.ontoolresult = function (result) {
-  flights = (result.structuredContent || {}).flights || [];
+  if (result.isError) { /* ... covered below ... */ }
+  var d = result.structuredContent || {};
+  flights = d.flights || [];
   render();
 };</code></pre>
-<p>Six lines in the first callback, and the user spends the whole wait reading something true. No spinner, and no layout shift when the data lands, because the three rows were already the right height. The rule underneath is to draw everything the arguments already tell you, which is usually the route, the date, the count, the units, and the title, and then draw the shape of what is coming, so that the only thing changing on arrival is the content of the placeholders. Design the failure state while you are in there, because tool calls fail, and a widget that sits in skeleton forever is worse than one that says “could not load the flights” with a retry. The first one looks like it is still trying.</p>
+<p>Ten lines in the first callback, and the user spends the whole wait reading something true. No spinner, and no layout shift when the data lands, because the three rows were already the right height. The rule underneath is to draw everything the arguments already tell you, which is usually the route, the date, the count, the units, and the title, and then draw the shape of what is coming, so that the only thing changing on arrival is the content of the placeholders. Design the failure state while you are in there, because tool calls fail, and a widget that sits in skeleton forever is worse than one that says “could not load the flights” with a retry. The first one looks like it is still trying.</p>
 <h2 id="the-guest-viewport">The guest viewport</h2>
 <p>Your app renders in a column. In Claude on a phone that column is roughly 380 CSS pixels wide; on a laptop it is wider, but not much, because the transcript is centred and the surrounding chrome is not yours to remove. You do not get to choose this and you do not get to break out of it. A widget that needs 900 pixels does not become a widget that gets 900 pixels. It becomes a widget with a horizontal scrollbar, which is a widget nobody uses.</p>
 <p>So design at 380 and let it grow, rather than the other way around. The direction matters more than it sounds like it should, because designing wide and shrinking produces a layout with a wide-screen soul, where the mobile version is visibly the compromise and the important thing is the one that got cut. Designing narrow and expanding produces a layout that is correct everywhere and merely comfortable in one place. In practice that means two columns of numbers at most, three if one of them is an icon; tables above about four columns need a different shape entirely, usually a list of cards where each card is one row turned sideways; long labels wrap, so test with the longest label in your data rather than the shortest; and never fix a height, because you report your height with <code>ui/size-changed</code> and the host gives you what it can.</p>

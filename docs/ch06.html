@@ -60,6 +60,12 @@ pre{background:var(--wash);border-left:3px solid var(--rule);
   border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
   font-size:13.5px;line-height:1.5;margin:1.3em 0}
 pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.provenance{font-family:var(--sans);font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--muted);margin:1.3em 0 -1.05em;font-weight:700}
+.provenance code{font-size:11px;text-transform:none;letter-spacing:0;
+  background:none;padding:0;color:var(--muted)}
+.provenance.captured{color:var(--good)}
+.provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
 aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
@@ -154,13 +160,15 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <h2 id="six-facts">Six facts</h2>
 <p><strong>UI is a resource, declared in advance.</strong> Your server publishes an HTML document at a <code>ui://</code> URI, with the MIME type <code>text/html;profile=mcp-app</code>, and it exists before any tool is called. That is what makes prefetching possible, and prefetching is what makes the first render fast enough to be worth having.</p>
 <p><strong>A tool points at it.</strong> A tool becomes an app by carrying <code>_meta.ui.resourceUri</code>, and that is the entire attachment mechanism. Tools without that field are ordinary tools that return text, both kinds can live on the same server, and a well-designed server usually has both.</p>
-<p><strong>It runs in a sandboxed iframe.</strong> The host puts your document in an iframe with a restrictive sandbox: your app cannot read the host’s DOM, cookies, or storage, and it cannot navigate the parent. The host also applies a Content Security Policy built from whatever you declared in <code>_meta.ui.csp</code>, and the default is deny.</p>
+<p><strong>It runs in a sandboxed iframe.</strong> The host puts your document in an iframe with a restrictive sandbox: your app cannot read the host’s DOM, cookies, or storage, and it cannot navigate the parent. The host also applies a Content Security Policy built from what the <em>resource</em> declares in its <code>_meta.ui.csp</code>, and the default is deny.</p>
+<p><strong>The policy lives on the resource, not on the tool.</strong> The tool carries the pointer, <code>_meta.ui.resourceUri</code>, and nothing else. The security posture, <code>csp</code>, <code>permissions</code>, and <code>domain</code>, sits on the UI resource, because a host reads it before it has called anything. That distinction is easy to get backwards and this book’s own gallery got it backwards once: a tool carrying a CSP declares nothing that anybody checks, and <code>mcp-inspector --app-info</code> would have reported an app with no policy at all.</p>
 <p><strong>Everything crosses by <code>postMessage</code>.</strong> The app talks to the host over <code>window.postMessage</code>, in JSON-RPC. Some methods are shared with core MCP, like <code>tools/call</code>. Most are new and prefixed <code>ui/</code>. Every message is loggable, which is what makes the medium auditable rather than merely sandboxed.</p>
 <p><strong>Results come in two shapes.</strong> A tool result carries <code>content</code> for the model and <code>structuredContent</code> for your app, and Chapter 2 is about the consequences of that split.</p>
 <p><strong>It is an extension, and it negotiates.</strong> MCP Apps is <code>io.modelcontextprotocol/ui</code>, which is optional. Client and server both declare it, and if either side does not, you get core behaviour: the tool runs and the text comes back. Your <code>content</code> string is therefore not a nicety. In several hosts it is the whole product.</p>
 <h2 id="registering-both-halves">Registering both halves</h2>
 <p>Two registrations, and they are the entire server-side surface of the extension.</p>
-<pre class="javascript"><code>// The tool. `_meta.ui.resourceUri` is what makes it an app.
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="javascript"><code>// The tool. `_meta.ui.resourceUri` is what makes it an app, and it is the
+// only thing the tool needs to say about the UI.
 registerAppTool(server, &quot;compare_rates&quot;, {
   title: &quot;Compare loan rates&quot;,
   description: &quot;Show a comparison of the loan offers under discussion, ...&quot;,
@@ -168,19 +176,25 @@ registerAppTool(server, &quot;compare_rates&quot;, {
   _meta: { ui: { resourceUri: &quot;ui://rate-compare/after&quot; } },
 }, handler);
 
-// The resource. One self-contained HTML document.
+// The resource. One self-contained HTML document, and the security posture,
+// because this is what a host reads before it calls anything.
 registerAppResource(server, &quot;ui://rate-compare/after&quot;, &quot;ui://rate-compare/after&quot;,
   { mimeType: &quot;text/html;profile=mcp-app&quot; },
   async () =&gt; ({ contents: [{
     uri: &quot;ui://rate-compare/after&quot;,
     mimeType: &quot;text/html;profile=mcp-app&quot;,
     text: await readFile(&quot;dist/rate-compare.html&quot;, &quot;utf8&quot;),
+    _meta: { ui: {
+      csp: { connectDomains: [], resourceDomains: [] },
+      permissions: {},
+      prefersBorder: true,
+    } },
   }] }));</code></pre>
 <p>Two things about that HTML are worth stating because they trip everybody once. It is one document, with styles inline, scripts inline, and images as data URIs, not because bundling is fashionable but because the CSP the host builds from your declaration denies by default and an external stylesheet is an external request. The gallery resolves shared partials at serve time; a real project usually reaches for a single-file bundler. And it has no server of its own: no origin to fetch from, no cookies, no session. Everything it knows arrives over <code>postMessage</code>, so if your mental model of the app still contains an API call, that call is a <code>tools/call</code> through the host now.</p>
 <h2 id="the-four-messages-you-will-actually-write">The four messages you will actually write</h2>
-<p>Six facts is enough to reason with, and four messages is enough to build with. Here they are in the shapes the gallery’s bridge uses; the ext-apps specification is normative and has more of them, but these are the four that carry the arguments in this book.</p>
+<p>Six facts is enough to reason with, and four messages is enough to build with. Here they are in the shapes the gallery’s bridge uses. One caveat worth stating plainly: <code>ui/initialize</code> is named in the published documentation, and the rest of the <code>ui/</code> surface is specified in the ext-apps repository, which this book does not vendor. The names below are the gallery’s dialect of that protocol, chosen to match it, and they are the four that carry the arguments in this book. Check the specification for the exact list before you ship against it.</p>
 <p>The handshake, where your app announces itself and finds out where it landed:</p>
-<pre class="javascript"><code>// app -&gt; host
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="javascript"><code>// app -&gt; host
 { &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 1, &quot;method&quot;: &quot;ui/initialize&quot;,
   &quot;params&quot;: { &quot;appInfo&quot;: { &quot;name&quot;: &quot;Rate comparison&quot;, &quot;version&quot;: &quot;1.0.0&quot; },
               &quot;capabilities&quot;: { &quot;toolCalls&quot;: {}, &quot;context&quot;: {} } } }
@@ -192,7 +206,7 @@ registerAppResource(server, &quot;ui://rate-compare/after&quot;, &quot;ui://rate
               &quot;theme&quot;: { &quot;mode&quot;: &quot;dark&quot;, &quot;cssVariables&quot;: { &quot;--ink&quot;: &quot;#E7EAEE&quot; } } } }</code></pre>
 <p>Read the <code>capabilities</code> that come back, because they are not decoration. A host that omits <code>toolCalls</code> will refuse every action your buttons trigger, and finding that out at click time means the user found out first. Chapter 12 is about designing for the answer rather than assuming it.</p>
 <p>Then data arrives, and the host pushes twice with a real gap between the pushes:</p>
-<pre class="javascript"><code>// host -&gt; app, as soon as the model has decided
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="javascript"><code>// host -&gt; app, as soon as the model has decided
 { &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;ui/tool-input&quot;,
   &quot;params&quot;: { &quot;arguments&quot;: { &quot;horizonYears&quot;: 5 } } }
 
@@ -202,11 +216,11 @@ registerAppResource(server, &quot;ui://rate-compare/after&quot;, &quot;ui://rate
               &quot;structuredContent&quot;: { &quot;horizonYears&quot;: 5, &quot;offers&quot;: [ ... ] } } }</code></pre>
 <p>Two callbacks, two states, and both of those states are screens somebody sees, which is why Chapter 3 treats the skeleton as a design surface rather than a placeholder.</p>
 <p>Then action goes back out, and your button becomes a tool call that travels through the host:</p>
-<pre class="javascript"><code>{ &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 2, &quot;method&quot;: &quot;tools/call&quot;,
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="javascript"><code>{ &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 2, &quot;method&quot;: &quot;tools/call&quot;,
   &quot;params&quot;: { &quot;name&quot;: &quot;hold_flight&quot;, &quot;arguments&quot;: { &quot;number&quot;: &quot;UA 512&quot; } } }</code></pre>
 <p>Note whose name ends up on that call. The host is the one that talks to the server; your app asked. That indirection is where consent, logging, and refusal live, and it is exactly why Chapter 4 treats every control you add as a tax on somebody else’s attention.</p>
 <p>And finally state goes back, which is the message most apps forget:</p>
-<pre class="javascript"><code>{ &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 3, &quot;method&quot;: &quot;ui/set-context&quot;,
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="javascript"><code>{ &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 3, &quot;method&quot;: &quot;ui/set-context&quot;,
   &quot;params&quot;: { &quot;content&quot;: [ { &quot;type&quot;: &quot;text&quot;,
                 &quot;text&quot;: &quot;Comparing over 4 years: Northbank is cheapest at $34,769.&quot; } ],
               &quot;structuredContent&quot;: { &quot;horizonYears&quot;: 4, &quot;cheapest&quot;: &quot;Northbank&quot; } } }</code></pre>
@@ -230,7 +244,7 @@ registerAppResource(server, &quot;ui://rate-compare/after&quot;, &quot;ui://rate
 <p>And the height is a request rather than a declaration. You send <code>ui/size-changed</code>; the host decides, and it may grant it, cap it, or ignore it. Design so that a smaller allocation degrades to scrolling inside your own container rather than to clipped content, and never put anything important below a fold you do not control.</p>
 <h2 id="content-versus-structuredcontent"><code>content</code> versus <code>structuredContent</code></h2>
 <p>Same fact, two renderings, one source. Chapter 2 made the design argument; here is the mechanical shape.</p>
-<pre class="javascript"><code>run({ horizonYears = 5 }) {
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="javascript"><code>run({ horizonYears = 5 }) {
   const offers = priceOffers();          // computed once
   const ranked = rankOffers(horizonYears);
   return {

@@ -60,6 +60,12 @@ pre{background:var(--wash);border-left:3px solid var(--rule);
   border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
   font-size:13.5px;line-height:1.5;margin:1.3em 0}
 pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.provenance{font-family:var(--sans);font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--muted);margin:1.3em 0 -1.05em;font-weight:700}
+.provenance code{font-size:11px;text-transform:none;letter-spacing:0;
+  background:none;padding:0;color:var(--muted)}
+.provenance.captured{color:var(--good)}
+.provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
 aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
@@ -201,7 +207,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>Notice the bottom two rows. Half your storefront is invisible to human shoppers and decisive for the other user, and it is the half nobody reviews before launch.</p>
 <h3 id="a-listing-before-and-after">A listing, before and after</h3>
 <p>Here is a real one, of the kind that fills registries now.</p>
-<pre><code>Northwind Billing MCP
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre><code>Northwind Billing MCP
 The comprehensive billing integration for modern teams. Northwind
 Billing brings the full power of your billing stack into your AI
 workflow with a rich, interactive experience.
@@ -209,7 +215,7 @@ workflow with a rich, interactive experience.
 Tools: northwind_billing_v2, northwind_get, northwind_list,
        northwind_action, nw_util</code></pre>
 <p>Three sentences and not one of them says what the thing does. “Comprehensive”, “full power”, “rich, interactive experience” are all adjectives about the product rather than facts about the job, so a human skimming learns nothing and a model reading the tool names learns less. <code>northwind_action</code> could do anything. <code>nw_util</code> is a shrug with an underscore in it.</p>
-<pre><code>Northwind Billing
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre><code>Northwind Billing
 Look up invoices, check payment status, and issue refunds against your
 Northwind account. Apps declare no network access.
 

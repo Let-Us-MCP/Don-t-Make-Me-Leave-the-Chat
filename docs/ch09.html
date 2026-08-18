@@ -60,6 +60,12 @@ pre{background:var(--wash);border-left:3px solid var(--rule);
   border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
   font-size:13.5px;line-height:1.5;margin:1.3em 0}
 pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.provenance{font-family:var(--sans);font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--muted);margin:1.3em 0 -1.05em;font-weight:700}
+.provenance code{font-size:11px;text-transform:none;letter-spacing:0;
+  background:none;padding:0;color:var(--muted)}
+.provenance.captured{color:var(--good)}
+.provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
 aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
@@ -155,6 +161,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>Core MCP can already ask the user a structured question without any app at all. The server sends an elicitation as part of a tool call; in revision <code>2026-07-28</code> this rides on the multi round-trip request mechanism, which exists precisely so the server does not need a socket or a sticky session while it waits for an answer. The host renders the question in its own components, with its own styling, accessibility, keyboard handling, and consent flow. You provide a schema, and you get an answer back.</p>
 <p>That path is free, works in every host that speaks core MCP, is consistent with every other prompt the user has seen in that client, and inherits accessibility work you did not do. Your custom form has to be better than that. Sometimes it is. Often it is not, and the honest test takes about a minute.</p>
 <p>Elicitation wins when the question is short, the fields are independent, the values are simple, and there is nothing to show the user while they answer. Three text fields and a dropdown is an elicitation; stop building. Your app wins when at least one of four things is true: seeing the data matters, because the user is choosing among things they need to look at; the fields interact, so changing one changes what the others should say and showing that live is the whole point; there is a preview, and the user needs to see the consequence before committing; or direct manipulation is faster than typing, because dragging a bar beats typing four numbers that have to add up.</p>
+<p>There is one case where the choice is made for you. The specification says servers <strong>MUST NOT</strong> use form mode elicitation to request passwords, API keys, access tokens, or payment credentials, and <strong>MUST</strong> use URL mode instead, which sends the user to a page on the origin that owns the secret. That rule is about elicitation, and the reasoning applies to your custom form with equal force: if the field would hold a credential, it does not belong in your widget either. Chapter 10 has the teardown.</p>
 <p>Notice what is not on that list. Branding is not on it. Familiarity with your product is not on it. The fact that you already have the components is emphatically not on it. Those are reasons your team wants an app, and they are not reasons your user needs one. Run this test honestly once and you will delete something, and that is the chapter doing its job before you have read the rest of it.</p>
 <h2 id="validation-for-two-users">Validation for two users</h2>
 <p>Assume you passed the test and you are building the form. Now you have two users who both need to be stopped from doing the wrong thing, and they need to be stopped in different languages.</p>
@@ -203,7 +210,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <h2 id="undo-when-the-model-pressed-the-button">Undo, when the model pressed the button</h2>
 <p>This is the requirement the second user creates, and most teams have not thought about it. On the web, the person who clicked the button read the button. Here they may not have: the model called <code>submit_expense</code> because the user said “yeah, file it”, and the model’s interpretation of “it” was an inference. Inferences are usually right, and usually is not a safety property.</p>
 <p>So for every tool that changes something, ship the tool that changes it back. That is not a preference. It is a design requirement created by the fact that one of your users is a probabilistic system acting on a human’s behalf. The gallery does this: <code>submit_expense</code> has a sibling called <code>void_expense</code> whose description says when to reach for it, and the successful result tells both users it exists.</p>
-<pre class="javascript"><code>app.setContext(
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="javascript"><code>app.setContext(
   &quot;Expense EXP-40122 submitted: $62.40 at Blue Bottle Coffee on 2026-08-14. &quot; +
   &quot;Reversible with void_expense.&quot;,
   { expenseId: &quot;EXP-40122&quot;, amount: 62.4, undoTool: &quot;void_expense&quot; }

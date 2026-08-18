@@ -36,6 +36,7 @@ triage, Appendix C for the session script.
 
 Every figure in this book comes from a repository you can clone.
 
+<!-- listing: illustrative -->
 ```bash
 git clone https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat
 cd Don-t-Make-Me-Leave-the-Chat
@@ -57,5 +58,18 @@ to its scene and the command that regenerates it.
 Hand-drawn figures make one argument each and are drawn by a script in
 `figures-src/`.
 
-Code in the book is extracted from the gallery. If a listing looks too short to
-be real, it is real, and it is short because the gallery is small on purpose.
+Every listing says where it came from, because a book that claims its code runs
+should be checkable on that claim. A block with no tag is **extracted**: it
+appears verbatim in the repository, and `tools/check_listings.py` fails the
+build if it stops doing so. A block tagged *captured output* is the real result
+of the command named beside it. A block tagged *illustrative* is a shape rather
+than a file: a wire message, a sketch, or in one case a deliberately fictional
+registry listing.
+
+Of the 41 listings in this book, 11 are extracted, 11 are captured, and 19 are
+illustrative. Writing that checker found two listings that had been quietly
+paraphrased and presented as extracted, which is exactly the sort of thing it
+exists to catch.
+
+If an extracted listing looks too short to be real, it is real, and it is short
+because the gallery is small on purpose.

@@ -21,7 +21,7 @@ renders:
 matrix:
 	python3 tools/build_matrix.py
 
-check: lint refs apps evals density style
+check: lint refs apps evals density style listings counts claims
 
 lint:
 	python3 tools/lint_prose.py
@@ -40,6 +40,16 @@ density:
 
 style:
 	python3 tools/audit_style.py
+
+listings:
+	python3 tools/check_listings.py
+
+counts:
+	python3 tools/check_counts.py
+
+# Needs proto/ (the spec clone). Skips cleanly without it, so CI stays green.
+claims:
+	python3 tools/check_claims.py
 
 serve:
 	$(NODE) gallery/serve.js

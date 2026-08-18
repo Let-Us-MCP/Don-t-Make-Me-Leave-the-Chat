@@ -67,6 +67,19 @@ jobs:
       - name: No deferrals, and contrastive phrasing within budget
         run: python3 tools/audit_style.py
 
+      - name: Every listing is extracted, captured, or labelled
+        run: python3 tools/check_listings.py
+
+      - name: Numbers the book asserts about itself
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y nodejs >/dev/null 2>&1 || true
+          python3 tools/check_counts.py
+
+      - name: Protocol claims against the specification
+        # Skips cleanly when proto/ is absent, which it always is here. Run it
+        # locally before publishing anything that names a field.
+        run: python3 tools/check_claims.py
+
       - name: Appendix B is generated, not hand-edited
         run: |
           python3 tools/build_matrix.py

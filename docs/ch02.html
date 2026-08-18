@@ -60,6 +60,12 @@ pre{background:var(--wash);border-left:3px solid var(--rule);
   border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
   font-size:13.5px;line-height:1.5;margin:1.3em 0}
 pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.provenance{font-family:var(--sans);font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--muted);margin:1.3em 0 -1.05em;font-weight:700}
+.provenance code{font-size:11px;text-transform:none;letter-spacing:0;
+  background:none;padding:0;color:var(--muted)}
+.provenance.captured{color:var(--good)}
+.provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
 aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
@@ -160,7 +166,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>Don Norman gave us the vocabulary. An affordance is a property of a thing that tells you what you can do with it: a handle affords pulling, a flat plate affords pushing, and doors get this wrong so consistently that he ended up famous for them. The model has affordances too. They are just not shaped like handles, and because they are not shaped like handles they tend to be written last, by whoever was still in the office, in a file nobody reviewed.</p>
 <p>For the model, the affordances of your app are four strings and a schema. The tool name comes first, and it is doing more work than anybody credits: <code>compare_rates</code> affords comparing rates, while <code>loan_analytics_suite_v3</code> affords nothing at all, because it names a product rather than an action and the model has no way to know what LoanIQ is. The description comes next, and it is the door handle, the single most important string in your entire application. Then the input schema, with its types, enums, required fields, defaults, and the per-property descriptions almost nobody writes, where every constraint you declare is a constraint the model does not have to guess. And finally the returned <code>content</code>, which is what the model gets to keep after your pixels are gone.</p>
 <p>Look at the description on the gallery’s fixed rate comparison tool:</p>
-<pre><code>Show a comparison of the loan offers under discussion, ranked by total
+<p class="provenance captured">Captured output from <code>tools/list</code></p><pre><code>Show a comparison of the loan offers under discussion, ranked by total
 cost over a horizon the user can adjust. Use when the user asks which
 loan is cheapest, or wants to see how the answer changes if they pay
 it off early.</code></pre>
@@ -171,7 +177,7 @@ it off early.</code></pre>
 <h2 id="feedback-for-something-that-was-not-watching">Feedback, for something that was not watching</h2>
 <p>Norman’s other big idea was feedback: after you act, the system tells you what happened. Press the button, hear the click. In this medium there is a second feedback channel, and it is the one people forget entirely. When the human interacts with your widget, the model does not automatically find out. The iframe is sandboxed, the host cannot read into it, and that is the entire point of the sandbox rather than an oversight in it. Unless you say something, everything that happens inside your app happens in a room the other user is locked out of.</p>
 <p>So say something. That is what <code>ui/set-context</code> is for:</p>
-<pre class="javascript"><code>app.setContext(
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="javascript"><code>app.setContext(
   &quot;Comparing over 5 years: Cedar Credit Union is cheapest at $34,835 total.&quot;,
   { horizonYears: 5, cheapest: &quot;Cedar Credit Union&quot;, totalCost: 34835 }
 );</code></pre>
@@ -191,17 +197,20 @@ it off early.</code></pre>
 <img src="figures/fig-2-2.png" alt="Figure 2-2. allocate_budget. Same direct manipulation, and every drag lands in the transcript." />
 <figcaption aria-hidden="true">Figure 2-2. <code>allocate_budget</code>. Same direct manipulation, and every drag lands in the transcript.</figcaption>
 </figure>
-<p>Same interaction, same feel: drag a bar, money moves. The difference is a few lines at the end of the drag handler.</p>
+<p>Same interaction, same feel: drag a bar, money moves. The difference is the tail of the drag handler.</p>
 <pre class="javascript"><code>function up() {
+  window.removeEventListener(&quot;pointermove&quot;, move);
+  window.removeEventListener(&quot;pointerup&quot;, up);
+  /* Every drag is legible to the model, not just to the eye. */
   app.setContext(
-    &quot;Budget now: &quot; + items.map(it =&gt; it.name + &quot; &quot; + money(it.amount)).join(&quot;, &quot;) + &quot;.&quot;,
-    { cap: cap, allocation: items }
+    &quot;Budget now: &quot; + items.map(function (it) { return it.name + &quot; &quot; + money(it.amount); }).join(&quot;, &quot;) + &quot;.&quot;,
+    { cap: cap, allocation: items.map(function (it) { return { name: it.name, amount: it.amount }; }) }
   );
 }</code></pre>
 <p>Now “draft the email with those numbers” works, because the numbers are in the conversation. The user never sees this code run and would not know how to describe it if you asked. What they see is that the assistant seems to know what they just did, and they will describe that to a colleague as the app being smart. It is not smart. It is legible, and legible is achievable on a deadline.</p>
 <h2 id="what-the-model-actually-sees">What the model actually sees</h2>
 <p>Abstractions are easy to nod at, so here is the literal artefact, for the gallery’s fixed rate comparison, exactly as it appears in the model’s context.</p>
-<pre class="json"><code>{
+<p class="provenance captured">Captured output from <code>tools/list</code></p><pre class="json"><code>{
   &quot;name&quot;: &quot;compare_rates&quot;,
   &quot;title&quot;: &quot;Compare loan rates&quot;,
   &quot;description&quot;: &quot;Show a comparison of the loan offers under discussion, ranked by total cost over a horizon the user can adjust. Use when the user asks which loan is cheapest, or wants to see how the answer changes if they pay it off early.&quot;,
@@ -218,7 +227,7 @@ it off early.</code></pre>
 }</code></pre>
 <p>That is the whole interface. No pixels, no layout, no colour, no card. A name, a paragraph, a schema with one property, and a pointer to something the model cannot look at. Read it the way a user would and ask what it tells you. That there is a thing called comparing rates. That it ranks by total cost. That there is a horizon, that it is a whole number of years between one and ten, that five is normal, and that the human can change it after the render. That last clause is doing real work, because it tells the model not to re-call the tool when the user says “what about four years”, the widget having already been told it can handle that.</p>
 <p>Now the same view of the before version, which is where the empty schema stops being a stylistic complaint and becomes a functional one:</p>
-<pre class="json"><code>{
+<p class="provenance captured">Captured output from <code>tools/list</code></p><pre class="json"><code>{
   &quot;name&quot;: &quot;compare_rates_suite&quot;,
   &quot;title&quot;: &quot;Loan analytics suite&quot;,
   &quot;description&quot;: &quot;Open the loan analytics suite to compare offers, view amortization schedules, run sensitivity analysis, and export results.&quot;,

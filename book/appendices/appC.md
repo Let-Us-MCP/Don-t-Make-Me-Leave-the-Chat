@@ -89,6 +89,7 @@ node gallery/evals/run.js --all
 
 Against a host you already have:
 
+<!-- listing: illustrative -->
 ```bash
 claude -p "<prompt from the suite>" \
   --allowedTools "mcp__<server>__<tool>" \

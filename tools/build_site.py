@@ -97,6 +97,16 @@ def pandoc(markdown: str) -> str:
     return proc.stdout
 
 
+# `<!-- listing: captured from `cmd` -->` before a fence. Pandoc passes HTML
+# comments through, so we turn them into a visible provenance tag: the book
+# claims its code comes from the gallery, and a reader should be able to see
+# which listings are extracted, which are real output, and which are sketches.
+LISTING_RE = re.compile(
+    r"<!--\s*listing:\s*(?P<kind>captured|illustrative)(?P<rest>[^>]*?)-->\s*"
+    r"(?P<pre><(?:pre|div)\b)",
+    re.S,
+)
+
 LAW_RE = re.compile(
     r'<div class="law" data-n="(\d+)">\s*<p>(.*?)</p>\s*</div>', re.S
 )
@@ -127,6 +137,17 @@ def transform(body: str) -> str:
     body = re.sub(r'<colgroup>.*?</colgroup>\s*', "", body, flags=re.S)
     body = re.sub(r'<tr class="(?:header|odd|even)">', "<tr>", body)
 
+    def listing(m: re.Match) -> str:
+        kind = m.group("kind")
+        rest = m.group("rest").strip()
+        rest = re.sub(r"`([^`]+)`", r"<code>\1</code>", rest)
+        if kind == "captured":
+            text = "Captured output" + (" " + rest if rest else "")
+        else:
+            text = "Illustrative, not from the gallery"
+        return (f'<p class="provenance {kind}">{text}</p>' + m.group("pre"))
+
+    body = LISTING_RE.sub(listing, body)
     body = LAW_RE.sub(law, body)
     body = FIG_RE.sub(figure, body)
     body = body.replace("<table>", '<div class="table-wrap"><table>')
@@ -188,6 +209,12 @@ pre{background:var(--wash);border-left:3px solid var(--rule);
   border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
   font-size:13.5px;line-height:1.5;margin:1.3em 0}
 pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.provenance{font-family:var(--sans);font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--muted);margin:1.3em 0 -1.05em;font-weight:700}
+.provenance code{font-size:11px;text-transform:none;letter-spacing:0;
+  background:none;padding:0;color:var(--muted)}
+.provenance.captured{color:var(--good)}
+.provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
 aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;

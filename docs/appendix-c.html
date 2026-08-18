@@ -60,6 +60,12 @@ pre{background:var(--wash);border-left:3px solid var(--rule);
   border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
   font-size:13.5px;line-height:1.5;margin:1.3em 0}
 pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.provenance{font-family:var(--sans);font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--muted);margin:1.3em 0 -1.05em;font-weight:700}
+.provenance code{font-size:11px;text-transform:none;letter-spacing:0;
+  background:none;padding:0;color:var(--muted)}
+.provenance.captured{color:var(--good)}
+.provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
 aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
@@ -265,7 +271,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <pre class="bash"><code>node gallery/evals/run.js --all</code></pre>
 <h2 id="the-model-in-the-loop-run">The model-in-the-loop run</h2>
 <p>Against a host you already have:</p>
-<pre class="bash"><code>claude -p &quot;&lt;prompt from the suite&gt;&quot; \
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="bash"><code>claude -p &quot;&lt;prompt from the suite&gt;&quot; \
   --allowedTools &quot;mcp__&lt;server&gt;__&lt;tool&gt;&quot; \
   --output-format json</code></pre>
 <p>Read <code>num_turns</code> and the tool calls out of the JSON. An invocation check is whether your tool appears. A readback check is whether the follow-up answer matches what the widget showed.</p>

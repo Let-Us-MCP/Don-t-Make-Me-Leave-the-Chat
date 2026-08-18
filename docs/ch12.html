@@ -60,6 +60,12 @@ pre{background:var(--wash);border-left:3px solid var(--rule);
   border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
   font-size:13.5px;line-height:1.5;margin:1.3em 0}
 pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.provenance{font-family:var(--sans);font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--muted);margin:1.3em 0 -1.05em;font-weight:700}
+.provenance code{font-size:11px;text-transform:none;letter-spacing:0;
+  background:none;padding:0;color:var(--muted)}
+.provenance.captured{color:var(--good)}
+.provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
 aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
@@ -175,7 +181,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>The rung that decides how good your product feels is the fourth one, and it gets the least attention, because it has no pixels to review.</p>
 <h3 id="checking-capabilities-in-three-lines">Checking capabilities, in three lines</h3>
 <p>The rung you land on is knowable at runtime, and almost nobody checks.</p>
-<pre class="javascript"><code>app.connect().then(function (host) {
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="javascript"><code>app.connect().then(function (host) {
   var can = host.capabilities || {};
   if (!can.toolCalls) {
     // Nothing this app can do will reach the server. Say so, once, quietly,
@@ -188,7 +194,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <h2 id="the-text-rung-is-a-product">The text rung is a product</h2>
 <p>Say it plainly. For a large fraction of your users, your <code>content</code> string <em>is</em> your app. That reframes the work: it is not a fallback you write in ten seconds so the schema validates, it is the version of your product that runs everywhere, and it deserves as much care as the card.</p>
 <p>The gallery’s probe measures this, because it is measurable.</p>
-<pre><code>$ node gallery/probe/probe.js http://localhost:8931/mcp
+<p class="provenance captured">Captured output from <code>node gallery/probe/probe.js</code></p><pre><code>$ node gallery/probe/probe.js http://localhost:8931/mcp
 io.modelcontextprotocol/ui  declared
 tools         21 (16 carry a ui:// resource)
 
@@ -206,7 +212,7 @@ render apps.</code></pre>
 <h2 id="a-worked-degradation">A worked degradation</h2>
 <p>One widget, four houses, same tool call. This is the gallery’s service status card, and it is the shortest way to see that the ladder is a design rather than a fallback.</p>
 <p>In a host that renders apps you get the card: pill, headline, sentence, three numbers, a disclosure holding the per-service table, and half a second to the answer. In a host that renders but blocks tool calls you get exactly the same thing, because this widget has no actions, which is not luck: a dashboard should not have actions, and this archetype earning nothing from <code>toolCalls</code> is the archetype behaving correctly. A tracker in the same position loses its refresh button and has to say so. In a host showing a static preview you get the first render, frozen, with no data, which is why the skeleton draws the title and the shape instead of a spinner. And in Claude Code, which is a terminal, you get the text.</p>
-<pre><code>degraded: Checkout is slow, nothing is down. One dependency is timing out
+<p class="provenance captured">Captured output from <code>tools/call service_status</code></p><pre><code>degraded: Checkout is slow, nothing is down. One dependency is timing out
 on 4% of calls. Everything else is nominal. error rate 4.1%, p99 latency
 2.4s, requests/min 18.2k, as of 09:41 UTC.</code></pre>
 <p>Every level of the Chapter 3 hierarchy is in there, in order: verdict, reason, numbers, timestamp. A user in a terminal gets the same answer in the same sequence, and the model can act on it without any of the pixels. That is what a designed fourth rung looks like. The before version of this widget returns “Ops overview opened.”, which is the same tool, the same data, and nothing at all for four fifths of the ecosystem.</p>

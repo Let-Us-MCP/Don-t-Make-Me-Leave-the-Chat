@@ -60,6 +60,12 @@ pre{background:var(--wash);border-left:3px solid var(--rule);
   border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
   font-size:13.5px;line-height:1.5;margin:1.3em 0}
 pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.provenance{font-family:var(--sans);font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--muted);margin:1.3em 0 -1.05em;font-weight:700}
+.provenance code{font-size:11px;text-transform:none;letter-spacing:0;
+  background:none;padding:0;color:var(--muted)}
+.provenance.captured{color:var(--good)}
+.provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
 aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
@@ -161,7 +167,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p><strong>The review.</strong> Chapter 2 for the design review question, Chapter 11 for the triage, Appendix C for the session script.</p>
 <h2 id="running-the-gallery">Running the gallery</h2>
 <p>Every figure in this book comes from a repository you can clone.</p>
-<pre class="bash"><code>git clone https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="bash"><code>git clone https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat
 cd Don-t-Make-Me-Leave-the-Chat
 node gallery/serve.js</code></pre>
 <p>Open <a href="http://localhost:8931" class="uri">http://localhost:8931</a>. The sidebar lists every scene in the book by chapter. Each one plays a short transcript, renders the app in a sandboxed frame at a width you can drag, and shows what the model sees in the right-hand column.</p>
@@ -169,7 +175,9 @@ node gallery/serve.js</code></pre>
 <h2 id="conventions">Conventions</h2>
 <p>Figures numbered <code>1-1</code>, <code>1-2</code> and so on are captured from the gallery. The figure caption names the tool that produced them, and Appendix D maps every one to its scene and the command that regenerates it.</p>
 <p>Hand-drawn figures make one argument each and are drawn by a script in <code>figures-src/</code>.</p>
-<p>Code in the book is extracted from the gallery. If a listing looks too short to be real, it is real, and it is short because the gallery is small on purpose.</p>
+<p>Every listing says where it came from, because a book that claims its code runs should be checkable on that claim. A block with no tag is <strong>extracted</strong>: it appears verbatim in the repository, and <code>tools/check_listings.py</code> fails the build if it stops doing so. A block tagged <em>captured output</em> is the real result of the command named beside it. A block tagged <em>illustrative</em> is a shape rather than a file: a wire message, a sketch, or in one case a deliberately fictional registry listing.</p>
+<p>Of the 41 listings in this book, 11 are extracted, 11 are captured, and 19 are illustrative. Writing that checker found two listings that had been quietly paraphrased and presented as extracted, which is exactly the sort of thing it exists to catch.</p>
+<p>If an extracted listing looks too short to be real, it is real, and it is short because the gallery is small on purpose.</p>
 
 <div class="pager"><a href="preface.html"><span class="dir">Previous</span>Preface</a><a href="ch01.html" style="text-align:right"><span class="dir">Next</span>1. Don&#x27;t Make Me Leave the Chat</a></div>
 </main>

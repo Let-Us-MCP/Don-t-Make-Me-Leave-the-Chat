@@ -60,6 +60,12 @@ pre{background:var(--wash);border-left:3px solid var(--rule);
   border-radius:0 6px 6px 0;padding:14px 16px;overflow-x:auto;
   font-size:13.5px;line-height:1.5;margin:1.3em 0}
 pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.provenance{font-family:var(--sans);font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--muted);margin:1.3em 0 -1.05em;font-weight:700}
+.provenance code{font-size:11px;text-transform:none;letter-spacing:0;
+  background:none;padding:0;color:var(--muted)}
+.provenance.captured{color:var(--good)}
+.provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
 aside.law .lawnum{display:block;font-family:var(--sans);font-weight:700;
@@ -162,7 +168,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>All of it is available to you, and the mechanism is completely unglamorous: put the fields in your input schema, describe them, and the model fills them in when it calls you. That last clause is the part people miss. <strong>A field the model can fill is a field the user never sees.</strong> Your input schema is not a validation artefact bolted on at the end. It is the list of questions you are choosing not to ask, and writing it is a design activity that happens to produce JSON.</p>
 <p>Compare the two expense tools in the gallery. The before version declares <code>inputSchema: { type: "object", properties: {} }</code>. No inputs, so the model passes nothing, so the app knows nothing, so the app asks for everything: nine fields, in a chat, for a $62 coffee. That empty object is not a neutral default. It is the decision to interrogate the user, made accidentally, in a file nobody reviewed.</p>
 <p>The after version declares five properties:</p>
-<pre class="javascript"><code>inputSchema: {
+<p class="provenance captured">Captured output from <code>tools/list</code></p><pre class="javascript"><code>inputSchema: {
   type: &quot;object&quot;,
   properties: {
     merchant: { type: &quot;string&quot;, description: &quot;Who was paid.&quot; },
@@ -186,7 +192,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>The one thing that does not work is a confidence indicator. Nobody has ever usefully acted on “we are 80% sure this is your cost centre”. Show the value, show the source, make it editable, and let the human do the thing humans are good at. There is one case where asking still beats assuming even with all three defences in place: when the wrong answer is expensive and quiet. Filing to the wrong cost centre is discovered at month end by somebody who is annoyed. If your field is like that, ask, and spend the extra turn.</p>
 <h2 id="the-default-that-is-not-a-question">The default that is not a question</h2>
 <p>A default is an answer you supply, and a good default is an answer that is right often enough that questioning it is the exception. Declared in the schema it costs the model nothing and the user nothing:</p>
-<pre class="javascript"><code>currency:     { type: &quot;string&quot;, default: &quot;USD&quot; },
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="javascript"><code>currency:     { type: &quot;string&quot;, default: &quot;USD&quot; },
 cabin:        { type: &quot;string&quot;, enum: [&quot;economy&quot;, &quot;business&quot;], default: &quot;economy&quot; },
 horizonYears: { type: &quot;integer&quot;, minimum: 1, maximum: 10, default: 5 },</code></pre>
 <p>Three things a default has to do to be worth having. It has to be right most of the time, because a default that is right half the time is not a default, it is a coin flip with a confident face. It has to be visible, so the user can see what was assumed without opening anything, which is usually a job for the orientation line in Chapter 8. And it has to be cheap to change, in one control or one sentence to the assistant. The horizon slider in Chapter 1 exists because five years was a default worth questioning and questioning it in prose costs a turn. A default that fails any of those three is a question you decided not to ask and should have.</p>
