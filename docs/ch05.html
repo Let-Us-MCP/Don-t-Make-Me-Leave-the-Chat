@@ -151,52 +151,25 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 </nav>
 <main>
 <p class="eyebrow">Chapter 5</p><h1>Omit Needless Widgets</h1><p class="summary">The six archetypes, what each owes both users, and the case for shipping zero.</p><aside class="law"><span class="lawnum">Law 4</span><p>Omit needless widgets.</p></aside>
-<p>Strunk and White told writers to omit needless words. Krug pointed out that half the words on any web page could go without anyone noticing, and that removing them made the remaining half easier to find.</p>
-<p>The same arithmetic applies here, at a higher exchange rate, because your viewport is a fifth the size and your user’s attention is a tenth as long.</p>
+<p>Strunk and White told writers to omit needless words. Krug pointed out that about half the words on any web page could go without anyone noticing, and that removing them made the remaining half easier to find. The same arithmetic applies here at a much higher exchange rate, because your viewport is a fifth the size and your user’s attention is a tenth as long.</p>
 <figure>
 <img src="figures/xkcd-omit.png" alt="The curve turns over sooner than the roadmap assumes." />
 <figcaption aria-hidden="true">The curve turns over sooner than the roadmap assumes.</figcaption>
 </figure>
-<h3 id="what-needless-means-here">What “needless” means here</h3>
-<p>Krug’s version of this law was about words on a page, and the exchange rate is worth stating because it changes what you cut.</p>
-<p>A needless word costs a reader about a fifth of a second. A needless <em>widget</em> costs a load, a viewport, a consent surface, a decision about whether to engage, and the space where the answer would have been. Everything is more expensive here, so the threshold moves.</p>
-<p>But needless does not mean absent. Three distinctions that keep this law from turning into minimalism theatre:</p>
-<p><strong>Needless widget, not needless information.</strong> Figure 5-2 drops seven columns from the pixels and keeps every one in <code>structuredContent</code>. The user sees less. The system knows the same.</p>
-<p><strong>Needless control, not needless capability.</strong> The horizon slider in Chapter 1 survived because the user acts on it. The export button did not, and exporting is still possible: the user asks, and the model calls a tool.</p>
-<p><strong>Needless chrome, not needless identity.</strong> Chapter 10 requires you to say who you are. That is one line, and it is load-bearing. A logo, a nav bar, and a notification bell are not that line.</p>
+<p>The exchange rate is worth stating precisely, because it changes what you cut. A needless word costs a reader about a fifth of a second. A needless <em>widget</em> costs a fetch, a viewport, a consent surface, a decision about whether to engage, and the space where the answer would have been. Everything is more expensive here, so the threshold moves a long way down.</p>
+<p>But needless does not mean absent, and three distinctions keep this law from turning into minimalism theatre. There is a difference between a needless widget and needless information: the fixed picker later in this chapter drops seven columns from the pixels and keeps every one of them in <code>structuredContent</code>, so the user sees less while the system knows exactly as much. There is a difference between a needless control and a needless capability: the horizon slider in Chapter 1 survived because the user acts on it, the export button did not, and exporting is still perfectly possible because the user can ask and the model can call a tool. And there is a difference between needless chrome and needless identity: Chapter 10 requires you to say who you are, which is one line and load-bearing, and which is not the same as a logo, a nav bar, and a notification bell with a red dot on it.</p>
 <h2 id="the-porting-instinct">The porting instinct</h2>
 <p>The most common way to get this wrong is not to over-design. It is to port.</p>
-<p>Somebody has a product. The product has a dashboard. MCP Apps arrive, the dashboard is already built, and putting it in an iframe takes an afternoon. Ship it.</p>
-<p>What arrives in the conversation is a 1200 pixel application squeezed into a 380 pixel column, with a nav bar for pages the user cannot reach, a search box for content the conversation already narrowed, and a header containing a logo, a settings gear, and a notifications bell with a red dot on it.</p>
-<p>Every one of those elements was correct in the product. The nav bar is correct when there are pages. The search box is correct when the user arrived with no context. The bell is correct when this is where you live.</p>
-<p>None of them is correct in a paragraph.</p>
-<p>Porting fails because it moves the <em>artefact</em> instead of the <em>job</em>. The job that your product does for this user, in this conversation, in the next thirty seconds, is a small fraction of your product, and it is a fraction with different edges.</p>
+<p>Somebody has a product. The product has a dashboard. MCP Apps arrive, the dashboard is already built, and putting it in an iframe takes an afternoon, so it ships. What arrives in the conversation is a 1200 pixel application squeezed into a 380 pixel column, with a nav bar for pages the user cannot reach, a search box for content the conversation already narrowed, and a header containing a logo, a settings gear, and that notification bell.</p>
+<p>Every one of those elements was correct in the product. The nav bar is correct when there are pages. The search box is correct when the user arrived with no context and no assistant. The bell is correct when this is a place where somebody lives. None of them is correct in a paragraph, and the reason porting fails is that it moves the <em>artefact</em> instead of the <em>job</em>. The job your product does for this user, in this conversation, in the next thirty seconds, is a small fraction of your product, and it is a fraction with different edges than any screen you have already built.</p>
 <h2 id="the-six-archetypes">The six archetypes</h2>
-<p>Nearly every useful MCP App is one of six things. Knowing which one you are building tells you what to keep and what to cut, and it tells you what you owe each of your two users.</p>
-<h3 id="the-picker">The picker</h3>
-<p>The human is choosing one thing from a small set. The model needs to know what they chose.</p>
-<p>Owes the human: a small set, differentiated at a glance, one tap to commit. Owes the model: the choice, written back, plus enough about it to act on.</p>
-<p>Fails when: the set is not small. A picker over 400 rows is a search interface wearing a picker’s clothes, and search interfaces belong to the model, not to your widget. Let the model narrow, then pick.</p>
-<h3 id="the-form">The form</h3>
-<p>The human is providing information the system does not have.</p>
-<p>Owes the human: the fewest fields that are genuinely unknown, prefilled context shown rather than asked, correction one click away. Owes the model: the same constraints in the schema that the UI enforces, and the submitted result written back.</p>
-<p>Fails when: fields outnumber unknowns. See Chapter 4, and see the humbling case in Chapter 9 where a plain elicitation beats the whole thing.</p>
-<h3 id="the-dashboard">The dashboard</h3>
-<p>The human is checking on something.</p>
-<p>Owes the human: a verdict, a reason, and everything else behind a disclosure. Owes the model: the verdict as a sentence, because “how are things” will be asked again in text.</p>
-<p>Fails when: there is no verdict. A dashboard that only presents numbers has delegated the synthesis back to the person who asked you to do it.</p>
-<h3 id="the-viewer">The viewer</h3>
-<p>The human needs to see a thing: a document, an image, a model, a chart.</p>
-<p>Owes the human: the relevant part, at a useful size, with the reason it is relevant marked. Owes the model: a text rendering of what is on screen, because the model cannot see the pixels and the user will ask about them.</p>
-<p>Fails when: it rebuilds the browser. Zoom, rotate, print, download, page navigation, and thumbnails are a viewer application. In a chat, they are somebody else’s toolbar.</p>
-<h3 id="the-tracker">The tracker</h3>
-<p>The human is watching something change.</p>
-<p>Owes the human: current state, the time it was read, and a way to refresh. Owes the model: the same, so a question about it does not need a new render.</p>
-<p>Fails when: it stops looking and keeps asserting. Chapter 7.</p>
-<h3 id="the-canvas">The canvas</h3>
-<p>The human is manipulating something directly, because describing it in words would be slower.</p>
-<p>Owes the human: direct manipulation that feels immediate. Owes the model: the result of the manipulation, in structured form, at every resting point.</p>
-<p>Fails when: it is opaque. Figure 2-1 is a canvas that fails this way.</p>
+<p>Nearly every useful MCP App is one of six things. Knowing which one you are building tells you what to keep and what to cut, and more usefully it tells you what you owe each of your two users, which is a question most teams never ask explicitly.</p>
+<p>The <strong>picker</strong> exists because the human is choosing one thing from a small set. It owes the human a small set, differentiated at a glance, committed in one tap. It owes the model the choice, written back, plus enough about it to act on. It fails when the set is not small: a picker over 400 rows is a search interface wearing a picker’s clothes, and search interfaces belong to the model rather than to your widget, so let the model narrow and then pick.</p>
+<p>The <strong>form</strong> exists because the human has information the system does not. It owes the human the fewest fields that are genuinely unknown, with prefilled context shown rather than asked and correction one click away. It owes the model the same constraints in the schema that the UI enforces, plus the submitted result written back. It fails when fields outnumber unknowns, which is Chapter 4 and also the humbling case that opens Chapter 9.</p>
+<p>The <strong>dashboard</strong> exists because the human is checking on something. It owes the human a verdict, a reason, and everything else behind a disclosure, and it owes the model that verdict as a sentence, because “how are things” will be asked again in text. It fails when there is no verdict: a dashboard that only presents numbers has delegated the synthesis back to the person who asked you to do it.</p>
+<p>The <strong>viewer</strong> exists because the human needs to see a thing, a document or an image or a model or a chart. It owes the human the relevant part, at a useful size, with the reason it is relevant marked on it. It owes the model a text rendering of what is on screen, because the model cannot see pixels and the user will ask about them. It fails when it rebuilds the browser, and zoom, rotate, print, download, page navigation, and a thumbnail strip together constitute rebuilding the browser.</p>
+<p>The <strong>tracker</strong> exists because the human is watching something change. It owes the human the current state, the time that state was read, and a way to refresh it. It owes the model the same, so that a question about it does not require a new render. It fails when it stops looking and keeps asserting, which is Chapter 7.</p>
+<p>The <strong>canvas</strong> exists because the human is manipulating something directly, since describing it in words would be slower. It owes the human direct manipulation that feels immediate, and it owes the model the result of that manipulation, in structured form, at every resting point. It fails when it is opaque, which is Figure 2-1.</p>
 <h3 id="the-archetype-card">The archetype card</h3>
 <p>One table, for taping next to the laws.</p>
 <div class="table-wrap"><table>
@@ -247,59 +220,37 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 </tr>
 </tbody>
 </table></div>
-<p>The rightmost column is the one people discover late. Every archetype owes the model something different, and in every case it is the thing the pixels are carrying that the API is not.</p>
+<p>The rightmost column is the one people discover late. Every archetype owes the model something different, and in every case it is precisely the thing the pixels are carrying that the API is not.</p>
 <h2 id="knowing-which-one-you-are">Knowing which one you are</h2>
-<p>Most confused widgets are two archetypes fighting.</p>
-<p>A dashboard with a form in it: the user came to check on something and got asked a question. A viewer with a picker in it: the user came to read one clause and got a table of contents. A canvas with a dashboard around it: the user came to move things and got metrics about the things.</p>
-<p>When you cannot tell which archetype you are building, that is the finding. Split it. Two renders, each with one job, beat one render with two, because the conversation is a perfectly good container for a sequence and your widget is a poor one.</p>
+<p>Most confused widgets are two archetypes fighting. A dashboard with a form in it means the user came to check on something and got asked a question. A viewer with a picker in it means the user came to read one clause and got a table of contents. A canvas with a dashboard around it means the user came to move things and got metrics about the things they have not moved yet.</p>
+<p>When you cannot tell which archetype you are building, that is the finding rather than a gap in the framework. Split it. Two renders, each with one job, beat one render with two, because the conversation is a perfectly good container for a sequence and your widget is a poor one.</p>
+<p>There is a seventh thing people build, and it is not on the list because it is not an archetype. It is a habit. The <strong>launcher</strong> is a widget whose job is to be a menu of your other widgets: four buttons reading Reports, Settings, History, Help. It exists because somebody could not decide which of the six the task needed, so they shipped a hallway. Launchers fail hard here for a reason specific to the medium: the model already is the launcher. It has your tool list, it has your descriptions, and it routes based on what the user said, which is a considerably better routing signal than four buttons. A launcher widget is a worse version of something the host already does, occupying the space where the answer would have been. The tell that you are building one is that the render answers no question. It offers. If a user could look at it and say “and?”, it is a hallway.</p>
+<h2 id="composing-archetypes-across-renders">Composing archetypes across renders</h2>
+<p>Splitting does not mean shipping less. It means shipping the parts in sequence, which the transcript is unusually good at holding.</p>
+<p>A travel booking is a picker, then a form, then a tracker. Built as one widget it is a wizard with three internal states, a back button you had to write, and a model that sees one tool call and one result and has no idea which state anybody is in. Built as three renders it is three tools, three descriptions, three schemas, and a conversation that reads like a record of what happened. The second version has a property the first cannot have: the user can leave in the middle and come back by asking, because “actually, go back to the flights” is a tool call with arguments rather than a state inside a widget nobody can address.</p>
+<p>The cost is real, so this is not a free rule. Three renders is three consent moments and more scrolling, and decomposing a single decision into three cards for the sake of purity makes things worse. Decompose when the steps are separately meaningful and keep them together when they are not; Chapter 8 has the full decision procedure.</p>
 <h2 id="when-the-right-number-is-zero">When the right number is zero</h2>
-<p>This deserves to be said plainly, because it is the option nobody defends in planning meetings.</p>
-<p>Sometimes the correct MCP App is no MCP App.</p>
-<ul>
-<li><strong>A verdict is a sentence.</strong> “Yes, you can cancel with 90 days notice.” Nothing visual is being communicated.</li>
-<li><strong>Under about five rows and three columns, a Markdown table in <code>content</code> is fine.</strong> It streams, it copies, it is screen-readable, it costs nothing, and the model can quote it later.</li>
-<li><strong>A structured question is an elicitation.</strong> The host renders it, in the host’s own style, in every host, including the ones that do not do apps.</li>
-<li><strong>A confirmation is a sentence and a tool call.</strong> “I’m about to void EXP-40122. Confirm?” needs no chrome.</li>
-</ul>
-<p>Every one of those options is faster than your widget, works in more places than your widget, and survives being scrolled past in a way your widget does not.</p>
-<p>Shipping zero widgets for a given tool is not a failure to adopt the platform. It is the platform working: MCP Apps are an option, they negotiate as an extension, and a server that renders exactly where rendering helps is a well-designed server.</p>
+<p>This deserves to be said plainly, because it is the option nobody defends in a planning meeting. Sometimes the correct MCP App is no MCP App.</p>
+<p>A verdict is a sentence: “yes, you can cancel with 90 days notice” communicates nothing visual and needs no card. Under about five rows and three columns, a Markdown table in <code>content</code> is fine, and it streams, copies, reads aloud, costs nothing, and can be quoted by the model later. A structured question is an elicitation, rendered by the host in the host’s own style, in every host, including the ones that do not do apps at all. A confirmation is a sentence and a tool call: “I’m about to void EXP-40122, confirm?” needs no chrome whatsoever.</p>
+<p>Every one of those options is faster than your widget, works in more places than your widget, and survives being scrolled past in a way your widget does not. Shipping zero widgets for a given tool is not a failure to adopt the platform. It is the platform working as designed: MCP Apps are an option, they negotiate as an extension, and a server that renders exactly where rendering helps is a well-designed server rather than a lazy one.</p>
 <h2 id="teardown-one-over-built-picker">Teardown: one over-built picker</h2>
 <p>The task: “get me to New York Thursday morning, economy, just me.”</p>
 <figure>
 <img src="figures/fig-5-1.png" alt="Figure 5-1. search_flights. A web page wearing a chat costume." />
 <figcaption aria-hidden="true">Figure 5-1. <code>search_flights</code>. A web page wearing a chat costume.</figcaption>
 </figure>
-<p>Six filters, all six re-asking things the sentence contained. Ten columns: flight, departure, arrival, stops, duration, aircraft, cabin, fare, bags, CO2. Pagination, for three results. In a 380 pixel column the table scrolls horizontally, which means the fare, which is the only column anybody looks at first, is off screen.</p>
-<p>The aircraft type is interesting to about one traveller in fifty. It is on screen, at the same visual weight as the price, on every render, for everybody.</p>
+<p>Six filters, all six re-asking things the sentence contained. Ten columns: flight, departure, arrival, stops, duration, aircraft, cabin, fare, bags, and CO2. Pagination, for three results. In a 380 pixel column the table scrolls horizontally, which means the fare, the one column everybody looks at first, is off screen when the widget first paints. The aircraft type is interesting to about one traveller in fifty, and it is on screen at the same visual weight as the price, on every render, for everybody.</p>
 <figure>
 <img src="figures/fig-5-2.png" alt="Figure 5-2. pick_flight. Three options, one tap, filters resolved into a sentence." />
 <figcaption aria-hidden="true">Figure 5-2. <code>pick_flight</code>. Three options, one tap, filters resolved into a sentence.</figcaption>
 </figure>
-<p>Three cards. Departure and arrival as the headline, because that is how people choose flights. Fare as the second thing. Duration and flight number underneath. Two tags, <code>cheapest</code> and <code>fastest</code>, because those are the two comparisons that drive most decisions and computing them is free.</p>
-<p>The six filters became one line of grey text: <em>SFO to JFK, one passenger, economy.</em> Everything the filters would have set is stated, so the user can see that the assumptions are right, and nothing is being asked.</p>
-<p>The other seven columns are gone from the render. They are not gone from the system: they are in <code>structuredContent</code>, so the model has them, and if the user asks “which one is the widebody” the answer comes back in text without another render. That is the decomposition this chapter is about. One widget became a smaller widget plus a sentence, and the information that left the pixels went somewhere it can still be used.</p>
-<h2 id="composing-archetypes-across-renders">Composing archetypes across renders</h2>
-<p>Splitting does not mean shipping less. It means shipping the parts in sequence, which the transcript is unusually good at holding.</p>
-<p>A travel booking is a picker, then a form, then a tracker. Built as one widget it is a wizard with three internal states, a back button you had to write, and a model that sees one tool call. Built as three renders it is three tools, three descriptions, three schemas, and a conversation that reads like what happened.</p>
-<p>The second version has a property the first does not: <strong>the user can leave in the middle and come back by asking.</strong> “Actually, go back to the flights” works, because the picker is a tool with arguments rather than a state inside a widget nobody can address.</p>
-<p>The cost is real. Three renders is three consent moments and more scrolling, so do not decompose a single decision into three cards for the sake of purity. Decompose when the steps are separately meaningful, and keep them together when they are not. Chapter 8 has the full decision.</p>
+<p>Three cards. Departure and arrival as the headline, because that is how people actually choose flights, with the fare as the second thing and duration and flight number underneath. Two tags, <code>cheapest</code> and <code>fastest</code>, because those are the two comparisons that drive most decisions and computing them costs nothing. The six filters became one line of grey text, <em>SFO to JFK, one passenger, economy</em>, so everything the filters would have set is stated where the user can check it and nothing is being asked.</p>
+<p>The other seven columns are gone from the render and not from the system. They are in <code>structuredContent</code>, so the model has them, and if the user asks “which one is the widebody” the answer comes back in text without another render. That is the decomposition this chapter is about: one widget became a smaller widget plus a sentence, and the information that left the pixels went somewhere it can still be used.</p>
 <h2 id="the-decomposition-test">The decomposition test</h2>
-<p>When a widget feels overloaded, run this in order:</p>
-<ol type="1">
-<li><strong>What is the one question this render answers?</strong> Write it down. If you write down two, you have two widgets.</li>
-<li><strong>What is on screen that does not serve that question?</strong> Move it to <code>structuredContent</code>, to a disclosure, or to the bin.</li>
-<li><strong>What is on screen that a sentence would serve better?</strong> Move it to <code>content</code>.</li>
-<li><strong>What remains, and does it still beat prose?</strong> Chapter 1’s three questions, applied to the residue.</li>
-</ol>
-<p>Step four is the one people skip, and it is the one that occasionally tells you to delete the widget. That is a good outcome. It is cheaper to learn it now than after the launch.</p>
-<h2 id="the-archetype-nobody-admits-to">The archetype nobody admits to</h2>
-<p>There is a seventh thing people build, and it is not on the list because it is not an archetype. It is a habit.</p>
-<p><strong>The launcher.</strong> A widget whose job is to be a menu of your other widgets. Four buttons: Reports, Settings, History, Help. It exists because somebody could not decide which of the six archetypes the task needed, so they shipped a hallway.</p>
-<p>Launchers fail hard here, for a reason specific to the medium. The model already is the launcher. It has your tool list, it has descriptions, and it routes based on what the user said, which is a better routing signal than four buttons. A launcher widget is a worse version of the thing the host already does, occupying the space where the answer would have been.</p>
-<p>The tell that you are building one: the render answers no question. It offers. If a user could look at it and say “and?”, it is a hallway.</p>
-<p>The fix is the same as everywhere else in this chapter. Work out which single question this call answers, build that, and let the model handle the routing to the other five things you were going to put on the menu.</p>
+<p>When a widget feels overloaded, run this in order. What is the one question this render answers? Write it down, and if you write down two, you have two widgets. What is on screen that does not serve that question, and can it move to <code>structuredContent</code>, to a disclosure, or to the bin? What is on screen that a sentence would serve better, and can it move to <code>content</code>? And finally, what remains, and does it still beat prose?</p>
+<p>Step four is the one people skip, and it is the one that occasionally tells you to delete the widget entirely. That is a good outcome and a cheap one, and it is considerably cheaper to learn now than after the launch.</p>
 <h2 id="what-to-remember">What to remember</h2>
-<p>Six archetypes cover nearly everything: picker, form, dashboard, viewer, tracker, canvas. Each owes the human one thing and the model another. Confusion about which one you are building shows up as an overloaded widget, and the fix is to split rather than to compress. And the right widget count is sometimes zero, which is a decision you are allowed to make on purpose.</p>
+<p>Six archetypes cover nearly everything: picker, form, dashboard, viewer, tracker, canvas. Each owes the human one thing and the model another, and confusion about which one you are building shows up as an overloaded widget whose fix is to split rather than to compress. The seventh thing, the launcher, is a hallway and the model is already better at it than you are. And the right widget count is sometimes zero, which is a decision you are allowed to make on purpose.</p>
 <p>That is Part 1. Four laws, and everything after this is what it takes to honour them.</p>
 <p>Next chapter: enough mechanism to make the rest of the arguments land, and no more.</p>
 

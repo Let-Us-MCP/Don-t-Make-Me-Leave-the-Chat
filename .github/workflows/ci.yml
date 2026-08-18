@@ -61,6 +61,9 @@ jobs:
       - name: Cross-references and figures
         run: python3 tools/check_refs.py
 
+      - name: Prose density against the framing text
+        run: python3 tools/audit_density.py
+
       - name: Appendix B is generated, not hand-edited
         run: |
           python3 tools/build_matrix.py

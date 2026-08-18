@@ -142,11 +142,27 @@ Legend: `[ ]` not started, `[~]` drafted, `[x]` drafted + linted + built
   ran, so `ui/initialize` never fired, so the host waited forever and the
   widget sat there blank. `tools/check_apps.mjs` exists because of that.
 
-## Open items
+- **The first draft read like LinkedIn, and it was measurable.** Short
+  paragraphs, bulleted assertions, a bolded lead-in every few lines, a heading
+  every 157 words. `tools/audit_density.py` put numbers on it and
+  `tools/measure_reference.py` measured the framing text to get a target:
+  *Don't Make Me Think* runs 46.4 words per paragraph across 803 blocks, and
+  the draft ran 26.5. Every chapter was rewritten against that number. The book
+  now runs 61.4 words per paragraph, 0% of lines are bullets, and bold lead-ins
+  went from 170 to 16. The metric that mattered most was "longest run of
+  paragraphs broken only by a heading", because a chapter that never runs five
+  paragraphs together never argues anything.
 
-- Chapters run 1,100 to 1,900 words against a 2,000 to 2,500 target. A density
-  pass is the next work: more mechanism, not more padding.
+- **One threshold in the audit was invented and had to be corrected.** The
+  header-interval flag was set at 280 words on instinct. Measuring the framing
+  text put it near 200, which meant the tool was flagging the book for matching
+  its own model. Threshold moved to 170 and the docstring now says where every
+  number came from.
+
+## Open items
 - No human usability sessions were run for this edition. Chapter 11 describes
   the method and claims no findings.
+- Chapters run 1,540 to 2,460 words. Three sit just under the 2,000 target and
+  are flagged as warnings rather than fixed with padding.
 - Appendix B's host rows come from the MCP project's published matrix, not from
   tests run here. Stated in the appendix and in `VERIFICATION.md`.

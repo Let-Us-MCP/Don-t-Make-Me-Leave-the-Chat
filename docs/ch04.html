@@ -151,111 +151,71 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 </nav>
 <main>
 <p class="eyebrow">Chapter 4</p><h1>Never Ask What the Conversation Already Knows</h1><p class="summary">Prefill from context, make it correctable, and treat every click as a tax.</p><aside class="law"><span class="lawnum">Law 3</span><p>Never ask what the conversation already knows.</p></aside>
-<p>This is the law with the shortest path from violation to insult.</p>
-<p>The user typed the answer. It is above your widget on the screen, in their own words, in their own message, thirty seconds ago. Your app rendered an empty field asking for it. The user is now retyping something they already said, into a box, inside a conversation whose entire premise is that they should not have to do that.</p>
+<p>This is the law with the shortest path from violation to insult. The user typed the answer. It is above your widget on the screen, in their own words, in their own message, thirty seconds ago. Your app rendered an empty field asking for it, and the user is now retyping something they already said, into a box, inside a conversation whose entire premise is that they should not have to do that.</p>
 <figure>
 <img src="figures/xkcd-reask.png" alt="The form that was not listening." />
 <figcaption aria-hidden="true">The form that was not listening.</figcaption>
 </figure>
-<p>Krug’s version of this law is “mindless choices”: the interface asks a question the user has no basis to answer, or no interest in answering, and every one of those is a small tax on getting anything done. Our version is worse, because the answer was not merely obvious. It was <em>stated</em>.</p>
+<p>Krug’s version of this law is about mindless choices: the interface asks a question the user has no basis to answer or no interest in answering, and every one of those is a small tax on getting anything done. Our version is worse, because the answer was not merely obvious from context. It was <em>stated</em>, out loud, by the person now being asked for it.</p>
 <h2 id="what-the-conversation-knows">What the conversation knows</h2>
-<p>More than you think, and it accumulates.</p>
-<p>By the time your tool is called, the model is sitting on:</p>
-<ul>
-<li><strong>What the user said.</strong> Explicitly, in this session, in their own words.</li>
-<li><strong>What the user said earlier.</strong> Three turns back, which they will absolutely expect you to remember, because a person would have.</li>
-<li><strong>What previous tools returned.</strong> Including yours, if you have been called before in this conversation.</li>
-<li><strong>What the model inferred.</strong> “My usual cost centre” resolves to <code>CC-ENG-7</code> because that came back from a lookup two turns ago.</li>
-</ul>
-<p>All of that is available to you, if you let it be. The mechanism is unglamorous: put the fields in your input schema, describe them, and the model fills them in when it calls you.</p>
-<p>That last clause is the part people miss. <strong>A field the model can fill is a field the user never sees.</strong> Your input schema is not a validation artefact. It is the list of questions you are choosing not to ask.</p>
-<p>Compare the two expense tools in the gallery. The before version:</p>
-<pre class="javascript"><code>inputSchema: { type: &quot;object&quot;, properties: {} }</code></pre>
-<p>No inputs. The tool takes nothing, so the model passes nothing, so the app knows nothing, so the app asks for everything. Nine fields, in a chat, for a $62 coffee. The empty schema is not a neutral choice. It is the decision to interrogate the user, made accidentally, in a file nobody reviewed.</p>
-<p>The after version:</p>
+<p>More than you think, and it accumulates. By the time your tool is called the model is sitting on what the user said explicitly in this session; what they said three turns back, which they will absolutely expect you to remember because a person would have; what previous tools returned, including yours if you have been called before; and what the model has already inferred, which is why “my usual cost centre” resolves to <code>CC-ENG-7</code> when a lookup two turns ago produced that string.</p>
+<p>All of it is available to you, and the mechanism is completely unglamorous: put the fields in your input schema, describe them, and the model fills them in when it calls you. That last clause is the part people miss. <strong>A field the model can fill is a field the user never sees.</strong> Your input schema is not a validation artefact bolted on at the end. It is the list of questions you are choosing not to ask, and writing it is a design activity that happens to produce JSON.</p>
+<p>Compare the two expense tools in the gallery. The before version declares <code>inputSchema: { type: "object", properties: {} }</code>. No inputs, so the model passes nothing, so the app knows nothing, so the app asks for everything: nine fields, in a chat, for a $62 coffee. That empty object is not a neutral default. It is the decision to interrogate the user, made accidentally, in a file nobody reviewed.</p>
+<p>The after version declares five properties:</p>
 <pre class="javascript"><code>inputSchema: {
   type: &quot;object&quot;,
   properties: {
-    merchant: { type: &quot;string&quot; },
-    amount:   { type: &quot;number&quot;, exclusiveMinimum: 0 },
+    merchant: { type: &quot;string&quot;, description: &quot;Who was paid.&quot; },
+    amount:   { type: &quot;number&quot;, exclusiveMinimum: 0, description: &quot;Total charged.&quot; },
     currency: { type: &quot;string&quot;, default: &quot;USD&quot; },
-    date:     { type: &quot;string&quot;, format: &quot;date&quot; },
+    date:     { type: &quot;string&quot;, format: &quot;date&quot;, description: &quot;Date of the purchase.&quot; },
     category: { type: &quot;string&quot;, enum: [&quot;Travel&quot;, &quot;Meals&quot;, &quot;Software&quot;, &quot;Other&quot;] },
   },
 }</code></pre>
-<p>Five properties, and the model fills all five from one sentence of user input. Note <code>enum</code> on category: the model now picks from a closed set instead of inventing “Food &amp; Bev”, and the human gets a correct default instead of a dropdown.</p>
-<h2 id="prefill-and-then-show-your-work">Prefill, and then show your work</h2>
-<p>Prefilling is half the job. The other half is making the prefill visible and correctable, because prefill without visibility is just a confident guess that nobody audited.</p>
-<p>The pattern that works, in three parts:</p>
-<p><strong>Show what you assumed.</strong> Not in a tooltip. On screen, in the layout, as facts. The gallery’s confirmation shows merchant, date, employee, and cost centre as a small definition list. Four things the user did not type into this widget, all of them checkable at a glance.</p>
-<p><strong>Say where it came from.</strong> One line at the bottom: <em>Employee, cost centre, amount, and date came from the receipt you sent.</em> This is the single highest value sentence in most widgets and it costs nothing. It converts a mysterious prefilled form into a summary the user can verify, and it converts a wrong prefill from a silent error into an obvious one.</p>
-<p><strong>Make correction cheap and quiet.</strong> Not a modal. Not an edit mode. A disclosure labelled with what is inside it: <em>Change merchant, date, or category</em>. Closed by default, one click away, and nothing is lost when it stays closed.</p>
-<p>That is progressive disclosure done honestly: fewer controls showing, everything reachable. The dishonest version hides things behind a gear icon labelled nothing, and then congratulates itself on a clean interface.</p>
+<p>The model fills all five from one sentence of user input, and each declaration is doing a specific job. The <code>enum</code> on category means the model picks from a closed set instead of inventing “Food &amp; Bev”, so the human gets a correct default rather than a dropdown. The <code>default</code> on currency means nobody is ever asked. The descriptions on merchant and amount exist because a bare <code>{ "type": "string" }</code> tells the model the shape and nothing about the meaning, and meaning is what it needs to decide what goes in there.</p>
 <h3 id="the-subtraction-exercise">The subtraction exercise</h3>
-<p>Do this on paper, before you open a design tool. It takes ten minutes and it is the highest-yield thing in this chapter.</p>
-<ol type="1">
-<li><strong>List every field your form has.</strong> One line each.</li>
-<li><strong>Next to each, write where the value could come from.</strong> The conversation. A previous tool result. The user’s identity. A sensible default. Nowhere.</li>
-<li><strong>Delete every row that is not “nowhere”.</strong> Those are schema properties now, not form fields.</li>
-<li><strong>Look at what is left.</strong> That is your widget.</li>
-<li><strong>Ask whether what is left is worth a render at all,</strong> using Chapter 1’s three questions. Sometimes the residue is one yes-or-no, and a sentence beats a card.</li>
-</ol>
-<p>Run on the gallery’s expense form, that exercise goes from nine rows to one, and step five nearly deletes the widget. What saves it is that the user wants to see the amount before it is filed, which is a genuine case of needing to be <em>seen</em> rather than read.</p>
+<p>Do this on paper before you open a design tool. It takes ten minutes and it is the highest-yield thing in this chapter. List every field your form has, one line each. Next to each, write where the value could come from: the conversation, a previous tool result, the user’s identity, a sensible default, or nowhere. Delete every row that is not “nowhere”, because those are schema properties now rather than form fields. Look at what is left; that is your widget. Then ask whether what is left is worth a render at all, using Chapter 1’s three questions.</p>
+<p>Run on the gallery’s expense form, the exercise goes from nine rows to one, and step five very nearly deletes the widget. What saves it is that the user wants to see the amount before it is filed, which is a genuine case of needing to be <em>seen</em> rather than read, and which is why the fixed version leads with the number in the largest type on the card.</p>
+<h2 id="prefill-and-then-show-your-work">Prefill, and then show your work</h2>
+<p>Prefilling is half the job. The other half is making the prefill visible and correctable, because prefill without visibility is a confident guess that nobody audited.</p>
+<p>The pattern that works has three parts. Show what you assumed, not in a tooltip but on screen, in the layout, as facts: the gallery’s confirmation puts merchant, date, employee, and cost centre in a small definition list, four things the user did not type into this widget and can check with one pass of the eye. Say where it came from, in one line at the bottom, because <em>Employee, cost centre, amount, and date came from the receipt you sent</em> is the single highest-value sentence in most widgets and it costs nothing. It converts a mysterious prefilled form into a summary the user can verify, and it converts a wrong prefill from a silent error into an obvious one. And make correction cheap and quiet: not a modal, not an edit mode, but a disclosure labelled with what is inside it, <em>Change merchant, date, or category</em>, closed by default and losing nothing when it stays closed.</p>
+<p>That is progressive disclosure done honestly, which means fewer controls showing and everything reachable. The dishonest version hides things behind a gear icon labelled nothing and then congratulates itself on a clean interface.</p>
+<h2 id="when-the-prefill-is-wrong">When the prefill is wrong</h2>
+<p>Prefilling raises the cost of being wrong, and pretending otherwise is how this law turns into a bug report. The model inferred <code>CC-ENG-7</code> from “my usual cost centre”. Suppose the user changed teams last month. The old widget asked and got the right answer; the new widget assumed and got the wrong one, silently, in a field the user was not looking at because they were looking at the amount.</p>
+<p>That is a real regression and it deserves a real defence, which is the three parts above doing a second job. Showing the assumption at the same visual weight as the thing being confirmed is what makes the wrong value catchable: not in grey nine-point type at the bottom, but in the list of facts the user reads before pressing the button. Saying where it came from is what makes scepticism possible at all, because a value that was typed, one that was inferred, one that was looked up, and one that was defaulted deserve four different amounts of trust, and without a source line the user cannot tell which they are looking at. And a correction that is one click away and labelled with its contents is what makes fixing it cheaper than complaining about it.</p>
+<p>The one thing that does not work is a confidence indicator. Nobody has ever usefully acted on “we are 80% sure this is your cost centre”. Show the value, show the source, make it editable, and let the human do the thing humans are good at. There is one case where asking still beats assuming even with all three defences in place: when the wrong answer is expensive and quiet. Filing to the wrong cost centre is discovered at month end by somebody who is annoyed. If your field is like that, ask, and spend the extra turn.</p>
+<h2 id="the-default-that-is-not-a-question">The default that is not a question</h2>
+<p>A default is an answer you supply, and a good default is an answer that is right often enough that questioning it is the exception. Declared in the schema it costs the model nothing and the user nothing:</p>
+<pre class="javascript"><code>currency:     { type: &quot;string&quot;, default: &quot;USD&quot; },
+cabin:        { type: &quot;string&quot;, enum: [&quot;economy&quot;, &quot;business&quot;], default: &quot;economy&quot; },
+horizonYears: { type: &quot;integer&quot;, minimum: 1, maximum: 10, default: 5 },</code></pre>
+<p>Three things a default has to do to be worth having. It has to be right most of the time, because a default that is right half the time is not a default, it is a coin flip with a confident face. It has to be visible, so the user can see what was assumed without opening anything, which is usually a job for the orientation line in Chapter 8. And it has to be cheap to change, in one control or one sentence to the assistant. The horizon slider in Chapter 1 exists because five years was a default worth questioning and questioning it in prose costs a turn. A default that fails any of those three is a question you decided not to ask and should have.</p>
 <h2 id="every-click-is-a-tool-call">Every click is a tool call</h2>
-<p>Here is the part that is structurally different from the web, and it is the reason this law is a law rather than a preference.</p>
-<p>On a web page, a click is free. It is a DOM event. Nobody approves it, nobody logs it, nobody sees a permission dialog.</p>
-<p>In this medium, a click that does anything is a <code>tools/call</code> that travels from your sandboxed iframe to the host, through whatever consent policy the user has configured, out to the server, and back. Hosts may prompt. Hosts may prompt <em>every time</em>, depending on how the user set things up and how destructive the tool looks.</p>
-<p>So every interactive control you add is a potential permission dialog you have added, and permission dialogs have a well-documented failure mode: after the fourth one, people stop reading them. That is not a hypothetical. It is the entire history of mobile permission prompts, and it is how consent fatigue turns a security feature into a rubber stamp.</p>
-<p>Which gives you a design rule with an unusually clear justification:</p>
+<p>Here is the part that is structurally different from the web, and it is why this is a law rather than a preference.</p>
+<p>On a web page a click is free. It is a DOM event. Nobody approves it, nobody logs it, nobody sees a permission dialog. In this medium a click that does anything is a <code>tools/call</code> that travels from your sandboxed iframe to the host, through whatever consent policy the user has configured, out to the server, and back. Hosts may prompt. Depending on how the user set things up and how destructive the tool looks, hosts may prompt <em>every time</em>.</p>
+<p>So every interactive control you add is a potential permission dialog you have added, and permission dialogs have a well-documented failure mode: after the fourth one, people stop reading them. That is not a hypothesis. It is the entire history of mobile permission prompts, and it is how consent fatigue turns a security feature into a rubber stamp. Which gives you a design rule with an unusually clear justification:</p>
 <blockquote><p>Every control you add spends a little of the user’s willingness to read the next consent prompt, including the ones that matter.</p>
 </blockquote>
 <p>Four fields the model could have filled are not four small annoyances. They are four opportunities to teach somebody that clicking through is fine.</p>
-<h2 id="when-the-prefill-is-wrong">When the prefill is wrong</h2>
-<p>Prefilling raises the cost of being wrong, and pretending otherwise is how this law turns into a bug.</p>
-<p>The model inferred <code>CC-ENG-7</code> from “my usual cost centre”. Suppose the user changed teams last month. The old widget asked, and got the right answer. The new widget assumed, and got the wrong one, silently, in a field the user was not looking at because they were looking at the amount.</p>
-<p>That is a real regression and it deserves a real defence. Three of them.</p>
-<p><strong>Show the assumption at the same visual weight as the thing being confirmed.</strong> Not in grey nine-point type at the bottom. In the list of facts the user reads before pressing the button. The gallery’s confirmation puts employee and cost centre in the same definition list as merchant and date, because the user is checking all four with one pass of the eye.</p>
-<p><strong>Say where it came from.</strong> “Employee, cost centre, amount, and date came from the receipt you sent” is the sentence that makes a wrong prefill discoverable. Without it the user has no way to know whether the value was typed, inferred, looked up, or defaulted, and all four deserve different amounts of scepticism.</p>
-<p><strong>Make correction one click away and label the click with what is inside it.</strong> <em>Change merchant, date, or category</em> tells the user that those three are adjustable without opening anything. A gear icon tells them nothing.</p>
-<p>The one thing that does not work is a confidence indicator. Nobody has ever usefully acted on “we are 80% sure this is your cost centre”. Show the value, show the source, make it editable, and let the human do what humans are good at.</p>
-<p>There is one case where asking beats assuming even with all three defences: when the wrong answer is expensive and quiet. Filing to the wrong cost centre is found at month end by somebody who is annoyed. If your field is like that, ask, and spend the extra turn.</p>
 <h2 id="teardown-nine-fields-becomes-one-confirmation">Teardown: nine fields becomes one confirmation</h2>
 <p>The task: the user sends a receipt and says “file it against my usual cost centre.”</p>
 <figure>
 <img src="figures/fig-4-1.png" alt="Figure 4-1. new_expense. Nine fields, seven of them already answered." />
 <figcaption aria-hidden="true">Figure 4-1. <code>new_expense</code>. Nine fields, seven of them already answered.</figcaption>
 </figure>
-<p>Count what is being re-asked. Employee ID: the system knows this, because it knows who is talking. Cost centre: the user just referred to it, and a lookup resolved it two turns ago. Merchant, date, amount, currency: all four are in the receipt, and all four were in the sentence.</p>
-<p>That leaves category, which the model can infer with an <code>enum</code>, and justification, which is genuinely optional and genuinely unknown.</p>
-<p>Nine fields. Two of them carry information the system did not already have. The other seven are a transcription exercise.</p>
-<p>There is a second failure here, quieter and worse. Look at what the model sees after this renders: nothing. The tool returned “Expense form opened.” The user now fills in nine fields, and the model watches none of it. Law 2 and Law 3 fail together, because they usually do.</p>
+<p>Count what is being re-asked. Employee ID, which the system knows because it knows who is talking. Cost centre, which the user just referred to and which a lookup resolved two turns ago. Merchant, date, amount, and currency, all four of which are in the receipt and all four of which were in the sentence. That leaves category, which the model can infer given an <code>enum</code>, and justification, which is genuinely optional and genuinely unknown. Nine fields, of which two carry information the system did not already have. The other seven are a transcription exercise with a submit button.</p>
+<p>There is a second failure here, quieter and worse. Look at what the model sees after this renders: nothing. The tool returned “Expense form opened.” The user now fills in nine fields and the model watches none of it, so when the user says “did that go through?” three turns later, nobody in the conversation knows. Law 2 and Law 3 fail together, as they usually do, because the same instinct produces both.</p>
 <figure>
 <img src="figures/fig-4-2.png" alt="Figure 4-2. confirm_expense. Four facts shown, one field asked, everything correctable." />
 <figcaption aria-hidden="true">Figure 4-2. <code>confirm_expense</code>. Four facts shown, one field asked, everything correctable.</figcaption>
 </figure>
-<p>The amount is the headline, because that is the thing a person checks. The four known facts sit underneath as a list, verifiable in one pass. One field is open, and it is the one field nobody could have filled in for you. The disclosure holds the corrections. The origin line says where the prefill came from.</p>
-<p>One question instead of nine. Not by removing capability, and not by removing information. By using what was already said.</p>
+<p>The amount is the headline, because that is the thing a person checks. The four known facts sit underneath as a list, verifiable in one pass. One field is open, and it is the one field nobody could have filled in for you. The disclosure holds the corrections, and the origin line says where the prefill came from. One question instead of nine, achieved by removing neither capability nor information, but by using what was already said.</p>
 <h2 id="when-you-genuinely-need-to-ask">When you genuinely need to ask</h2>
-<p>Sometimes you do need input, and the law does not forbid it. It forbids asking for what you already have. Three cases where asking is right:</p>
-<p><strong>The information does not exist yet.</strong> A justification, a preference, a judgement call. Nobody has said it, so somebody has to.</p>
-<p><strong>The stakes justify confirmation.</strong> “Yes, delete the production database” is a question worth asking even though the intent is clear, because the cost of being wrong is unbounded. Chapter 9 is about how to ask it well.</p>
-<p><strong>The user is exploring.</strong> A slider that re-ranks, a filter that narrows. Nothing here is being re-asked, because the user is generating new information by playing with it. This is the case that earned the slider in Chapter 1.</p>
-<p>The test that separates those from the violations: <em>if the user answered this already, would my widget notice?</em> If the answer is no, you are not asking. You are interrogating.</p>
-<h2 id="the-escape-hatch-worth-knowing-about">The escape hatch worth knowing about</h2>
-<p>Before you build a form at all, know that core MCP can ask a structured question for you, with no widget involved. Chapter 9 opens on that option, because it wins more often than app developers like to admit.</p>
-<h2 id="the-default-that-is-not-a-question">The default that is not a question</h2>
-<p>One more move worth having in the toolkit, because it removes questions without removing choice.</p>
-<p>A default is an answer you supply. A good default is an answer that is right often enough that questioning it is the exception. Declared in the schema, it costs the model nothing and the user nothing:</p>
-<pre class="javascript"><code>currency: { type: &quot;string&quot;, default: &quot;USD&quot; },
-cabin:    { type: &quot;string&quot;, enum: [&quot;economy&quot;, &quot;business&quot;], default: &quot;economy&quot; },
-horizonYears: { type: &quot;integer&quot;, minimum: 1, maximum: 10, default: 5 },</code></pre>
-<p>Three things a default has to do to be worth having.</p>
-<p><strong>Be right most of the time.</strong> If it is right half the time it is not a default, it is a coin flip with a confident face.</p>
-<p><strong>Be visible.</strong> The user should be able to see what was assumed without opening anything. Chapter 3’s orientation line usually carries it.</p>
-<p><strong>Be cheap to change.</strong> One control, or one sentence to the assistant. The horizon slider in Chapter 1 exists because five years was a default worth questioning, and questioning it in prose costs a turn.</p>
-<p>A default that fails any of those three is a question you decided not to ask and should have.</p>
+<p>Sometimes you do need input, and the law does not forbid it. It forbids asking for what you already have. Three cases where asking is right: the information does not exist yet, as with a justification or a preference or a judgement call that nobody has expressed; the stakes justify confirmation, because “yes, delete the production database” is worth asking even when the intent is obvious, since the cost of being wrong is unbounded; and the user is exploring, dragging a slider that re-ranks or a filter that narrows, in which case nothing is being re-asked because the user is generating new information by playing with it. That third case is what earned the slider in Chapter 1.</p>
+<p>The test that separates those from the violations is one question: if the user answered this already, would my widget notice? If the answer is no, you are not asking. You are interrogating.</p>
+<p>Before you build a form at all, know that core MCP can ask a structured question for you with no widget involved. Chapter 9 opens on that option, because it wins more often than app developers like to admit.</p>
 <h2 id="what-to-remember">What to remember</h2>
-<p>The conversation is a database and you have read access. Put fields in your schema so the model can fill them. Show what you assumed, say where it came from, make the correction one click away and closed by default. Every control you add is a consent prompt you might have added, and consent prompts are a shared resource you are spending on somebody else’s behalf.</p>
+<p>The conversation is a database and you have read access. Put fields in your schema so the model can fill them, because a field the model can fill is a field the user never sees. Show what you assumed, say where it came from, and put the correction one click away and closed by default. Every control you add is a consent prompt you might have added, and consent prompts are a shared resource you are spending on somebody else’s behalf.</p>
 <p>Next chapter: what happens when you keep asking these questions honestly, which is that most of your widget disappears.</p>
 
 <div class="pager"><a href="ch03.html"><span class="dir">Previous</span>3. How People Actually Use Apps in Chat</a><a href="ch05.html" style="text-align:right"><span class="dir">Next</span>5. Omit Needless Widgets</a></div>

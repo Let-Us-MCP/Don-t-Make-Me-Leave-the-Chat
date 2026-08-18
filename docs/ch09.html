@@ -150,40 +150,16 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <div class="part">Elsewhere</div><a href="https://github.com/Let-Us-MCP/Don-t-Make-Me-Leave-the-Chat">Repository</a>
 </nav>
 <main>
-<p class="eyebrow">Chapter 9</p><h1>Forms and Actions</h1><p class="summary">The humbling case for plain elicitation, validation for two users, consent without nagging, and undo when the model pressed the button.</p><p>This is the chapter with the most code in it, because forms are where most MCP Apps end up, and because forms are where the two-user problem stops being philosophy and starts being a bug report.</p>
-<p>We start with the case that should worry you.</p>
+<p class="eyebrow">Chapter 9</p><h1>Forms and Actions</h1><p class="summary">The humbling case for plain elicitation, validation for two users, consent without nagging, and undo when the model pressed the button.</p><p>This is the chapter with the most code in it, because forms are where most MCP Apps end up, and because forms are where the two-user problem stops being philosophy and starts being a bug report. We start with the case that should worry you.</p>
 <h2 id="the-humbling-case">The humbling case</h2>
-<p>Core MCP can already ask the user a structured question without any app at all.</p>
-<p>The server sends an elicitation as part of a tool call. In revision <code>2026-07-28</code> this rides on the multi round-trip request mechanism, which exists so the server does not need a socket or a sticky session to wait for an answer. The host renders the question, in its own components, with its own styling, accessibility, keyboard handling, and consent flow. You provide a schema. You get an answer back.</p>
-<p>That path is free, works in every host that speaks core MCP, is consistent with every other prompt the user has seen, and inherits accessibility work you did not do.</p>
-<p>Your custom form has to be better than that. Sometimes it is. Often it is not.</p>
-<p><strong>Elicitation wins when</strong> the question is short, the fields are independent, the values are simple, and there is nothing to show the user while they answer. Three text fields and a dropdown is an elicitation. Stop building.</p>
-<p><strong>Your app wins when</strong> at least one of these is true:</p>
-<ul>
-<li><strong>Seeing the data matters.</strong> The user is choosing among things they need to look at.</li>
-<li><strong>The fields interact.</strong> Changing one changes what the others should say, and showing that live is the point.</li>
-<li><strong>There is a preview.</strong> The user needs to see the consequence before they commit.</li>
-<li><strong>Direct manipulation is faster than typing.</strong> Dragging a bar beats typing four numbers that must add up.</li>
-</ul>
-<p>Notice what is not on that list: branding, familiarity with your product, and the fact that you already have the components. Those are reasons your team wants an app. They are not reasons your user needs one.</p>
-<p>Run this test honestly once and you will delete something. That is the chapter doing its job.</p>
+<p>Core MCP can already ask the user a structured question without any app at all. The server sends an elicitation as part of a tool call; in revision <code>2026-07-28</code> this rides on the multi round-trip request mechanism, which exists precisely so the server does not need a socket or a sticky session while it waits for an answer. The host renders the question in its own components, with its own styling, accessibility, keyboard handling, and consent flow. You provide a schema, and you get an answer back.</p>
+<p>That path is free, works in every host that speaks core MCP, is consistent with every other prompt the user has seen in that client, and inherits accessibility work you did not do. Your custom form has to be better than that. Sometimes it is. Often it is not, and the honest test takes about a minute.</p>
+<p>Elicitation wins when the question is short, the fields are independent, the values are simple, and there is nothing to show the user while they answer. Three text fields and a dropdown is an elicitation; stop building. Your app wins when at least one of four things is true: seeing the data matters, because the user is choosing among things they need to look at; the fields interact, so changing one changes what the others should say and showing that live is the whole point; there is a preview, and the user needs to see the consequence before committing; or direct manipulation is faster than typing, because dragging a bar beats typing four numbers that have to add up.</p>
+<p>Notice what is not on that list. Branding is not on it. Familiarity with your product is not on it. The fact that you already have the components is emphatically not on it. Those are reasons your team wants an app, and they are not reasons your user needs one. Run this test honestly once and you will delete something, and that is the chapter doing its job before you have read the rest of it.</p>
 <h2 id="validation-for-two-users">Validation for two users</h2>
 <p>Assume you passed the test and you are building the form. Now you have two users who both need to be stopped from doing the wrong thing, and they need to be stopped in different languages.</p>
-<p><strong>The model is stopped by the schema.</strong> Types, <code>enum</code>, <code>required</code>, <code>exclusiveMinimum</code>, <code>format</code>. These are read before the call, so a well-declared schema prevents the bad call instead of rejecting it.</p>
-<p><strong>The human is stopped by a message.</strong> In place, next to the field, in words, saying what the rule is and how to satisfy it.</p>
-<p><strong>Both must be enforced by the server</strong>, because the app is a client and clients lie. Not out of malice, usually. Out of being an older version.</p>
-<p>The failure mode is having those three in three places, written by three people, disagreeing. So: one rule, three renderings, derived from one statement of it.</p>
-<p>Here is the gallery’s version. The rule is “expenses over $500 need a justification”. In the schema:</p>
-<pre class="javascript"><code>inputSchema: {
-  type: &quot;object&quot;,
-  required: [&quot;amount&quot;, &quot;merchant&quot;, &quot;date&quot;],
-  properties: {
-    amount: { type: &quot;number&quot;, exclusiveMinimum: 0 },
-    justification: { type: &quot;string&quot; },
-    // ...
-  },
-}</code></pre>
-<p>In the server handler, where it is actually enforced:</p>
+<p>The model is stopped by the schema: types, <code>enum</code>, <code>required</code>, <code>exclusiveMinimum</code>, <code>format</code>. These are read before the call, so a well-declared schema prevents the bad call rather than rejecting it afterwards. The human is stopped by a message, in place, next to the field, in words, saying what the rule is and how to satisfy it. And both must be enforced by the server, because the app is a client and clients lie, usually not out of malice but out of being an older version that somebody’s host cached.</p>
+<p>The failure mode is having those three in three places, written by three people, disagreeing. So: one rule, three renderings, derived from one statement of it. Here is the gallery’s version, where the rule is that expenses over $500 need a justification. In the schema, <code>justification</code> is a string with a description saying when it is required. In the server handler, where it is actually enforced:</p>
 <pre class="javascript"><code>run(args) {
   if (args.amount &gt; 500 &amp;&amp; !args.justification) {
     throw new Error(&quot;Expenses over $500 require a justification.&quot;);
@@ -198,96 +174,51 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
   }
   return &quot;&quot;;
 }</code></pre>
-<p>Three appearances, one sentence, same threshold. If the threshold changes, three lines change, and a test catches you if you miss one.</p>
+<p>Three appearances, one sentence, one threshold. If the threshold changes, three lines change, and a test catches you if you miss one.</p>
 <figure>
 <img src="figures/fig-9-1.png" alt="Figure 9-1. confirm_expense at $842, after a submit attempt." />
 <figcaption aria-hidden="true">Figure 9-1. <code>confirm_expense</code> at $842, after a submit attempt.</figcaption>
 </figure>
-<p>Two things in that figure are worth stealing.</p>
-<p>The message names the rule <em>and</em> the threshold, and sits next to the control that fixes it. Compare it to a red border, which tells the user something is wrong and nothing else, or a toast, which tells them something is wrong and then leaves.</p>
-<p>And the label changed <em>before</em> the error appeared. At $62 the field reads <code>Business justification</code> with the placeholder <code>One line, optional</code>. At $842 it reads <code>Business justification (required over $500)</code>. A field labelled optional that then refuses to submit has told the human one thing and the server another, which is a small betrayal that people remember.</p>
+<p>Two things in that figure are worth stealing. The message names the rule <em>and</em> the threshold, and it sits next to the control that fixes it, which you should compare against a red border, telling the user something is wrong and nothing else, or a toast, telling them something is wrong and then leaving. And the label changed <em>before</em> the error appeared: at $62 the field reads <em>Business justification</em> with the placeholder <em>One line, optional</em>, while at $842 it reads <em>Business justification (required over $500)</em>. A field labelled optional that then refuses to submit has told the human one thing and the server another, which is a small betrayal that people remember longer than you would expect.</p>
 <h2 id="errors-that-the-model-can-use">Errors that the model can use</h2>
-<p>One more audience for your error messages, and it is the one that will actually retry.</p>
-<p>When a tool call fails, the model reads the failure. It then decides whether to try again, try differently, or tell the user. What it decides is determined entirely by what your message says.</p>
-<p>Compare:</p>
-<pre><code>Error: validation failed</code></pre>
-<pre><code>Expenses over $500 require a justification. Call submit_expense again
-with a `justification` string describing the business purpose.</code></pre>
-<p>The first produces an apology to the user. The second produces a fixed call. Writing the second one costs nothing and turns a dead end into a recovery.</p>
-<p>Two mechanical notes. Tool failures belong in the result, with <code>isError: true</code>, not as JSON-RPC protocol errors, because the model is supposed to read them. And say what to do next, not just what went wrong: an error message is an instruction to the second user.</p>
+<p>There is one more audience for your error messages, and it is the one that will actually retry. When a tool call fails, the model reads the failure and then decides whether to try again, try differently, or tell the user, and what it decides is determined entirely by what your message says.</p>
+<p>Compare <code>Error: validation failed</code> against <code>Expenses over $500 require a justification. Call submit_expense again with a justification string describing the business purpose.</code> The first produces an apology to the user; the second produces a fixed call. Writing the second one costs nothing and turns a dead end into a recovery.</p>
+<p>Two mechanical notes. Tool failures belong in the result with <code>isError: true</code> rather than as JSON-RPC protocol errors, because the model is supposed to read them and protocol errors are for the transport. And say what to do next rather than only what went wrong: an error message here is an instruction to the second user, not a verdict on the first one.</p>
 <h2 id="destructive-actions-in-a-consent-medium">Destructive actions in a consent medium</h2>
-<p>Now the sharp end.</p>
-<p>Your app can call tools. Some of those tools delete things. And the button that triggers them can be pressed by a human who read the screen, or by a model that inferred intent from a sentence.</p>
+<p>Now the sharp end. Your app can call tools, some of those tools delete things, and the button that triggers them can be pressed by a human who read the screen or by a model that inferred intent from a sentence.</p>
 <figure>
 <img src="figures/xkcd-undo.png" alt="One of these two users is confident on purpose." />
 <figcaption aria-hidden="true">One of these two users is confident on purpose.</figcaption>
 </figure>
-<p>The instinct is to add a confirmation dialog. The instinct is half right. The question is what the confirmation is <em>for</em>.</p>
-<p>A confirmation that says “Are you sure?” is not a safety mechanism. It is a speed bump that the user learns to jump in about four repetitions, and after that it is worse than nothing, because it creates a sense of protection that no longer exists.</p>
-<p>A confirmation is only worth showing if it <strong>tells the user something they did not already know</strong>. Which means it names the specific thing, and the specific consequence:</p>
-<blockquote><p>Delete <code>orders-2026-prod</code>? 4.2M rows. This cannot be undone.</p>
-</blockquote>
-<p>versus</p>
-<blockquote><p>Are you sure you want to delete this item?</p>
-</blockquote>
-<p>The first is worth reading, and people do. The second trains people not to read the first.</p>
-<p>Three rules for destructive actions here:</p>
-<p><strong>Name the object and the scale.</strong> “This item” is not a name. “4.2M rows” is a scale.</p>
-<p><strong>Say whether it is reversible, honestly.</strong> “This cannot be undone” is information. If it can be undone, say that instead and stop pretending it is dangerous, because crying wolf costs you the one time it matters.</p>
-<p><strong>Do not put a destructive action next to a frequent one.</strong> Krug’s version was about misclicks. Here it is worse: the model might call the tool directly, and proximity in your UI often becomes proximity in your naming, and confusable names are a real source of wrong tool calls.</p>
+<p>The instinct is to add a confirmation dialog, and the instinct is half right. The question is what the confirmation is <em>for</em>. A confirmation that says “Are you sure?” is not a safety mechanism; it is a speed bump the user learns to jump in about four repetitions, and after that it is worse than nothing, because it creates a sense of protection that no longer exists. A confirmation is only worth showing if it tells the user something they did not already know, which means it names the specific thing and the specific consequence. “Delete <code>orders-2026-prod</code>? 4.2M rows. This cannot be undone.” is worth reading, and people do. “Are you sure you want to delete this item?” trains people not to read the first one.</p>
+<p>Three rules follow. Name the object and the scale, because “this item” is not a name and “4.2M rows” is a scale. Say whether it is reversible, honestly, since “this cannot be undone” is information and, if it can be undone, saying that instead and dropping the alarm is better than crying wolf on the one occasion it matters. And do not put a destructive action next to a frequent one: Krug’s version of that rule was about misclicks, and here it is worse, because the model might call the tool directly, proximity in your UI often becomes proximity in your naming, and confusable names are a real source of wrong tool calls.</p>
 <h3 id="the-confirmation-written-out">The confirmation, written out</h3>
-<p>Copy is design here, so here is the copy, for a confirmation that has to earn a read.</p>
+<p>Copy is design here, so here is the copy for a confirmation that has to earn a read.</p>
 <blockquote><p><strong>Void expense EXP-40122?</strong></p>
 <p>$842.00 to United Airlines, filed 14 August, already approved by Dana Okafor. Voiding notifies Dana and removes it from the August close.</p>
 <p><code>[ Void it ]</code> <code>[ Keep it ]</code></p>
 </blockquote>
-<p>Four things it does that “Are you sure?” does not.</p>
-<p><strong>It names the object,</strong> with enough detail to recognise the wrong one. If the model picked the flight when the user meant the coffee, that is visible in the first line.</p>
-<p><strong>It states the blast radius.</strong> Somebody else finds out. Something else changes. Those are the facts that turn a reflex into a decision.</p>
-<p><strong>Its buttons say what they do.</strong> Not OK and Cancel. A user who reads only the buttons still gets it right, and a lot of users read only the buttons.</p>
-<p><strong>It does not shout.</strong> No red banner, no warning triangle. The information is the warning. Decoration on top of information reads as decoration, and people learn to skip decoration.</p>
-<p>Where does the confirmation live? Two options, and the choice matters.</p>
-<p>Inside the widget, when the widget is already on screen and the action came from a button in it. In its own render, when the action came from the conversation: the model called <code>void_expense</code>, the host is about to run it, and a card that summarises it before it happens is the whole interface.</p>
-<p>The second case is the one people forget to build, and it is the one where the model, rather than the human, chose the object.</p>
+<p>Four things it does that “Are you sure?” does not. It names the object with enough detail to recognise the wrong one, so if the model picked the flight when the user meant the coffee, that is visible in the first line. It states the blast radius, because somebody else finds out and something else changes, and those are the facts that turn a reflex into a decision. Its buttons say what they do rather than OK and Cancel, so a user who reads only the buttons still gets it right, and a lot of users read only the buttons. And it does not shout: no red banner, no warning triangle, because the information is the warning and decoration on top of information reads as decoration, which people learn to skip.</p>
+<p>Where the confirmation lives matters too. Inside the widget, when the widget is already on screen and the action came from a button in it. In its own render, when the action came from the conversation, because the model called <code>void_expense</code>, the host is about to run it, and a card that summarises it before it happens is the whole interface. The second case is the one people forget to build, and it is exactly the case where the model rather than the human chose the object.</p>
 <h2 id="undo-when-the-model-pressed-the-button">Undo, when the model pressed the button</h2>
-<p>This is the requirement the second user creates, and it is the one most teams have not thought about.</p>
-<p>On the web, the person who clicked the button read the button. Here they may not have. The model called <code>submit_expense</code> because the user said “yeah, file it”, and the model’s interpretation of “it” was an inference.</p>
-<p>Inferences are usually right. Usually is not a safety property.</p>
-<p>So: <strong>for every tool that changes something, ship the tool that changes it back.</strong> Not a preference. A design requirement created by the fact that one of your users is a probabilistic system acting on a human’s behalf.</p>
-<p>The gallery does this. <code>submit_expense</code> has a sibling:</p>
-<pre class="javascript"><code>{
-  name: &quot;void_expense&quot;,
-  description: &quot;Reverse a submitted expense.&quot;,
-  inputSchema: {
-    type: &quot;object&quot;, required: [&quot;expenseId&quot;],
-    properties: { expenseId: { type: &quot;string&quot; } },
-  },
-}</code></pre>
-<p>And the successful result says so, to both users:</p>
+<p>This is the requirement the second user creates, and most teams have not thought about it. On the web, the person who clicked the button read the button. Here they may not have: the model called <code>submit_expense</code> because the user said “yeah, file it”, and the model’s interpretation of “it” was an inference. Inferences are usually right, and usually is not a safety property.</p>
+<p>So for every tool that changes something, ship the tool that changes it back. That is not a preference. It is a design requirement created by the fact that one of your users is a probabilistic system acting on a human’s behalf. The gallery does this: <code>submit_expense</code> has a sibling called <code>void_expense</code> whose description says when to reach for it, and the successful result tells both users it exists.</p>
 <pre class="javascript"><code>app.setContext(
   &quot;Expense EXP-40122 submitted: $62.40 at Blue Bottle Coffee on 2026-08-14. &quot; +
   &quot;Reversible with void_expense.&quot;,
   { expenseId: &quot;EXP-40122&quot;, amount: 62.4, undoTool: &quot;void_expense&quot; }
 );</code></pre>
-<p>The human sees <em>Ask me to void it if that was wrong.</em> The model sees the tool name. When the user says “no, wait, that was the personal card”, the recovery is one turn and no apology.</p>
-<p>When something genuinely cannot be undone, the design changes shape. Then the confirmation is the only line of defence and it has to earn its place: name the object, state the scale, say plainly that it is permanent, and put the burden on the click rather than on a checkbox nobody reads.</p>
+<p>The human sees <em>Ask me to void it if that was wrong.</em> The model sees the tool name. When the user says “no, wait, that was the personal card”, the recovery is one turn and no apology. Where something genuinely cannot be undone the design changes shape, because then the confirmation is the only line of defence and it has to earn its place: name the object, state the scale, say plainly that it is permanent, and put the burden on the click rather than on a checkbox nobody reads.</p>
+<h2 id="latency-and-the-button-that-lies">Latency, and the button that lies</h2>
+<p>Actions in this medium are slow in a way web forms are not. A click becomes a <code>postMessage</code>, a host decision, possibly a consent prompt, a network call, and a response. Half a second is optimistic and two seconds happens, which makes the pressed state a design surface rather than a detail.</p>
+<p>Disable on press, immediately, because double submission is a real failure here and the round trip is long enough for a person to press twice. Say what is happening in the button itself, since <em>Submitting…</em> beats a spinner beside it when the user is already looking at the button. Keep the form readable while it is in flight, so do not blank the fields or overlay the card, because if it fails the user needs to see what they were submitting. And handle the consent prompt case, where the host puts a dialog in front of the user and your app finds out nothing until they answer: your pressed state might sit there for ten seconds while somebody reads a permission dialog, and it should still look sane at second nine, which rules out anything that animates impatiently.</p>
+<p>On failure, restore the state and say what happened in place. A toast that appears and leaves is worse than useless here, because the widget it was describing is still on screen looking unchanged.</p>
 <h2 id="four-failures-one-form">Four failures, one form</h2>
 <p>Everything above, applied to the same widget. These are the four things to look for in review, in the order they bite.</p>
-<p><strong>Failure one: fields the model could have filled.</strong> Chapter 4’s law. Count the fields, count the genuinely unknown values, and if those numbers differ, fix the schema rather than the layout.</p>
-<p><strong>Failure two: validation the human sees and the model does not.</strong> Inline messages, empty schema. The model then calls with values your UI would have rejected, the server throws, and the user watches the assistant fail at something they were about to do correctly.</p>
-<p><strong>Failure three: submission the model never hears about.</strong> The form posts, the widget shows a tick, and nothing is written back. Three turns later, “did that go through?” and nobody knows. One <code>setContext</code> call, at the moment of success, with the identifier in it.</p>
-<p><strong>Failure four: an action with no way back.</strong> Covered above. The question in review is not “is there a confirmation”, it is “what does the user say to undo it, and does that work”.</p>
+<p>Fields the model could have filled is the first, which is Chapter 4’s law: count the fields, count the genuinely unknown values, and if those numbers differ, fix the schema rather than the layout. Validation the human sees and the model does not is the second, where inline messages sit on top of an empty schema, so the model calls with values your UI would have rejected, the server throws, and the user watches the assistant fail at something they were about to do correctly. Submission the model never hears about is the third: the form posts, the widget shows a tick, and nothing is written back, so three turns later “did that go through?” and nobody knows, when one <code>setContext</code> call at the moment of success with the identifier in it would have closed it. And an action with no way back is the fourth, where the review question is not “is there a confirmation” but “what does the user say to undo it, and does that work”.</p>
 <p>Fix all four and the form in Figure 4-2 is what you get: four assumptions shown, one question asked, one rule stated before it is enforced, one result written back, and one sentence telling both users how to reverse it.</p>
-<h2 id="latency-and-the-button-that-lies">Latency, and the button that lies</h2>
-<p>Actions in this medium are slow in a way web forms are not. A click becomes a <code>postMessage</code>, a host decision, possibly a consent prompt, a network call, and a response. Half a second is optimistic. Two seconds happens.</p>
-<p>Which makes the pressed state a design surface rather than a detail.</p>
-<p><strong>Disable on press, immediately.</strong> Double submission is a real failure here, because the round trip is long enough for a person to press twice.</p>
-<p><strong>Say what is happening, in the button.</strong> <em>Submitting…</em> beats a spinner beside it, because the user is already looking at the button.</p>
-<p><strong>Keep the form readable while it is in flight.</strong> Do not blank the fields, do not overlay the card. If it fails, the user needs to see what they were submitting.</p>
-<p><strong>Handle the consent prompt case.</strong> The host may put a dialog in front of the user, and your app finds out nothing until they answer. Your pressed state might sit there for ten seconds while somebody reads a permission dialog. It should still look sane at second nine, which rules out anything that animates impatiently.</p>
-<p>And on failure, restore the state and say what happened in place. A toast that appears and leaves is worse than useless here, because the widget it was describing is still on screen looking unchanged.</p>
 <h2 id="what-to-remember">What to remember</h2>
-<p>Check whether a plain elicitation beats your form, and accept the answer. Write the rule once and render it three ways: schema for the model, message for the human, enforcement on the server. Make error messages instructions rather than verdicts. Confirm only when the confirmation carries information. And ship the undo, because one of your users pressed the button on an inference.</p>
+<p>Check whether a plain elicitation beats your form, and accept the answer. Write the rule once and render it three ways: schema for the model, message for the human, enforcement on the server. Make error messages instructions rather than verdicts. Confirm only when the confirmation carries information the user did not have. And ship the undo, because one of your users pressed the button on an inference.</p>
 <p>Next chapter: the part where your widget spends trust that belongs to everybody.</p>
 
 <div class="pager"><a href="ch08.html"><span class="dir">Previous</span>8. Navigation in Someone Else&#x27;s House</a><a href="ch10.html" style="text-align:right"><span class="dir">Next</span>10. Trust, Courtesy, and the Sandbox</a></div>

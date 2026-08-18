@@ -21,7 +21,7 @@ renders:
 matrix:
 	python3 tools/build_matrix.py
 
-check: lint refs apps evals
+check: lint refs apps evals density
 
 lint:
 	python3 tools/lint_prose.py
@@ -34,6 +34,9 @@ apps:
 
 evals:
 	$(NODE) gallery/evals/run.js --all
+
+density:
+	python3 tools/audit_density.py
 
 serve:
 	$(NODE) gallery/serve.js
