@@ -190,6 +190,52 @@ Running both is worth the few dollars for one reason. A description that scores
 well on one model family and badly on another is tuned rather than clear, and
 you cannot tell which you have written until you try the second one.
 
+## What two models disagreed about
+
+Then the same thirty prompts went to a different model family, through
+`gallery/evals/openai.mjs`, which converts the gallery's tools to function
+definitions and reads the tool choice out of the API response instead of asking
+the model to report it.
+
+<!-- listing: historical from `node gallery/evals/openai.mjs` -->
+```
+                 Claude Code   gpt-5-nano
+invoked            15/15         13/15
+skipped             8/9           9/9
+sibling             1/3           2/3
+```
+
+Two different shapes of wrong. The second model is more reluctant to call
+anything: it scored perfectly on the prompts that should invoke nothing, and it
+declined to call the app twice when the app was the right answer. The first is
+more willing: it never missed an invocation and it reached for a viewer when
+somebody asked for an email to be drafted, which the other model correctly
+refused.
+
+Four prompts got different verdicts, and the useful one is the prompt they
+agreed on. *Work out the real cost of each of these* reached the app on both
+models when the prose tool was the right answer. A failure that survives two
+model families is a description bug. A failure that appears on one is tuning.
+
+## The finding that could not be fixed
+
+So the description was rewritten to give the prose tool the calculation verbs.
+That took the sibling score to 3 out of 3 on both models and knocked the
+invocation score down, on both models, in the same direction. A second rewrite,
+symmetric this time, landed at 3/5 and 2/3 on one model and 2/5 and 3/3 on the
+other. Every formulation traded the same two things against each other.
+
+That is not a tuning problem, and no third rewrite was going to fix it. Those
+two tools do the same job for the same user and differ only in whether the
+answer is adjustable, which is a distinction a sentence in a description cannot
+carry reliably. The gallery ships both because Chapter 1 needs them as exhibits,
+one prose and one rendered, side by side. A real server would ship one tool, and
+Chapter 5's rule about two archetypes fighting is the same rule seen from the
+model's side.
+
+Which is a better outcome than a green suite. The eval did not tell me my
+descriptions needed another pass. It told me the tools were wrong.
+
 ## The triage
 
 In order, and resist reordering it:

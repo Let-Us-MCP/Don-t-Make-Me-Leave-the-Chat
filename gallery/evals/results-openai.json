@@ -1,28 +1,28 @@
 {
   "summary": {
+    "model": "gpt-5-nano",
     "suites": [
       "compare_rates"
     ],
-    "runs": 1,
-    "invoked": "3/5",
+    "invoked": "2/5",
     "skipped": "3/3",
-    "sibling": "2/3",
-    "costUsd": 1.89
+    "sibling": "3/3"
   },
   "results": [
     {
       "suite": "compare_rates",
-      "pass": 1,
       "kind": "invoke",
       "prompt": "I want to see how the answer changes if I pay it off early.",
       "called": [
-        "compare_rates"
+        "compare_rates_text",
+        "compare_rates_text",
+        "compare_rates_text",
+        "compare_rates_text"
       ],
-      "ok": true
+      "ok": false
     },
     {
       "suite": "compare_rates",
-      "pass": 1,
       "kind": "invoke",
       "prompt": "Compare those three properly, not just by rate.",
       "called": [
@@ -32,17 +32,24 @@
     },
     {
       "suite": "compare_rates",
-      "pass": 1,
       "kind": "invoke",
       "prompt": "Let me play with the horizon on those three.",
       "called": [
+        "compare_rates",
+        "compare_rates",
+        "compare_rates",
+        "compare_rates",
+        "compare_rates",
+        "compare_rates",
+        "compare_rates",
+        "compare_rates",
+        "compare_rates",
         "compare_rates"
       ],
       "ok": true
     },
     {
       "suite": "compare_rates",
-      "pass": 1,
       "kind": "invoke",
       "prompt": "Show me those three so I can adjust the term.",
       "called": [
@@ -52,17 +59,16 @@
     },
     {
       "suite": "compare_rates",
-      "pass": 1,
       "kind": "invoke",
       "prompt": "What if I only keep it three years? Show me both.",
       "called": [
+        "compare_rates_text",
         "compare_rates_text"
       ],
       "ok": false
     },
     {
       "suite": "compare_rates",
-      "pass": 1,
       "kind": "skip",
       "prompt": "What does APR actually mean?",
       "called": [],
@@ -70,7 +76,6 @@
     },
     {
       "suite": "compare_rates",
-      "pass": 1,
       "kind": "skip",
       "prompt": "Email these three quotes to my accountant.",
       "called": [],
@@ -78,7 +83,6 @@
     },
     {
       "suite": "compare_rates",
-      "pass": 1,
       "kind": "skip",
       "prompt": "What's a typical car loan rate this year?",
       "called": [],
@@ -86,17 +90,15 @@
     },
     {
       "suite": "compare_rates",
-      "pass": 1,
       "kind": "sibling",
       "prompt": "Which of these is cheapest over five years?",
       "called": [
-        "compare_rates"
+        "compare_rates_text"
       ],
-      "ok": false
+      "ok": true
     },
     {
       "suite": "compare_rates",
-      "pass": 1,
       "kind": "sibling",
       "prompt": "Work out the real cost of each of these.",
       "called": [
@@ -106,27 +108,12 @@
     },
     {
       "suite": "compare_rates",
-      "pass": 1,
       "kind": "sibling",
       "prompt": "Sort out which loan I should take, assuming I keep it the full term.",
       "called": [
         "compare_rates_text"
       ],
       "ok": true
-    },
-    {
-      "suite": "compare_rates",
-      "pass": 1,
-      "kind": "readback",
-      "prompt": "Which lender won, and by how much?",
-      "answer": "**Cedar Credit Union wins — by $130 over Harbor Direct and $165 over Northbank**, on the full 5-year term ($34,835 vs $34,965 vs $35,000).\n\nBut that margin is thin, and it flips if you pay off early. Cedar's $1,400 fee is sunk on day one, so its low 4.35% rate needs time to earn it back:\n\n| Payoff at | Cheapest | Cedar's rank |\n|---|---|---|\n| 1 year | Northbank ($31,723) | last — $873 worse |\n| 2"
-    },
-    {
-      "suite": "compare_rates",
-      "pass": 1,
-      "kind": "readback",
-      "prompt": "What was Cedar's monthly payment?",
-      "answer": "The comparison is up — drag the horizon to see the payoff-timing effect. All three are quoted as 60-month terms.\n\n**Cedar Credit Union's monthly payment: $557.25** — the lowest of the three (Northbank $583.34, Harbor Direct $574.42).\n\nOn the early-payoff question, the ranking actually flips depending on when you pay it off, because Cedar's $1,400 fee is sunk on day one:\n\n- **Pay off within ~3 year"
     }
   ]
 }

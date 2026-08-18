@@ -237,6 +237,13 @@ skipped   8/9     (was 7/9)
 sibling   1/3</code></pre>
 <p>Every invoke phrasing now reaches the app, including the three new ones written to describe exploring instead of asking. The historical-question over-invocation is gone. And the new sibling category, the one that asks whether a one-shot question correctly reaches the <em>prose</em> tool, scores 1 out of 3: once the model answered from context with no tool at all, which is arguably more correct than the answer the suite wanted, and once it reached for the app anyway.</p>
 <p>That last number is the honest state of this app, and it is not a triumph. It says the boundary between the two tools is still fuzzier than their descriptions claim, and that a reader copying this pattern should expect to iterate on it. <code>find_clause</code> also still renders a viewer at somebody who asked for an email to be drafted, which the description change did not fix.</p>
+<h3 id="the-same-suite-a-second-model">The same suite, a second model</h3>
+<p>The same thirty prompts then went to a different model family. The scores were different in an instructive way, and one prompt failed on both:</p>
+<p class="provenance historical">Recorded output from <code>node gallery/evals/openai.mjs</code>, from a state this repository has moved past</p><pre><code>                 Claude Code   gpt-5-nano
+invoked            15/15         13/15
+skipped             8/9           9/9
+sibling             1/3           2/3</code></pre>
+<p>A failure that survives two model families is a description bug. A failure that appears on one is tuning. Appendix C has the full comparison, and the finding it produced, which was not the finding anybody wanted.</p>
 <p>Which is what the two warnings below are about.</p>
 <h3 id="two-warnings">Two warnings</h3>
 <p>Model runs are not deterministic, so a single failure is noise; run the suite three times and look at rates, because a prompt that invokes correctly two times out of three is a description problem, not a flake. And record the prompts rather than the outputs, since outputs change with every model release while what you are testing is whether your description survives the paraphrase, which makes the prompt suite the durable artefact.</p>

@@ -25,8 +25,8 @@ export const APPS = [
     description:
       "Compare the loan offers already discussed and say which costs least over a " +
       "given number of years. Returns a written answer with no user interface. " +
-      "Use when the user asks which loan is cheapest and wants the answer " +
-      "stated: a one-shot question with no follow-up to explore.",
+      "Use when the user asks which offer is cheapest, what each one costs, or " +
+      "to work out the numbers, and a written answer finishes the question.",
     inputSchema: {
       type: "object",
       properties: {

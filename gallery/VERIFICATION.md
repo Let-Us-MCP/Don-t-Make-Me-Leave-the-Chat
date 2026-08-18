@@ -103,8 +103,25 @@ sibling   1/3
 cost     $4.14
 ```
 
-Three suites, thirty prompts, driven against Claude Code over MCP from a
-scratch directory containing nothing but an `.mcp.json`. The isolation matters:
+Then the same suite against a second model family, via
+`gallery/evals/openai.mjs`, which converts the gallery's tools to function
+definitions and reads the tool choice from the API response instead of asking
+the model to report it:
+
+```
+                 Claude Code   gpt-5-nano
+invoked            15/15         13/15
+skipped             8/9           9/9
+sibling             1/3           2/3
+```
+
+One prompt failed on both models, which made it the only description bug in the
+set; the other four disagreements were tuning. Trying to fix that one bug moved
+the invocation score down on both models for every phrasing tried, which is
+recorded in Appendix C as a design finding rather than a tuning failure.
+
+All of it ran against Claude Code over MCP from a scratch directory containing
+nothing but an `.mcp.json`. The isolation matters:
 the first version ran in the repository root, and the model read the prompt file,
 worked out it was being graded, and said so. Chapter 11 quotes the findings and
 what was changed because of them.
