@@ -235,6 +235,20 @@ with a `justification` string describing the business purpose.</code></pre>
 <p><strong>Name the object and the scale.</strong> “This item” is not a name. “4.2M rows” is a scale.</p>
 <p><strong>Say whether it is reversible, honestly.</strong> “This cannot be undone” is information. If it can be undone, say that instead and stop pretending it is dangerous, because crying wolf costs you the one time it matters.</p>
 <p><strong>Do not put a destructive action next to a frequent one.</strong> Krug’s version was about misclicks. Here it is worse: the model might call the tool directly, and proximity in your UI often becomes proximity in your naming, and confusable names are a real source of wrong tool calls.</p>
+<h3 id="the-confirmation-written-out">The confirmation, written out</h3>
+<p>Copy is design here, so here is the copy, for a confirmation that has to earn a read.</p>
+<blockquote><p><strong>Void expense EXP-40122?</strong></p>
+<p>$842.00 to United Airlines, filed 14 August, already approved by Dana Okafor. Voiding notifies Dana and removes it from the August close.</p>
+<p><code>[ Void it ]</code> <code>[ Keep it ]</code></p>
+</blockquote>
+<p>Four things it does that “Are you sure?” does not.</p>
+<p><strong>It names the object,</strong> with enough detail to recognise the wrong one. If the model picked the flight when the user meant the coffee, that is visible in the first line.</p>
+<p><strong>It states the blast radius.</strong> Somebody else finds out. Something else changes. Those are the facts that turn a reflex into a decision.</p>
+<p><strong>Its buttons say what they do.</strong> Not OK and Cancel. A user who reads only the buttons still gets it right, and a lot of users read only the buttons.</p>
+<p><strong>It does not shout.</strong> No red banner, no warning triangle. The information is the warning. Decoration on top of information reads as decoration, and people learn to skip decoration.</p>
+<p>Where does the confirmation live? Two options, and the choice matters.</p>
+<p>Inside the widget, when the widget is already on screen and the action came from a button in it. In its own render, when the action came from the conversation: the model called <code>void_expense</code>, the host is about to run it, and a card that summarises it before it happens is the whole interface.</p>
+<p>The second case is the one people forget to build, and it is the one where the model, rather than the human, chose the object.</p>
 <h2 id="undo-when-the-model-pressed-the-button">Undo, when the model pressed the button</h2>
 <p>This is the requirement the second user creates, and it is the one most teams have not thought about.</p>
 <p>On the web, the person who clicked the button read the button. Here they may not have. The model called <code>submit_expense</code> because the user said “yeah, file it”, and the model’s interpretation of “it” was an inference.</p>
@@ -264,6 +278,14 @@ with a `justification` string describing the business purpose.</code></pre>
 <p><strong>Failure three: submission the model never hears about.</strong> The form posts, the widget shows a tick, and nothing is written back. Three turns later, “did that go through?” and nobody knows. One <code>setContext</code> call, at the moment of success, with the identifier in it.</p>
 <p><strong>Failure four: an action with no way back.</strong> Covered above. The question in review is not “is there a confirmation”, it is “what does the user say to undo it, and does that work”.</p>
 <p>Fix all four and the form in Figure 4-2 is what you get: four assumptions shown, one question asked, one rule stated before it is enforced, one result written back, and one sentence telling both users how to reverse it.</p>
+<h2 id="latency-and-the-button-that-lies">Latency, and the button that lies</h2>
+<p>Actions in this medium are slow in a way web forms are not. A click becomes a <code>postMessage</code>, a host decision, possibly a consent prompt, a network call, and a response. Half a second is optimistic. Two seconds happens.</p>
+<p>Which makes the pressed state a design surface rather than a detail.</p>
+<p><strong>Disable on press, immediately.</strong> Double submission is a real failure here, because the round trip is long enough for a person to press twice.</p>
+<p><strong>Say what is happening, in the button.</strong> <em>Submitting…</em> beats a spinner beside it, because the user is already looking at the button.</p>
+<p><strong>Keep the form readable while it is in flight.</strong> Do not blank the fields, do not overlay the card. If it fails, the user needs to see what they were submitting.</p>
+<p><strong>Handle the consent prompt case.</strong> The host may put a dialog in front of the user, and your app finds out nothing until they answer. Your pressed state might sit there for ten seconds while somebody reads a permission dialog. It should still look sane at second nine, which rules out anything that animates impatiently.</p>
+<p>And on failure, restore the state and say what happened in place. A toast that appears and leaves is worse than useless here, because the widget it was describing is still on screen looking unchanged.</p>
 <h2 id="what-to-remember">What to remember</h2>
 <p>Check whether a plain elicitation beats your form, and accept the answer. Write the rule once and render it three ways: schema for the model, message for the human, enforcement on the server. Make error messages instructions rather than verdicts. Confirm only when the confirmation carries information. And ship the undo, because one of your users pressed the button on an inference.</p>
 <p>Next chapter: the part where your widget spends trust that belongs to everybody.</p>

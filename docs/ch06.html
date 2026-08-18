@@ -172,6 +172,27 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>A tool result carries <code>content</code> (for the model) and <code>structuredContent</code> (for your app). Chapter 2 is about the consequences of that.</p>
 <p><strong>6. It is an extension, and it negotiates.</strong></p>
 <p>MCP Apps is <code>io.modelcontextprotocol/ui</code>, an optional extension. Client and server both declare it, and if either side does not, you get core behaviour: the tool runs and the text comes back. Which means your <code>content</code> string is not a nicety. In several hosts it is the whole product.</p>
+<h3 id="registering-both-halves">Registering both halves</h3>
+<p>Two registrations, and they are the entire server-side surface of the extension.</p>
+<pre class="javascript"><code>// The tool. `_meta.ui.resourceUri` is what makes it an app.
+registerAppTool(server, &quot;compare_rates&quot;, {
+  title: &quot;Compare loan rates&quot;,
+  description: &quot;Show a comparison of the loan offers under discussion, ...&quot;,
+  inputSchema: { type: &quot;object&quot;, properties: { horizonYears: { ... } } },
+  _meta: { ui: { resourceUri: &quot;ui://rate-compare/after&quot; } },
+}, handler);
+
+// The resource. One self-contained HTML document.
+registerAppResource(server, &quot;ui://rate-compare/after&quot;, &quot;ui://rate-compare/after&quot;,
+  { mimeType: &quot;text/html;profile=mcp-app&quot; },
+  async () =&gt; ({ contents: [{
+    uri: &quot;ui://rate-compare/after&quot;,
+    mimeType: &quot;text/html;profile=mcp-app&quot;,
+    text: await readFile(&quot;dist/rate-compare.html&quot;, &quot;utf8&quot;),
+  }] }));</code></pre>
+<p>Two things about that HTML are worth stating because they trip people.</p>
+<p><strong>It is one document.</strong> Styles inline, scripts inline, images as data URIs. Not because bundling is fashionable, but because the CSP the host builds from your declaration is deny by default, and an external stylesheet is an external request. The gallery resolves shared partials at serve time; a real project usually reaches for a single-file bundler.</p>
+<p><strong>It has no server of its own.</strong> There is no origin to fetch from, no cookies to send, no session. Everything it knows arrives over <code>postMessage</code>. If your mental model of the app still has an API call in it, that call is a <code>tools/call</code> through the host now.</p>
 <h2 id="the-lifecycle-in-one-page">The lifecycle in one page</h2>
 <figure>
 <img src="figures/diag-lifecycle.png" alt="One render, from predeclaration to teardown." />
@@ -184,6 +205,57 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p><strong>Interact.</strong> The human does something. Your app calls <code>tools/call</code> for actions and <code>ui/set-context</code> for state the model should know about. The host mediates both, applies consent policy, and logs everything.</p>
 <p><strong>Teardown.</strong> The conversation moves on. The frame goes away. Anything you did not write back is gone.</p>
 <p>That last sentence is the one to remember. The frame is transient. The transcript is durable. Chapter 7 is entirely about the consequences.</p>
+<h2 id="the-four-messages-you-will-actually-write">The four messages you will actually write</h2>
+<p>Six facts is enough to reason with. Four messages is enough to build with. Here they are, in the shapes the gallery’s bridge uses. The ext-apps specification is normative and has more of them; these are the ones that carry the arguments in this book.</p>
+<p><strong>Handshake.</strong> Your app announces itself and finds out where it landed.</p>
+<pre class="javascript"><code>// app -&gt; host
+{ &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 1, &quot;method&quot;: &quot;ui/initialize&quot;,
+  &quot;params&quot;: { &quot;appInfo&quot;: { &quot;name&quot;: &quot;Rate comparison&quot;, &quot;version&quot;: &quot;1.0.0&quot; },
+              &quot;capabilities&quot;: { &quot;toolCalls&quot;: {}, &quot;context&quot;: {} } } }
+
+// host -&gt; app
+{ &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 1,
+  &quot;result&quot;: { &quot;hostInfo&quot;: { &quot;name&quot;: &quot;claude&quot;, &quot;version&quot;: &quot;...&quot; },
+              &quot;capabilities&quot;: { &quot;toolCalls&quot;: {}, &quot;context&quot;: {}, &quot;openLink&quot;: {} },
+              &quot;theme&quot;: { &quot;mode&quot;: &quot;dark&quot;, &quot;cssVariables&quot;: { &quot;--ink&quot;: &quot;#E7EAEE&quot; } } } }</code></pre>
+<p>Read the <code>capabilities</code> that come back. They are not decoration. A host that omits <code>toolCalls</code> will refuse every action your buttons trigger, and finding that out at click time means the user found out first. Chapter 12 is about designing for the answer.</p>
+<p><strong>Data in.</strong> The host pushes twice, and the gap between them is real.</p>
+<pre class="javascript"><code>// host -&gt; app, as soon as the model has decided
+{ &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;ui/tool-input&quot;,
+  &quot;params&quot;: { &quot;arguments&quot;: { &quot;horizonYears&quot;: 5 } } }
+
+// host -&gt; app, when the server answers
+{ &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;ui/tool-result&quot;,
+  &quot;params&quot;: { &quot;content&quot;: [ { &quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;...&quot; } ],
+              &quot;structuredContent&quot;: { &quot;horizonYears&quot;: 5, &quot;offers&quot;: [ ... ] } } }</code></pre>
+<p>Two callbacks, two states, both of them screens somebody sees.</p>
+<p><strong>Action out.</strong> Your button becomes a tool call, and it goes through the host.</p>
+<pre class="javascript"><code>// app -&gt; host, forwarded to the server if policy allows
+{ &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 2, &quot;method&quot;: &quot;tools/call&quot;,
+  &quot;params&quot;: { &quot;name&quot;: &quot;hold_flight&quot;, &quot;arguments&quot;: { &quot;number&quot;: &quot;UA 512&quot; } } }</code></pre>
+<p>Note whose name is on that message. The host is the one that calls the server. Your app asked. That indirection is where consent, logging, and refusal live, and it is the reason Chapter 4 treats every control as a tax.</p>
+<p><strong>State back.</strong> The one most apps forget.</p>
+<pre class="javascript"><code>// app -&gt; host, written into the conversation
+{ &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 3, &quot;method&quot;: &quot;ui/set-context&quot;,
+  &quot;params&quot;: { &quot;content&quot;: [ { &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Comparing over 4 years: Northbank is cheapest at $34,769.&quot; } ],
+              &quot;structuredContent&quot;: { &quot;horizonYears&quot;: 4, &quot;cheapest&quot;: &quot;Northbank&quot; } } }</code></pre>
+<p>Two fields again, for the same two users, for the same reason.</p>
+<p>There is a fifth you should send and will not think about: <code>ui/size-changed</code>, which tells the host how tall you are. Send it after every render and after every disclosure toggle. A widget that reports its height once and then grows is the thing Chapter 10 calls out as the most annoying move available to an interface.</p>
+<h2 id="negotiation-in-two-lines">Negotiation, in two lines</h2>
+<p>The extension is opt-in on both sides. The client declares what it can render:</p>
+<pre class="json"><code>&quot;_meta&quot;: {
+  &quot;io.modelcontextprotocol/clientCapabilities&quot;: {
+    &quot;extensions&quot;: { &quot;io.modelcontextprotocol/ui&quot;: {
+      &quot;mimeTypes&quot;: [&quot;text/html;profile=mcp-app&quot;] } }
+  }
+}</code></pre>
+<p>And the server declares that it has apps to offer:</p>
+<pre class="json"><code>&quot;capabilities&quot;: {
+  &quot;tools&quot;: {},
+  &quot;extensions&quot;: { &quot;io.modelcontextprotocol/ui&quot;: {} }
+}</code></pre>
+<p>If either side is silent, the tools still work. The model calls them, the server answers, the text comes back, and nothing renders. That is the design of the extensions framework rather than a degradation of it, and it is why the specification tells servers to return meaningful text for clients that do not support the UI.</p>
 <h2 id="what-the-sandbox-promises-the-user">What the sandbox promises the user</h2>
 <p>The sandbox is not a limitation imposed on you. It is a promise made to the user on your behalf, and it is the reason a stranger’s HTML is allowed to render inside a conversation that also contains their tax return.</p>
 <p>Specifically, it promises:</p>
@@ -220,6 +292,10 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <li><strong>Write <code>content</code> for a reader, not a log.</strong> “Loan analytics suite opened.” is a log line. It tells the model nothing it can use.</li>
 <li><strong>Put in <code>structuredContent</code> what the app needs, plus what the model will be asked about.</strong> Figure 5-2 drops seven columns from the pixels and keeps them in the data, so “which one is the widebody” is answerable in text.</li>
 </ul>
+<h2 id="three-things-that-surprise-people">Three things that surprise people</h2>
+<p><strong>The template is cached and the data is not.</strong> That split is the point of predeclaration. Your HTML is fetched once and reused across renders; your data arrives fresh each time. Which means anything you bake into the HTML is effectively permanent for the session, and anything that changes belongs in <code>structuredContent</code>. A widget that hard-codes today’s date into its markup will be wrong tomorrow and nobody will know why.</p>
+<p><strong>Your app can be rendered more than once in one conversation.</strong> Two calls, two frames, both alive, both on screen, both holding their own state. They do not know about each other. If that matters for your archetype, the transcript is the coordination mechanism: write state back, and let the model reconcile.</p>
+<p><strong>The height is a request.</strong> You send <code>ui/size-changed</code>; the host decides. It may grant it, cap it, or ignore it. Design so that a smaller allocation degrades to scrolling inside your own container rather than to clipped content, and never position anything important below a fold you do not control.</p>
 <h2 id="what-is-deliberately-not-here">What is deliberately not here</h2>
 <p>To keep the promise made at the top of this chapter, here is what this book will not explain, and where it lives.</p>
 <ul>
@@ -230,6 +306,13 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <li><strong>The exact field names in <code>_meta.ui</code>.</strong> The ext-apps specification, which is the normative document and which moves faster than any book.</li>
 </ul>
 <p>What this book does own is the question of whether to render at all, and what to put in the render. Everything from here on is that.</p>
+<h2 id="reading-the-specification-after-this">Reading the specification after this</h2>
+<p>At some point you will need the normative document, and it helps to know what you are looking for.</p>
+<p>Go to it for <strong>field names and their exact shapes</strong>, especially under <code>_meta.ui</code>: the CSP declaration, the permissions list, size hints, and whatever has been added since. Books are the wrong medium for that and this one does not try.</p>
+<p>Go to it for <strong>the full method list</strong>. This chapter covered four messages. There are more, and some of them matter for archetypes this book treats lightly.</p>
+<p>Go to it for <strong>the security model in full</strong>. The threat model behind the sandbox is written down, and Chapter 10 argues from it rather than restating it.</p>
+<p>Do not go to it for <strong>whether to render</strong>. The specification is deliberately silent on judgment, which is the entire reason this book exists.</p>
+<p>One practical note on reading it: the extension moves faster than the core protocol, by design, since extensions evolve independently. Pin your reading to a dated revision the way this book does, and re-check the fields when you upgrade.</p>
 <h2 id="what-to-remember">What to remember</h2>
 <p>UI is a predeclared <code>ui://</code> resource, attached to a tool by <code>_meta.ui.resourceUri</code>, rendered in a sandboxed iframe, spoken to over <code>postMessage</code> in JSON-RPC. The template renders before the data arrives. The frame is transient and the transcript is durable. The result carries text for the model and data for the app, and they should come from one computation. And the whole thing is an optional extension, so the text path is not a fallback you tolerate. It is a product you ship.</p>
 <p>Next chapter: what happens to your widget’s idea of the world while nobody is looking at it.</p>

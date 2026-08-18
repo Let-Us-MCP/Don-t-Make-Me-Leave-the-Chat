@@ -186,6 +186,66 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p><strong>3. Does the conversation already contain the answer?</strong></p>
 <p>The cruellest failure in this medium is a widget that renders four input fields when the user already said, in words, in this very conversation, what goes in three of them. If the conversation contains it, your app should arrive already knowing it. This one is important enough that it gets its own law in Chapter 4.</p>
 <p>Score zero out of three and the right widget count is zero. Write the sentence. Score one, think hard, and consider whether the one you scored is really worth a render. Two or three, render, and make it count.</p>
+<h3 id="the-questions-applied">The questions, applied</h3>
+<p>The three questions look soft until you run them on things you have actually seen. Here they are against six tools that exist in some form on every MCP server being built right now.</p>
+<table style="width:100%;">
+<thead>
+<tr>
+<th>The tool</th>
+<th style="text-align: center;">Seen?</th>
+<th style="text-align: center;">Act?</th>
+<th style="text-align: center;">New?</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“What is our error rate right now”</td>
+<td style="text-align: center;">no</td>
+<td style="text-align: center;">no</td>
+<td style="text-align: center;">yes</td>
+<td>A sentence. Ship no widget.</td>
+</tr>
+<tr>
+<td>“Show me the last 30 days of signups”</td>
+<td style="text-align: center;"><strong>yes</strong></td>
+<td style="text-align: center;">no</td>
+<td style="text-align: center;">yes</td>
+<td>A chart, and nothing else on the card.</td>
+</tr>
+<tr>
+<td>“Which of these three candidates should I schedule”</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;"><strong>yes</strong></td>
+<td style="text-align: center;">partly</td>
+<td>A picker. This is the sweet spot.</td>
+</tr>
+<tr>
+<td>“File this receipt”</td>
+<td style="text-align: center;">no</td>
+<td style="text-align: center;"><strong>yes</strong></td>
+<td style="text-align: center;">no</td>
+<td>One confirmation, everything prefilled.</td>
+</tr>
+<tr>
+<td>“What does the contract say about X”</td>
+<td style="text-align: center;">partly</td>
+<td style="text-align: center;">no</td>
+<td style="text-align: center;">yes</td>
+<td>Quoted text beats a viewer.</td>
+</tr>
+<tr>
+<td>“Rebalance this budget”</td>
+<td style="text-align: center;"><strong>yes</strong></td>
+<td style="text-align: center;"><strong>yes</strong></td>
+<td style="text-align: center;">no</td>
+<td>A canvas. Direct manipulation earns it.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Two things fall out of that table.</p>
+<p>The middle column is the one that decides most cases. If the user is going to act, some interface usually beats some prose, even when the data is unremarkable. If they are only going to look, the bar is much higher and most widgets do not clear it.</p>
+<p>And row four is the one people get wrong most often, because “file this receipt” <em>feels</em> like a form. It is not. It is a confirmation with four facts attached, and Chapter 4 is about the difference.</p>
 <h2 id="teardown-the-same-task-three-ways">Teardown: the same task, three ways</h2>
 <p>The task: somebody comparing three loan quotes asks, “which of these is actually cheapest over five years?”</p>
 <p>The gallery builds this three ways. Run them yourself with <code>npm run gallery</code> and click through the Chapter 1 scenes; the argument survives on paper, but it lands in the renderer.</p>
@@ -229,6 +289,14 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>This book is not anti-app. It is anti <em>needless</em> app, and the difference between those two positions is a test rather than a vibe. Chapter 11 shows you how to run the test for the price of one afternoon.</p>
 <p><strong>“Our users like it.”</strong></p>
 <p>Maybe. Five of them, watched for an hour, will tell you whether that is true, and the answer will not be ambiguous. It never is. Again: Chapter 11.</p>
+<h2 id="what-a-good-render-costs-honestly">What a good render costs, honestly</h2>
+<p>The three questions are a filter, and filters are only worth using if the thing being filtered has a cost. Here is the cost, so the filter has teeth.</p>
+<p><strong>A render is a fetch.</strong> The host has to have your template, and if it did not prefetch it, the user waits for it.</p>
+<p><strong>A render is a decision.</strong> The user has to decide whether to engage. That decision is cheap individually and expensive in aggregate, and it happens every time.</p>
+<p><strong>A render is a surface.</strong> It occupies the column. Everything above it moves up and out of view. On a phone, one card can be the whole screen, which means the conversation you were having is now off it.</p>
+<p><strong>A render is a consent boundary.</strong> The moment it has a button, the user is in a policy conversation with their host about what your server may do.</p>
+<p><strong>A render is a thing that can be stale.</strong> Text is a record of a moment and reads like one. A live-looking card reads like the present tense. Chapter 7.</p>
+<p>None of those is a reason to never render. All of them are reasons the answer has to be worth it, and together they explain why the incumbent is stronger here than it ever was on the web. On the web, the alternative to your interface was somebody else’s interface. Here, the alternative is a sentence that arrives instantly and never goes stale.</p>
 <h2 id="the-one-thing">The one thing</h2>
 <p>A good MCP App is the guest who shows up with exactly the tool the moment needs, uses it, hands the result back into the conversation, and lets the flow continue as though they had always been part of it.</p>
 <p>Don’t make me leave the chat. Not for a tab, not for a login, not for a tour of your tabs and settings. The conversation was the point. You were invited to help with it.</p>

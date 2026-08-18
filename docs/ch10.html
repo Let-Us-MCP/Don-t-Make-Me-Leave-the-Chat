@@ -206,6 +206,18 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>Which means the work you did for Law 2 was accessibility work. Every time you wrote a <code>content</code> string that says what happened rather than “dashboard opened”, you served all three. Every <code>setContext</code> call after a state change updated the description for all three.</p>
 <p>This is worth saying out loud in your team, because accessibility usually competes for time and this version does not. The text channel is not an alternative rendering to be maintained separately. It is the same channel your second user reads, so it is exercised on every request, and it rots slower than any alt-text regime ever has.</p>
 <p>The ordinary accessibility work still applies inside the frame, and it is the familiar list, made shorter by the fact that your app is one card: real buttons rather than divs, labels tied to inputs, visible focus, contrast that survives the host’s dark theme, and hit targets a thumb can find. The gallery’s picker uses <code>tabindex</code> and handles Enter and Space because a picker you cannot operate from the keyboard is a picker half your users cannot operate.</p>
+<h3 id="the-inside-the-frame-checklist">The inside-the-frame checklist</h3>
+<p>The text channel covers the linear description. The frame still has to be operable, and in a card this small the list is short enough to finish.</p>
+<ul>
+<li><strong>Real elements.</strong> <code>&lt;button&gt;</code> for things that do something, <code>&lt;a&gt;</code> for things that go somewhere, <code>&lt;input&gt;</code> with a real <code>&lt;label&gt;</code>. A <code>div</code> with a click handler is invisible to a keyboard and a screen reader both.</li>
+<li><strong>Keyboard, in order.</strong> Tab reaches everything actionable, in the order it appears. Enter and Space activate. The gallery’s picker binds both, because a card that only responds to a mouse is a card half the audience cannot use.</li>
+<li><strong>Visible focus.</strong> Do not remove the outline. Restyle it if you must.</li>
+<li><strong>Contrast in both themes.</strong> Check the dark one, because that is the one the host token swap is most likely to break.</li>
+<li><strong>Hit targets a thumb can find.</strong> Forty-four pixels, and the whole card is a target where the card is the choice.</li>
+<li><strong>Announce the change.</strong> When the content updates after a tool call, the update needs to reach assistive technology, not just the pixels. An <code>aria-live="polite"</code> region around the part that changes is usually the whole fix.</li>
+<li><strong>Respect reduced motion.</strong> The gallery’s tracker pulses a dot. Under <code>prefers-reduced-motion</code> it should not.</li>
+</ul>
+<p>None of that is new to anybody who has built a web form. What is new is the first item on the previous list: you already wrote the linear description, because your second user needed one.</p>
 <h2 id="courtesy-in-somebody-elses-house">Courtesy, in somebody else’s house</h2>
 <p>The small things, which are small individually and enormous in aggregate.</p>
 <p><strong>Do not autoplay anything.</strong> Not sound, not video, not animation that moves for longer than a transition.</p>
@@ -214,6 +226,12 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p><strong>Do not ask twice.</strong> If the user dismissed it, it is dismissed.</p>
 <p><strong>Do not keep working when nobody is watching.</strong> Timers, polls, and animations after the conversation moved on are somebody else’s battery.</p>
 <p>Each of these is a version of the same rule from Chapter 1. You are in somebody else’s house, and the fact that they cannot see the mess you are making is not permission to make it.</p>
+<h2 id="three-things-that-quietly-spend-trust">Three things that quietly spend trust</h2>
+<p>Not attacks. Ordinary decisions that cost more than they look like they cost.</p>
+<p><strong>Asking for more than you need, once.</strong> A single permission request the user did not expect changes how they read every subsequent render from anybody. The CSP argument above is the positive version of this: what you decline to ask for is visible.</p>
+<p><strong>Being vague about what an action does.</strong> <em>Continue</em>, <em>Submit</em>, <em>Confirm</em> on a button that moves money. The user finds out afterwards, and afterwards is where trust is spent rather than built. Name the consequence in the button.</p>
+<p><strong>Rendering when nothing was asked for.</strong> A widget that appears because your server thought the user might like a dashboard is an interruption with your name on it. In a medium where the model chose you, an unwanted render reads as the assistant misbehaving, which means you spent somebody else’s credibility rather than your own.</p>
+<p>The through line: the user cannot inspect your frame, cannot see your code, and did not choose you. Every signal they have about whether you are trustworthy is a signal you chose to send. Send fewer, and make them true.</p>
 <h2 id="what-to-remember">What to remember</h2>
 <p>The trust in this medium is shared, and you are spending everybody’s. Never look like the host: draw a boundary, name yourself, and leave system language alone. A credential request the user did not initiate is the shape of the attack, so make yours never look like one. Declare the smallest CSP you can and then say so in the interface, because it is a promise the platform actually keeps. And your <code>content</code> text is your accessible rendering, which means Law 2 already bought you most of the work.</p>
 <p>That is Part 2. Next: how you find out whether any of this worked.</p>

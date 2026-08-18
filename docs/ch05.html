@@ -157,6 +157,13 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <img src="figures/xkcd-omit.png" alt="The curve turns over sooner than the roadmap assumes." />
 <figcaption aria-hidden="true">The curve turns over sooner than the roadmap assumes.</figcaption>
 </figure>
+<h3 id="what-needless-means-here">What “needless” means here</h3>
+<p>Krug’s version of this law was about words on a page, and the exchange rate is worth stating because it changes what you cut.</p>
+<p>A needless word costs a reader about a fifth of a second. A needless <em>widget</em> costs a load, a viewport, a consent surface, a decision about whether to engage, and the space where the answer would have been. Everything is more expensive here, so the threshold moves.</p>
+<p>But needless does not mean absent. Three distinctions that keep this law from turning into minimalism theatre:</p>
+<p><strong>Needless widget, not needless information.</strong> Figure 5-2 drops seven columns from the pixels and keeps every one in <code>structuredContent</code>. The user sees less. The system knows the same.</p>
+<p><strong>Needless control, not needless capability.</strong> The horizon slider in Chapter 1 survived because the user acts on it. The export button did not, and exporting is still possible: the user asks, and the model calls a tool.</p>
+<p><strong>Needless chrome, not needless identity.</strong> Chapter 10 requires you to say who you are. That is one line, and it is load-bearing. A logo, a nav bar, and a notification bell are not that line.</p>
 <h2 id="the-porting-instinct">The porting instinct</h2>
 <p>The most common way to get this wrong is not to over-design. It is to port.</p>
 <p>Somebody has a product. The product has a dashboard. MCP Apps arrive, the dashboard is already built, and putting it in an iframe takes an afternoon. Ship it.</p>
@@ -190,6 +197,57 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>The human is manipulating something directly, because describing it in words would be slower.</p>
 <p>Owes the human: direct manipulation that feels immediate. Owes the model: the result of the manipulation, in structured form, at every resting point.</p>
 <p>Fails when: it is opaque. Figure 2-1 is a canvas that fails this way.</p>
+<h3 id="the-archetype-card">The archetype card</h3>
+<p>One table, for taping next to the laws.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Archetype</th>
+<th>The human’s job</th>
+<th>The one thing to get right</th>
+<th>Owes the model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Picker</td>
+<td>Choose one of a few</td>
+<td>Differentiated at a glance, one tap</td>
+<td>The choice, and enough about it to act</td>
+</tr>
+<tr>
+<td>Form</td>
+<td>Supply what is missing</td>
+<td>Only the genuinely unknown fields</td>
+<td>Same constraints in the schema</td>
+</tr>
+<tr>
+<td>Dashboard</td>
+<td>Check on something</td>
+<td>A verdict, not a pile of numbers</td>
+<td>The verdict as a sentence</td>
+</tr>
+<tr>
+<td>Viewer</td>
+<td>See a specific thing</td>
+<td>The relevant part, marked</td>
+<td>A text rendering of what is shown</td>
+</tr>
+<tr>
+<td>Tracker</td>
+<td>Watch something change</td>
+<td>The time it was read</td>
+<td>State plus timestamp</td>
+</tr>
+<tr>
+<td>Canvas</td>
+<td>Manipulate directly</td>
+<td>Immediacy</td>
+<td>The result at every resting point</td>
+</tr>
+</tbody>
+</table></div>
+<p>The rightmost column is the one people discover late. Every archetype owes the model something different, and in every case it is the thing the pixels are carrying that the API is not.</p>
 <h2 id="knowing-which-one-you-are">Knowing which one you are</h2>
 <p>Most confused widgets are two archetypes fighting.</p>
 <p>A dashboard with a form in it: the user came to check on something and got asked a question. A viewer with a picker in it: the user came to read one clause and got a table of contents. A canvas with a dashboard around it: the user came to move things and got metrics about the things.</p>
@@ -220,6 +278,11 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>Three cards. Departure and arrival as the headline, because that is how people choose flights. Fare as the second thing. Duration and flight number underneath. Two tags, <code>cheapest</code> and <code>fastest</code>, because those are the two comparisons that drive most decisions and computing them is free.</p>
 <p>The six filters became one line of grey text: <em>SFO to JFK, one passenger, economy.</em> Everything the filters would have set is stated, so the user can see that the assumptions are right, and nothing is being asked.</p>
 <p>The other seven columns are gone from the render. They are not gone from the system: they are in <code>structuredContent</code>, so the model has them, and if the user asks “which one is the widebody” the answer comes back in text without another render. That is the decomposition this chapter is about. One widget became a smaller widget plus a sentence, and the information that left the pixels went somewhere it can still be used.</p>
+<h2 id="composing-archetypes-across-renders">Composing archetypes across renders</h2>
+<p>Splitting does not mean shipping less. It means shipping the parts in sequence, which the transcript is unusually good at holding.</p>
+<p>A travel booking is a picker, then a form, then a tracker. Built as one widget it is a wizard with three internal states, a back button you had to write, and a model that sees one tool call. Built as three renders it is three tools, three descriptions, three schemas, and a conversation that reads like what happened.</p>
+<p>The second version has a property the first does not: <strong>the user can leave in the middle and come back by asking.</strong> “Actually, go back to the flights” works, because the picker is a tool with arguments rather than a state inside a widget nobody can address.</p>
+<p>The cost is real. Three renders is three consent moments and more scrolling, so do not decompose a single decision into three cards for the sake of purity. Decompose when the steps are separately meaningful, and keep them together when they are not. Chapter 8 has the full decision.</p>
 <h2 id="the-decomposition-test">The decomposition test</h2>
 <p>When a widget feels overloaded, run this in order:</p>
 <ol type="1">
@@ -229,6 +292,12 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <li><strong>What remains, and does it still beat prose?</strong> Chapter 1’s three questions, applied to the residue.</li>
 </ol>
 <p>Step four is the one people skip, and it is the one that occasionally tells you to delete the widget. That is a good outcome. It is cheaper to learn it now than after the launch.</p>
+<h2 id="the-archetype-nobody-admits-to">The archetype nobody admits to</h2>
+<p>There is a seventh thing people build, and it is not on the list because it is not an archetype. It is a habit.</p>
+<p><strong>The launcher.</strong> A widget whose job is to be a menu of your other widgets. Four buttons: Reports, Settings, History, Help. It exists because somebody could not decide which of the six archetypes the task needed, so they shipped a hallway.</p>
+<p>Launchers fail hard here, for a reason specific to the medium. The model already is the launcher. It has your tool list, it has descriptions, and it routes based on what the user said, which is a better routing signal than four buttons. A launcher widget is a worse version of the thing the host already does, occupying the space where the answer would have been.</p>
+<p>The tell that you are building one: the render answers no question. It offers. If a user could look at it and say “and?”, it is a hallway.</p>
+<p>The fix is the same as everywhere else in this chapter. Work out which single question this call answers, build that, and let the model handle the routing to the other five things you were going to put on the menu.</p>
 <h2 id="what-to-remember">What to remember</h2>
 <p>Six archetypes cover nearly everything: picker, form, dashboard, viewer, tracker, canvas. Each owes the human one thing and the model another. Confusion about which one you are building shows up as an overloaded widget, and the fix is to split rather than to compress. And the right widget count is sometimes zero, which is a decision you are allowed to make on purpose.</p>
 <p>That is Part 1. Four laws, and everything after this is what it takes to honour them.</p>

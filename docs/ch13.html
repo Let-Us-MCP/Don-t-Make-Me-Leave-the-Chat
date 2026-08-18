@@ -205,6 +205,20 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 </tbody>
 </table></div>
 <p>Notice the bottom two rows. Half your storefront is invisible to human shoppers and decisive for the other user, and it is the half nobody reviews before launch.</p>
+<h2 id="the-first-thirty-seconds-after-an-install">The first thirty seconds after an install</h2>
+<p>Somebody just connected your server. What happens next decides whether they still have it connected next week.</p>
+<p><strong>Your tool list is read immediately, by the model, in full.</strong> Every tool you expose is now competing for attention in a list that also contains ten other servers. A server with forty tools has not given the user forty capabilities. It has made every selection harder, including selections that have nothing to do with you.</p>
+<p>Expose the tools somebody would ask for. Keep the internal ones internal. If a tool exists only to be called by your own app, it does not need to be in the list at all in most designs, and where it does, the description should say so.</p>
+<p><strong>The first render sets the expectation for the rest.</strong> If it is a dashboard nobody asked for, the user has learned that your server produces dashboards nobody asked for, and the second render starts from behind.</p>
+<p><strong>The first refusal sets the trust.</strong> If your server’s first act is a consent prompt for something the user did not initiate, you have spent the goodwill in Chapter 10 before earning any.</p>
+<p>The practical version: pick the one thing your server does that is most likely to be the first thing somebody wants, and make that path perfect. Everything else can be good.</p>
+<h2 id="registries-and-what-they-can-actually-see">Registries, and what they can actually see</h2>
+<p>A registry entry has less to work with than you think. It has your name, your description, your tool list, and whatever metadata the registry chose to collect. It does not have your renders, because nobody has called anything yet.</p>
+<p>Which means the discoverability signals available to you are, in order of weight:</p>
+<p><strong>Your tool names and descriptions.</strong> Searchable, quotable, and the thing a model reads when deciding among installed servers. This is the same text doing its third job.</p>
+<p><strong>Your server’s own description.</strong> One paragraph. Written for the human who is deciding whether to connect you to their conversations, which is a trust decision more than a feature decision.</p>
+<p><strong>Your declared permissions and CSP.</strong> A server whose apps declare no network access is making a claim a registry can display and a user can weigh. Chapter 10 argued this is a design decision. Here it becomes a listing feature.</p>
+<p><strong>Everything else.</strong> Screenshots, icons, categories. Nice, and not decisive.</p>
 <h2 id="naming-briefly">Naming, briefly</h2>
 <p>Tool names do more work per character than anything else in your server, and the rules are short.</p>
 <p><strong>Verb plus object.</strong> <code>compare_rates</code>, <code>find_clause</code>, <code>submit_expense</code>. What it does, to what.</p>
@@ -220,6 +234,16 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p><strong>Retention lives in the model’s memory, not in a bookmark.</strong> People return by asking again, which means your tool names and descriptions are your homepage, your SEO, and your brand recall, all at once.</p>
 <p><strong>Trust is your whole moat.</strong> With no website behind you, the only signals a user has are your listing, your declared permissions, and how your renders behave. Chapter 10 stops being a chapter about courtesy and becomes a chapter about business.</p>
 <p>What does not change is every law in Part 1. An app-first product that ships a dashboard nobody asked for fails in exactly the same way, and faster, because it has nothing else to fall back on.</p>
+<h2 id="what-you-cannot-measure-and-what-you-can">What you cannot measure, and what you can</h2>
+<p>Distribution comes with a temptation: to instrument everything, because everything is now instrumentable.</p>
+<p>Some of it you genuinely cannot see. What the user did inside your sandboxed frame is invisible to the host and to you, by design, unless you wrote it back. Which means the instinct to add analytics to a widget runs directly into the sandbox, and it should. An app that phones home about interaction detail is an app that cannot make the promise in Chapter 10, and that promise is worth more than the funnel.</p>
+<p>What you can see, without spending any trust:</p>
+<p><strong>Invocation rate.</strong> How often is your tool chosen, and for which phrasings. Server-side, no client instrumentation, and it is the number that matters most.</p>
+<p><strong>Re-invocation.</strong> Does the same conversation come back to you? Does the same user, tomorrow? This is the honest version of engagement, and it goes up when your app finishes fast.</p>
+<p><strong>Argument completeness.</strong> What fraction of calls arrive with the optional fields filled? A low number means the model is not confident about your schema, and that is a description problem you can fix.</p>
+<p><strong>Error and retry rates.</strong> Which failures does the model recover from, and which end the conversation? Chapter 9’s argument about error messages, measured.</p>
+<p><strong>Follow-through.</strong> For an app with an action, how often does the action happen after the render? A picker that renders a hundred times and holds four flights is telling you something.</p>
+<p>All five come from the server. None of them requires watching the user. That is a happy accident of the architecture, and it is worth defending when somebody asks for a heatmap.</p>
 <h2 id="the-laws-on-one-page">The laws, on one page</h2>
 <p>Here they are, in the order you should apply them.</p>
 <aside class="law"><span class="lawnum">Law 1</span><p>Don’t make me leave the chat.</p></aside>
@@ -231,6 +255,14 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <aside class="law"><span class="lawnum">Law 4</span><p>Omit needless widgets.</p></aside>
 <p>Six archetypes cover nearly everything. Know which one you are building. When two are fighting, split rather than compress. And the right widget count is sometimes zero.</p>
 <p>Print it. Tape it to the monitor. Appendix A is the same page, formatted for exactly that.</p>
+<h2 id="versioning-without-breaking-the-address-space">Versioning, without breaking the address space</h2>
+<p>One operational note that belongs here rather than in Chapter 6, because it is a distribution problem wearing an engineering hat.</p>
+<p>Your tool names and descriptions are addresses. Changing them changes what the model can reach, in every conversation, everywhere, at once.</p>
+<p>Which gives you a short list of what is safe:</p>
+<p><strong>Safe.</strong> Adding an optional property. Adding a tool. Improving a description without changing what it triggers on. Changing your widget’s layout entirely.</p>
+<p><strong>Not safe.</strong> Renaming a tool. Adding a required property. Narrowing an enum. Changing what a description triggers on, which is the one nobody counts as a change.</p>
+<p>That last item deserves a sentence. If you rewrite a description to be more precise, you have changed the set of phrasings that reach your tool. That is a behaviour change with no code diff, it will not show up in any test you currently run, and it is exactly what Chapter 11’s prompt suite is for.</p>
+<p>The temptation is to solve this with <code>search_v2</code>. Do not. Two tools that do the same thing are two tools the model has to choose between, forever, and it will sometimes choose the old one. Deprecate by removal, on a schedule you announce, and keep the address space small.</p>
 <h2 id="what-this-book-was-arguing">What this book was arguing</h2>
 <p>One thing, in the end.</p>
 <p>Every host that renders MCP Apps is about to fill up with widgets. Most of them will be slower paragraphs, dashboards nobody asked for, and forms that re-ask what the conversation already established. That is not a prediction about developers being careless. It is what happened on the web, and on mobile, and it happened because the tools made building easy before anybody agreed on what was worth building.</p>

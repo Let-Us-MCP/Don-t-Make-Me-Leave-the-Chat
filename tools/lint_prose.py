@@ -165,7 +165,8 @@ def excerpt(text: str, index: int, span: int = 46) -> str:
     return " ".join(text[lo:hi].split())
 
 
-TARGET_LOW, TARGET_HIGH = 1500, 3200
+# Krug economy: chapters that outgrow this are hiding two chapters or a figure.
+TARGET_LOW, TARGET_HIGH = 2000, 3200
 
 
 def lint_file(path: Path, sentence_index: dict) -> list[Finding]:

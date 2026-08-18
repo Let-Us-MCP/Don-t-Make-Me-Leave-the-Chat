@@ -178,6 +178,21 @@ it off early.</code></pre>
 <pre><code>Open the loan analytics suite to compare offers, view amortization
 schedules, run sensitivity analysis, and export results.</code></pre>
 <p>Four capabilities, no trigger conditions, and the verb is “open”. The model reads that and learns that this tool opens something. Opening things is not a user goal. Nobody has ever wanted to open a suite.</p>
+<h3 id="the-description-formula">The description formula</h3>
+<p>Descriptions are the highest-value strings you will write, and most people freeze in front of them. Three sentences, in this order, and you can stop:</p>
+<ol type="1">
+<li><strong>What it does,</strong> in the user’s vocabulary, not your product’s.</li>
+<li><strong>When to use it,</strong> phrased the way somebody would ask.</li>
+<li><strong>When not to,</strong> if there is a near neighbour it could be confused with.</li>
+</ol>
+<p>Applied to the gallery’s clause finder:</p>
+<blockquote><p>Show the clauses in the contract that govern a topic, quoted, with the governing words highlighted. Use when the user asks what the contract says about something.</p>
+</blockquote>
+<p>Two sentences, because there is no near neighbour. Applied to the flight picker, which does have one:</p>
+<blockquote><p>Show the shortlisted flights for a route and date already established in the conversation so the user can pick one. Use when the user has said where and when they are going and now needs to choose. Do not call this before origin, destination, and date are known.</p>
+</blockquote>
+<p>That third sentence is a real constraint, and a model will honour it. Negative space is part of the door handle, and it is the part nobody writes.</p>
+<p>One more habit worth forming: <strong>write the description before you build the widget.</strong> If you cannot say when somebody would want this in one sentence, the widget is not going to fix that.</p>
 <h2 id="feedback-for-something-that-was-not-watching">Feedback, for something that was not watching</h2>
 <p>Norman’s other big idea was feedback: after you act, the system tells you what happened. Press the button, hear the click.</p>
 <p>In this medium there is a second feedback channel, and it is the one people forget. When the human interacts with your widget, the model does not automatically find out. The iframe is sandboxed. The host cannot read into it, which is the entire point of the sandbox. Unless you say something, everything that happens inside your app happens in a room the other user is locked out of.</p>
@@ -213,6 +228,16 @@ schedules, run sensitivity analysis, and export results.</code></pre>
 }</code></pre>
 <p>Now “draft the email with those numbers” works, because the numbers are in the conversation. The user never sees this code run. What they see is that the assistant seems to know what they just did, and they will describe that to a colleague as the app being smart.</p>
 <p>It is not smart. It is legible. Legible is achievable on a deadline.</p>
+<h3 id="what-a-write-back-costs">What a write-back costs</h3>
+<p>Context is not free and it is not yours. Every string you write back is tokens in somebody’s window, on every subsequent turn, forever.</p>
+<p>Which gives you a budget and a shape:</p>
+<ul>
+<li><strong>One line per meaningful state change.</strong> Not per keystroke, not per hover.</li>
+<li><strong>Prefer replacing over appending.</strong> The current state is worth more than its history. “Comparing over 4 years” replaces “Comparing over 5 years”; you do not need both.</li>
+<li><strong>Put the detail in <code>structuredContent</code>, the meaning in the text.</strong> The text is what gets read on every turn. The object is what gets used when somebody acts.</li>
+<li><strong>Numbers, names, and identifiers earn their place.</strong> Adjectives do not. “The user selected a flight” is a wasted line. “User picked UA 512 departing 07:15 for $318” is an answer to the next three questions.</li>
+</ul>
+<p>The failure mode at the other extreme is real too. An app that writes nothing back is cheap and useless. Aim for the smallest sentence that would let a colleague pick up the task from a cold start.</p>
 <h2 id="one-source-two-renderings">One source, two renderings</h2>
 <p>Here is the mechanical version of Law 2, and it is the part that keeps you out of trouble at three in the morning.</p>
 <figure>
@@ -222,6 +247,36 @@ schedules, run sensitivity analysis, and export results.</code></pre>
 <p>A tool result carries <code>content</code> for the model and <code>structuredContent</code> for your app. The temptation is to compute them separately, because they have different shapes. The consequence is that they drift, and when they drift, your two users are told different things about the same fact, and the human is the one who finds out.</p>
 <p>The gallery avoids this by computing once. <code>priceOffers()</code> in <code>gallery/fixtures.js</code> prices every horizon from one to ten years, the handler puts that table in <code>structuredContent</code>, and the app does no arithmetic at all. It reads <code>offer.totals[years]</code>. When the slider moves, the number on screen and the number in the model’s context come from the same line of code, because there is only one line of code.</p>
 <p>If your widget computes something the server did not, you now have two implementations of one truth. That is a bug with a countdown timer on it.</p>
+<h2 id="what-the-model-actually-sees">What the model actually sees</h2>
+<p>Abstractions are easy to nod at. Here is the literal artefact, for the gallery’s fixed rate comparison, as it appears in the model’s context.</p>
+<pre class="json"><code>{
+  &quot;name&quot;: &quot;compare_rates&quot;,
+  &quot;title&quot;: &quot;Compare loan rates&quot;,
+  &quot;description&quot;: &quot;Show a comparison of the loan offers under discussion, ranked by total cost over a horizon the user can adjust. Use when the user asks which loan is cheapest, or wants to see how the answer changes if they pay it off early.&quot;,
+  &quot;inputSchema&quot;: {
+    &quot;type&quot;: &quot;object&quot;,
+    &quot;properties&quot;: {
+      &quot;horizonYears&quot;: {
+        &quot;type&quot;: &quot;integer&quot;, &quot;minimum&quot;: 1, &quot;maximum&quot;: 10, &quot;default&quot;: 5,
+        &quot;description&quot;: &quot;Starting comparison horizon. The user can change it in the app.&quot;
+      }
+    }
+  },
+  &quot;_meta&quot;: { &quot;ui&quot;: { &quot;resourceUri&quot;: &quot;ui://rate-compare/after&quot; } }
+}</code></pre>
+<p>That is the whole interface. No pixels, no layout, no colour. A name, a paragraph, a schema with one property, and a pointer to something the model cannot look at.</p>
+<p>Read it as a user would. What does it tell you?</p>
+<p>That there is a thing called comparing rates. That it ranks by total cost. That there is a horizon, that it is a whole number of years between one and ten, that five is normal, and that the human can change it after the render. That last clause is doing real work: it tells the model not to re-call the tool when the user says “what about four years”, because the widget can handle it.</p>
+<p>Now the same view of the before version:</p>
+<pre class="json"><code>{
+  &quot;name&quot;: &quot;compare_rates_suite&quot;,
+  &quot;title&quot;: &quot;Loan analytics suite&quot;,
+  &quot;description&quot;: &quot;Open the loan analytics suite to compare offers, view amortization schedules, run sensitivity analysis, and export results.&quot;,
+  &quot;inputSchema&quot;: { &quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: {} },
+  &quot;_meta&quot;: { &quot;ui&quot;: { &quot;resourceUri&quot;: &quot;ui://rate-compare/before&quot; } }
+}</code></pre>
+<p>An empty schema. There is exactly one thing this tool can be asked for, so “compare those at three years” cannot be expressed. The user will type it, the model will call the tool anyway, and the widget will render its default view, and the user will conclude that the assistant did not listen.</p>
+<p>The pixels were never the problem.</p>
 <h2 id="the-design-review-question">The design review question</h2>
 <p>Adopt one habit from this chapter and make it this one. In every design review, for every screen, ask:</p>
 <blockquote><p><strong>What does the model see when this renders?</strong></p>
@@ -229,6 +284,14 @@ schedules, run sensitivity analysis, and export results.</code></pre>
 <p>Not “what does the API return”. What does the <em>model</em> see: the name, the description, the schema, the <code>content</code> string, and whatever comes back over <code>ui/set-context</code> while the human is working.</p>
 <p>The question is disruptive in a useful way, because in most reviews nobody can answer it. The design file has pixels. The schema is in a different repository, written by a different person, six weeks ago. That gap is where these applications fail, and the question is a flashlight you can point at it in thirty seconds.</p>
 <p>The gallery’s mini host puts a “what the model sees” pane next to every render for exactly this reason. It is the panel visible in Figures 2-1 and 2-2, and it is the most useful thing in the whole development loop. Build one. It costs an afternoon and it changes what your team argues about.</p>
+<h2 id="the-failure-that-looks-like-a-model-problem">The failure that looks like a model problem</h2>
+<p>One pattern worth naming, because it gets misdiagnosed constantly.</p>
+<p>A team ships an app. It works in demos. In use, the assistant “keeps getting confused”, “forgets what the user did”, or “asks things it should know”. The conclusion in the retro is that the model is not smart enough yet.</p>
+<p>Almost always, it is one of three things from this chapter.</p>
+<p><strong>The description never said when.</strong> The model calls the tool sometimes and not others, which reads as inconsistency. It is not inconsistent; it is guessing, because you gave it a definition rather than a trigger.</p>
+<p><strong>The app never wrote back.</strong> The user did something, the model did not find out, and the next answer ignores it. The user experiences this as the assistant not paying attention, which is exactly what happened, and exactly whose fault it is.</p>
+<p><strong>The two channels disagreed.</strong> The widget computed one number and the text carried another. The model quotes the text, the user is looking at the pixels, and one of them is wrong.</p>
+<p>None of those is a model capability problem, and all three are fixed by editing strings and adding one function call. When somebody on your team says the model is confused, the first question is Law 2’s question: what does the model see when this renders?</p>
 <h2 id="what-to-remember">What to remember</h2>
 <p>Your app has two users. The human reads pixels and forgives a lot. The model reads names, descriptions, schemas, and text, and forgives nothing, because it cannot see what it was not told.</p>
 <p>Write the description as though it were the only thing you shipped, because for one of your users it very nearly is. Write state back when a person would have said it out loud. Compute the fact once and render it twice.</p>

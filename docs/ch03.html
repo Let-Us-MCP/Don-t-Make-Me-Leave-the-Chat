@@ -180,6 +180,22 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>Which means the skeleton is not a nicety. It is a screen your users will look at, and it should be designed rather than defaulted.</p>
 <p>A good skeleton in this medium does one thing a web skeleton does not: it uses the arguments. By the time you are drawing the skeleton you already know the tool was called with <code>origin: "SFO"</code>, <code>destination: "JFK"</code>, <code>date: "2026-08-20"</code>. Draw the title. Draw the route. Draw the three grey rows where the flights will go. The user reads the header while the data lands and the perceived wait is zero, because they were busy.</p>
 <p>The version that shows a spinner over an empty box has thrown away information it already had.</p>
+<h3 id="the-skeleton-in-code">The skeleton, in code</h3>
+<p>The gallery’s bridge gives you two callbacks, and most apps only wire the second one. Here is what wiring both looks like:</p>
+<pre class="javascript"><code>app.ontoolinput = function (params) {
+  var a = params.arguments || {};
+  title.textContent = &quot;Three nonstops, &quot; + a.date;
+  sub.textContent = a.origin + &quot; to &quot; + a.destination + &quot;, &quot; + a.cabin;
+  opts.innerHTML = row() + row() + row();      // three grey placeholders
+};
+
+app.ontoolresult = function (result) {
+  flights = (result.structuredContent || {}).flights || [];
+  render();
+};</code></pre>
+<p>Six lines in the first callback, and the user spends the whole wait reading something true. No spinner, no layout shift when the data lands, because the three rows were already the right height.</p>
+<p>The rule underneath: <strong>draw everything the arguments already tell you.</strong> The route, the date, the count, the units, the title. Then draw the shape of what is coming. The only thing that should change when the result arrives is the content of the placeholders.</p>
+<p>And design the failure state while you are there. Tool calls fail. A widget that sits in skeleton forever is worse than one that says “could not load the flights” with a retry, because the first one looks like it is still trying.</p>
 <h2 id="the-guest-viewport">The guest viewport</h2>
 <p>Your app renders in a column. In Claude on a phone that column is roughly 380 CSS pixels wide. On a laptop it is wider, but not much, because the transcript is centred and the surrounding chrome is not yours to remove.</p>
 <p>You do not get to choose this. You do not get to break out of it. A widget that needs 900 pixels does not become a widget that gets 900 pixels; it becomes a widget with a horizontal scrollbar, which is a widget nobody uses.</p>
@@ -192,6 +208,18 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <li><strong>Never fix a height.</strong> Report your height with <code>ui/size-changed</code> and let the host give you what it can. The gallery’s bridge does this in one line and calls it again whenever the content changes.</li>
 </ul>
 <p>And the one that catches everybody: <strong>the theme is not yours</strong>. The host supplies it, the user may be in dark mode, and they may switch while your app is on screen. Paint with the host’s variables. If you hard-code <code>background: white</code> you have built a bright rectangle that shouts in a dark transcript, and users notice that faster than they notice anything else you did.</p>
+<h3 id="the-380-pixel-checklist">The 380 pixel checklist</h3>
+<p>Run this before you ship. It takes four minutes and it catches most of it.</p>
+<ul>
+<li>Set the frame to 380 pixels wide. Read the widget. Can you get the answer without scrolling?</li>
+<li>Set it to 320, because somebody is on a small phone with large system text.</li>
+<li>Replace every string with the longest one in your data. Does anything wrap into three lines, or clip?</li>
+<li>Switch the host to dark. Is anything invisible, and is your background still painted with the host’s token rather than white?</li>
+<li>Switch it back while the widget is on screen. Did it follow?</li>
+<li>Remove the data. Is the skeleton a screen or an accident?</li>
+<li>Open every disclosure. Did the height report update?</li>
+</ul>
+<p>The gallery’s mini host has a width slider and a theme toggle above the transcript for exactly this loop.</p>
 <h2 id="billboard-design-one-glance-at-a-time">Billboard design, one glance at a time</h2>
 <p>Krug’s chapter on billboards is about hierarchy: make the important thing look important, and make the relationship between things visible without reading them.</p>
 <p>The chat version is stricter, because you have less room and less time. It comes down to three levels, and a widget that has more than three is asking for a reading rather than a glance.</p>
@@ -213,6 +241,13 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 </figure>
 <p>Same data. <code>degraded</code>, colour-coded, first. Then the sentence that explains it. Then three numbers, of which two are marked as the alarming ones. Then a disclosure holding the per-service table, which is where the other nine metrics went. Nothing was deleted. The hierarchy was applied.</p>
 <p>And notice the last line: <code>As of 09:41 UTC.</code> A status widget without a timestamp is asserting the present tense on the strength of a fetch it made at an unknown moment. Chapter 7 is about what that costs.</p>
+<h3 id="the-glance-test">The glance test</h3>
+<p>You can run the hierarchy check on your own widget in about a minute, and it is the closest thing this book has to a lab instrument.</p>
+<p>Open the render. Look away. Look back for one second, then close your eyes.</p>
+<p>Write down what you got. Not what you know is there. What you <em>got</em>.</p>
+<p>If what you wrote down is the answer to the question that caused the render, the hierarchy works. If what you wrote down is “a card with some numbers on it”, it does not, and the fix is almost always the same three moves: make one thing much bigger, make one thing a colour, and delete something.</p>
+<p>It works on other people’s widgets too, and it works better, because you cannot un-know your own layout. Two colleagues and four minutes will tell you more than an afternoon of arguing about spacing.</p>
+<p>The failure this catches most often is the tie. Three things at the same size, same weight, same colour, all important. A glance cannot rank them, so it returns nothing, and the user has to read. Ties are the default state of any layout nobody has made a decision about.</p>
 <h2 id="the-first-render-is-the-homepage">The first render is the homepage</h2>
 <p>Krug spends a chapter on the homepage, because it is the page that has to answer four questions at once: what is this, what do you have, what can I do here, and why should I be here rather than somewhere else.</p>
 <p>Your first render is that page, and it has less room and less time. It has to answer three:</p>
@@ -222,6 +257,13 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <li><strong>What can I do about it?</strong> Zero controls is a fine answer. One is usually the right one.</li>
 </ol>
 <p>If the render answers those three in the first half second, the rest of the design is decoration you may or may not need. If it does not, no amount of decoration will save it.</p>
+<h2 id="motion-and-the-one-place-it-helps">Motion, and the one place it helps</h2>
+<p>A short word on animation, because chat surfaces invite it and mostly punish it.</p>
+<p>Movement in a transcript is different from movement on a page. The transcript is already moving: messages arrive, the view scrolls, the composer is live. Adding motion to that is adding motion to motion, and the result is a surface nobody can settle on.</p>
+<p>Two rules cover it.</p>
+<p><strong>Never move anything that is already readable.</strong> Fade in if you must, but do not slide, expand, or reflow after the user has started reading. Layout that settles late is the single most disliked thing an interface can do on a phone, and it is the reason to report your height before you paint rather than after.</p>
+<p><strong>Animate the one thing that is genuinely changing.</strong> A number that just went from 4.1% to 6.2% can move, because the movement carries the information. A card that fades in three staggered rows is telling you nothing and costing you a third of a second of the attention budget in Figure 3-1.</p>
+<p>Under <code>prefers-reduced-motion</code>, do neither.</p>
 <h2 id="what-to-remember">What to remember</h2>
 <p>People glance, satisfice, and correct verbally. Data lands in pieces, so the skeleton is a screen you designed. The viewport is narrow, the theme is not yours, and the height is a request rather than a decision. Hierarchy is three levels: verdict, reason, everything else.</p>
 <p>Next chapter: the single rudest thing a widget can do, which is ask a question whose answer is already in the transcript.</p>

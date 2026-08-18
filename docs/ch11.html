@@ -170,6 +170,15 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <li><strong>Did they notice the widget?</strong> In a scrolling transcript, on a phone, a render can be missed entirely. If they scrolled past it and typed a follow-up question instead, that is the answer to Chapter 1’s first question.</li>
 <li><strong>Did they touch the controls?</strong> A control nobody touches in five sessions is a control you can delete. This is the cheapest deletion criterion in the book.</li>
 </ul>
+<h3 id="what-five-sessions-actually-look-like">What five sessions actually look like</h3>
+<p>The advice above is easy to agree with and easy to not do, so here is the shape of an afternoon that has actually happened, compressed.</p>
+<p><strong>Session one.</strong> The user types “compare these loans”. The tool does not fire; the model answers in prose from the numbers already in the conversation. That is finding number one, and it is not a bug in the widget. It is the description not saying that this tool is for when the answer should be adjustable.</p>
+<p>Fix between sessions: add the trigger sentence.</p>
+<p><strong>Session two.</strong> The widget fires. The user reads the headline, says “so the credit union”, and moves on without touching the slider. Finding two: the slider may not be earning its place. Not yet actionable, because one person is not data.</p>
+<p><strong>Session three.</strong> Same, but this user drags the slider immediately and says “oh, that changes it”. Finding two is now interesting rather than damning, and the difference between these two users is worth understanding rather than averaging.</p>
+<p><strong>Session four.</strong> The user asks a follow-up: “what was the monthly on the Northbank one?” The model answers correctly, because the monthly is in <code>structuredContent</code>. That is not a finding; it is a control passing, and it is worth noticing when something works.</p>
+<p><strong>Session five.</strong> The user scrolls back to the render twenty minutes later and reads the old numbers as current. Finding three, and it is the Chapter 7 problem, found in the wild in about four seconds.</p>
+<p>Three findings, two fixes, one open question, one afternoon. That is a normal yield, and it is why the method survives contact with a schedule.</p>
 <h2 id="the-new-half-the-model-as-a-user">The new half: the model as a user</h2>
 <p>Now the part with no precedent, and the part you can run every commit.</p>
 <p>Your other user can be tested automatically, at scale, without recruiting anybody, because it is software. And it needs testing more than the human does, because you never watch it use your app. You watch the transcript afterwards and infer.</p>
@@ -225,6 +234,18 @@ Yes, it flips at three years: Northbank wins at $34,130 ... Cedar&#39;s $1,400 i
 fees only pays off over a longer horizon.</code></pre>
 <p>That is an invocation check, an argument check, and a readback check in one command, and it costs about ten cents.</p>
 <p>Build a suite of ten prompts per app. Five that should invoke it, phrased the way five different people would phrase it. Three that should not, including at least one near miss. Two that check readback after a render. Run them nightly, or on every change to a description, which is where the regressions come from.</p>
+<p>Here is a real suite, for the gallery’s flight picker, written the way five different people would ask:</p>
+<pre><code>INVOKE   &quot;book me a flight to New York Thursday morning&quot;
+INVOKE   &quot;what are my options for getting to JFK on the 20th&quot;
+INVOKE   &quot;I need to be in New York by lunchtime Thursday&quot;
+INVOKE   &quot;sort out the travel for the Thursday meeting, economy, just me&quot;
+INVOKE   &quot;same as last time but Thursday&quot;            (context in earlier turns)
+SKIP     &quot;how much do flights to New York usually cost&quot;   (a question, not a booking)
+SKIP     &quot;cancel my Thursday flight&quot;                       (a different tool)
+SKIP     &quot;what is the baggage allowance on United&quot;         (answerable from context)
+READBACK &quot;which one did I pick?&quot;                           (after a selection)
+READBACK &quot;what time does it land?&quot;                         (needs structuredContent)</code></pre>
+<p>The third and fifth are the interesting ones. Neither mentions a flight, an airport, or a date in the form your schema wants, and both are how people actually talk. If your description only survives the first two phrasings, it will get invoked in demos and not in use.</p>
 <p>Two warnings from running this in anger.</p>
 <p><strong>Model runs are not deterministic.</strong> A single failure is noise. Run the suite three times and look at rates. A prompt that invokes correctly two times out of three is a description problem, not a flake.</p>
 <p><strong>Record the prompts, not the outputs.</strong> Outputs change with every model release. What you are testing is whether your description survives the paraphrase, and the prompt suite is the durable artefact.</p>
@@ -235,6 +256,16 @@ fees only pays off over a longer horizon.</code></pre>
 <p><strong>3. Things that make the human ask a question they already answered.</strong> Every re-ask found in a session is a schema property you did not declare.</p>
 <p><strong>4. Everything else.</strong></p>
 <p>Resist the urge to fix the visual problems first. They are the ones you can see, which is why they get fixed, and they are usually the ones that matter least.</p>
+<h2 id="wiring-it-into-ci">Wiring it into CI</h2>
+<p>The static checks belong on every commit, because the things they catch are edits somebody makes at five o’clock.</p>
+<pre class="yaml"><code>- name: Every app parses and connects
+  run: node tools/check_apps.mjs
+
+- name: Model-as-user checks
+  run: node gallery/evals/run.js --all</code></pre>
+<p>Two jobs, no dependencies, about twenty seconds. What they buy is that the class of bug which is invisible in review stops reaching main.</p>
+<p>The invisible one is worth naming. A mismatched quote in one of the gallery’s apps meant its script never ran, so it never called <code>ui/initialize</code>, so the host waited forever and the widget rendered as an empty box. No error appeared anywhere: not in the server log, not in the host, not in a test. A syntax error inside a sandboxed iframe is silence. <code>check_apps.mjs</code> exists because of that afternoon, and it now parses every app’s script before anything else runs.</p>
+<p>The model-in-the-loop suite does not belong on every commit. It costs money and it is non-deterministic, so run it nightly, and on any change to a tool description, which is where invocation regressions come from and where nobody thinks to look.</p>
 <h2 id="what-to-remember">What to remember</h2>
 <p>Five humans, three tasks, one afternoon, and fix something after each session. Then test the other user, which is cheaper because it never gets tired: does the model invoke you, does it pass what it knows, and can it answer afterwards. Most of that runs as static checks in under a second. The rest costs ten cents a run against a host you already have. And when the checks fail on your own examples, which they will, notice how many of the fixes are strings.</p>
 <p>Next chapter: the same widget, in four houses that do not agree.</p>
