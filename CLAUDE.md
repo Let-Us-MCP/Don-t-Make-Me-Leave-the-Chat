@@ -159,10 +159,31 @@ Legend: `[ ]` not started, `[~]` drafted, `[x]` drafted + linted + built
   its own model. Threshold moved to 170 and the docstring now says where every
   number came from.
 
+- **The capability ladder figure found three bugs by existing.** Teaching the
+  mini host to claim less than it supports produced Figure 12-1, and building it
+  showed that the gallery's own tracker had no skeleton, never checked
+  `toolCalls`, and that a zero-height report from a freshly-appended iframe
+  collapsed a working widget to six pixels. All three are in
+  `gallery/VERIFICATION.md`. The last one was intermittent in exactly the way
+  that survives manual testing: the first frame on a page was always fine.
+
+- **`tools/audit_style.py` found zero deferrals and one chapter over budget on
+  contrastive phrasing.** Chapter 12 used "rather than" fifteen times, which
+  reads as arguing with somebody who is not in the room. Rewritten to eight.
+
 ## Open items
 - No human usability sessions were run for this edition. Chapter 11 describes
   the method and claims no findings.
-- Chapters run 1,540 to 2,460 words. Three sit just under the 2,000 target and
-  are flagged as warnings rather than fixed with padding.
+- Chapters run 1,543 to 2,902 words, one flagged as slightly under target and
+  left there instead of padded.
+- **The book is still shorter than its framing text.** Measured:
+  *Don't Make Me Think, Revisited* is about 43,250 words; this is about 32,300.
+  The outline claimed the framing book was shorter than 28-32k, which the
+  measurement disproves. Coverage is complete against the outline, so the gap is
+  compression instead of omission, but a fourth pass adding worked examples
+  would close it honestly.
+- Three teardowns the outline promised are described in prose and not yet
+  photographed: the decomposition in Chapter 5, the three flow shapes in
+  Chapter 8, and the four annotated form failures in Chapter 9.
 - Appendix B's host rows come from the MCP project's published matrix, not from
   tests run here. Stated in the appendix and in `VERIFICATION.md`.
