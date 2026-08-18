@@ -171,6 +171,33 @@ Legend: `[ ]` not started, `[~]` drafted, `[x]` drafted + linted + built
   contrastive phrasing.** Chapter 12 used "rather than" fifteen times, which
   reads as arguing with somebody who is not in the room. Rewritten to eight.
 
+- **The specification audit found two real errors.** `csp`, `permissions`, and
+  `domain` live on the UI **resource**, not on the tool, and the gallery had
+  them on the tool: an inspector running `--app-info` would have reported an app
+  with no policy at all. And `preferredFrameSize` was invented; nothing in the
+  spec mentions it. Both fixed, and `tools/check_claims.py` now verifies fifteen
+  protocol claims against `proto/` and fails if we use a field the spec has
+  never heard of.
+
+- **The audit also found things the book was missing.** `prefersBorder` is a
+  real resource field, which makes Chapter 10's "be visibly separate" a protocol
+  feature rather than only taste; the gallery's phishing exhibit now declines it
+  on purpose, so the probe shows the difference without rendering anything. And
+  the elicitation spec says servers **MUST NOT** use form mode for credentials
+  and **MUST** use URL mode, which is the strongest sentence available for
+  Chapter 10's argument and was not in the draft.
+
+- **`tools/check_listings.py` closed a promise the book was breaking.** Of 41
+  listings, 11 are extracted, 11 are captured output, and 19 are illustrative,
+  and every one now says which on the rendered page. Writing it found two
+  listings that had been quietly paraphrased and presented as extracted, and six
+  that I then mislabelled as illustrative when they were in fact real.
+
+- **`tools/check_counts.py` earned itself within an hour.** Adding the wizard app
+  for Figure 8-3 moved six numbers the prose asserts, and the checker caught all
+  six before the commit. It skips fenced blocks, because captured output is a
+  record of a moment and is allowed to disagree with the present.
+
 ## Open items
 - No human usability sessions were run for this edition. Chapter 11 describes
   the method and claims no findings.
@@ -181,9 +208,11 @@ Legend: `[ ]` not started, `[~]` drafted, `[x]` drafted + linted + built
   The outline claimed the framing book was shorter than 28-32k, which the
   measurement disproves. Coverage is complete against the outline, so the gap is
   compression instead of omission, but a fourth pass adding worked examples
-  would close it honestly.
-- Three teardowns the outline promised are described in prose and not yet
-  photographed: the decomposition in Chapter 5, the three flow shapes in
-  Chapter 8, and the four annotated form failures in Chapter 9.
+  would close it honestly. Currently 34,154 against 43,250, a gap of 21%.
+- Chapter 3 runs 2,897 words against a 2,000 to 2,500 target. It is coherent
+  (everything in it is about what the human experiences) and under the 3,200
+  ceiling, so it is being left alone rather than split into a fourteenth chapter
+  that would renumber thirty cross-references.
+- Chapters 6 and 13 still carry no annotated render.
 - Appendix B's host rows come from the MCP project's published matrix, not from
   tests run here. Stated in the appendix and in `VERIFICATION.md`.

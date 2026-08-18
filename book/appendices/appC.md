@@ -38,6 +38,20 @@ one costs you least if you keep it for five years.*
 **After each session,** fix one thing. Five sessions with four fixes between
 them beats five sessions and a report.
 
+## The four-minute viewport check
+
+Run this before you ship. It takes four minutes and it catches most of it. Set
+the frame to 380 pixels and read the widget: can you get the answer without
+scrolling? Set it to 320, because somebody is on a small phone with large system
+text. Replace every string with the longest one in your data and look for
+anything that wraps to three lines or clips. Switch the host to dark, check that
+nothing has gone invisible and that your background is painted with a token
+rather than a hex code, then switch it back while the widget is on screen and
+see whether it followed. Remove the data and ask whether the skeleton is a
+screen or an accident. Then open every disclosure and confirm the height report
+updated. The gallery's mini host has a width slider and a theme toggle above the
+transcript for exactly this loop.
+
 ## The ten prompts, per app
 
 Five that should invoke, phrased differently:
