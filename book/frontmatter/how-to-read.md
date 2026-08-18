@@ -62,14 +62,17 @@ Every listing says where it came from, because a book that claims its code runs
 should be checkable on that claim. A block with no tag is **extracted**: it
 appears verbatim in the repository, and `tools/check_listings.py` fails the
 build if it stops doing so. A block tagged *captured output* is the real result
-of the command named beside it. A block tagged *illustrative* is a shape rather
-than a file: a wire message, a sketch, or in one case a deliberately fictional
-registry listing.
+of the command named beside it, and `tools/check_captured.py` re-runs that
+command and fails if the output has drifted. A block tagged *recorded output* was
+real once, from a state the repository has moved past, and is quoted because the
+past state is the point. A block tagged *illustrative* is a shape rather than a
+file: a wire message, a sketch, or in one case a deliberately fictional registry
+listing.
 
-Of the 41 listings in this book, 11 are extracted, 11 are captured, and 19 are
-illustrative. Writing that checker found two listings that had been quietly
-paraphrased and presented as extracted, which is exactly the sort of thing it
-exists to catch.
+Writing those checkers found two listings that had been quietly paraphrased and
+presented as extracted, six more that were mislabelled, and one number quoted as
+live evidence that had gone stale the moment the gallery grew an app. All of
+which is the sort of thing they exist to catch.
 
 If an extracted listing looks too short to be real, it is real, and it is short
 because the gallery is small on purpose.

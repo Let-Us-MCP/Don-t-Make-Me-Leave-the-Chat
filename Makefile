@@ -21,7 +21,7 @@ renders:
 matrix:
 	python3 tools/build_matrix.py
 
-check: lint refs apps evals density style listings counts claims
+check: lint refs apps evals density style listings captured counts claims
 
 lint:
 	python3 tools/lint_prose.py
@@ -43,6 +43,9 @@ style:
 
 listings:
 	python3 tools/check_listings.py
+
+captured:
+	python3 tools/check_captured.py
 
 counts:
 	python3 tools/check_counts.py

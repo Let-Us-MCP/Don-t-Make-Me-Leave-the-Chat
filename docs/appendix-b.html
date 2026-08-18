@@ -65,6 +65,7 @@ pre code{background:none;padding:0;font-size:inherit;word-break:normal}
 .provenance code{font-size:11px;text-transform:none;letter-spacing:0;
   background:none;padding:0;color:var(--muted)}
 .provenance.captured{color:var(--good)}
+.provenance.historical{color:var(--accent)}
 .provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
@@ -236,7 +237,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <h2 id="the-half-you-can-automate">The half you can automate</h2>
 <p>Host support is somebody else’s published fact. Server support is yours, and it is probeable:</p>
 <pre class="bash"><code>node gallery/probe/probe.js http://localhost:8931/mcp</code></pre>
-<p>The probe reports whether the server declares the extension, which tools carry a <code>ui://</code> resource, what each app is allowed to reach over the network, and, most usefully, how many of your apps return a text answer good enough for a host that does not render apps at all. On the gallery it says 8 of 16, and the 8 that fail are exactly the book’s deliberately over-built “before” exhibits.</p>
+<p>The probe reports whether the server declares the extension, which tools carry a <code>ui://</code> resource, what each app is allowed to reach over the network, and, most usefully, how many of your apps return a text answer good enough for a host that does not render apps at all. On the gallery it says 8 of 17, and the 9 that fail are exactly the book’s deliberately over-built “before” exhibits.</p>
 <p>That last number is the one to watch. It is the fallback ladder from Chapter 12, measured.</p>
 
 <div class="pager"><a href="appendix-a.html"><span class="dir">Previous</span>Appendix A. The Laws, on One Page</a><a href="appendix-c.html" style="text-align:right"><span class="dir">Next</span>Appendix C. The Ten-Prompt Test Kit</a></div>

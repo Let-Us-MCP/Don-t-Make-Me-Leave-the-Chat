@@ -65,6 +65,7 @@ pre code{background:none;padding:0;font-size:inherit;word-break:normal}
 .provenance code{font-size:11px;text-transform:none;letter-spacing:0;
   background:none;padding:0;color:var(--muted)}
 .provenance.captured{color:var(--good)}
+.provenance.historical{color:var(--accent)}
 .provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
@@ -234,20 +235,17 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <h3 id="the-contract-made-concrete">The contract, made concrete</h3>
 <p>Here is that contract as a diff on the gallery’s own dashboard, and it is a real finding from the first eval run in Chapter 11. Before, <code>service_status</code> declared <code>inputSchema: { type: "object", properties: {} }</code>. One address. “Just show me checkout” produced the whole platform, every time, because the tool had no way to be asked for anything narrower.</p>
 <p>After:</p>
-<p class="provenance captured">Captured output from <code>tools/list</code></p><pre class="javascript"><code>{
-  name: &quot;service_status&quot;,
-  description: &quot;... Safe to call again to check for changes.&quot;,
-  inputSchema: {
-    type: &quot;object&quot;,
-    properties: {
-      service: {
-        type: &quot;string&quot;,
-        description: &quot;Narrow to one service. Omit for the whole platform.&quot;,
+<pre class="javascript"><code>    inputSchema: {
+      type: &quot;object&quot;,
+      properties: {
+        service: {
+          type: &quot;string&quot;,
+          description: &quot;Narrow to one service. Omit for the whole platform.&quot;,
+        },
       },
-    },
-  },
-}</code></pre>
-<p>Six lines. Now “just show me checkout” works, “show me that again” works, and “has checkout recovered” works, because all three are expressible as arguments and the description says the call is repeatable. Note what did not change: not one pixel. The widget was already fine. The thing that could not be re-summoned was the <em>tool</em>, and the tool is the part the model addresses.</p>
+    },</code></pre>
+<p>and one clause added to the end of the description: <em>Safe to call again to check for changes.</em></p>
+<p>Nine lines and a clause. Now “just show me checkout” works, “show me that again” works, and “has checkout recovered” works, because all three are expressible as arguments and the description says the call is repeatable. Note what did not change: not one pixel. The widget was already fine. The thing that could not be re-summoned was the <em>tool</em>, and the tool is the part the model addresses.</p>
 <h2 id="teardown-two-deploy-trackers">Teardown: two deploy trackers</h2>
 <p>The task: “ship 2026.8.14 and keep an eye on it.”</p>
 <figure>

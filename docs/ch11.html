@@ -65,6 +65,7 @@ pre code{background:none;padding:0;font-size:inherit;word-break:normal}
 .provenance code{font-size:11px;text-transform:none;letter-spacing:0;
   background:none;padding:0;color:var(--muted)}
 .provenance.captured{color:var(--good)}
+.provenance.historical{color:var(--accent)}
 .provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
@@ -182,9 +183,9 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>None of that is clever. All of it has caught something.</p>
 <h2 id="a-worked-session">A worked session</h2>
 <p>Here is what happened the first time those checks ran against this book’s own gallery. The apps had just been written, by somebody who had just finished writing the chapters telling you not to make these mistakes. The run below is a record of that afternoon; the gallery has grown a tool since, so the totals in your own run will differ.</p>
-<p class="provenance captured">Captured output from <code>node gallery/evals/run.js --all</code></p><pre><code>21 tools checked, 20 error(s), 15 warning(s)</code></pre>
+<p class="provenance historical">Recorded output from <code>node gallery/evals/run.js --all</code>, from a state this repository has moved past</p><pre><code>21 tools checked, 20 error(s), 15 warning(s)</code></pre>
 <p>Twenty errors. Some of the findings, verbatim:</p>
-<p class="provenance captured">Captured output from <code>node gallery/evals/run.js --all</code></p><pre><code>FAIL  service_status  [empty-schema] no input properties, so the model cannot
+<p class="provenance historical">Recorded output from <code>node gallery/evals/run.js --all</code>, from a state this repository has moved past</p><pre><code>FAIL  service_status  [empty-schema] no input properties, so the model cannot
                       re-summon a specific view and the app must ask the user
                       for everything
 FAIL  submit_expense  [log-line] content reads as a log line rather than an

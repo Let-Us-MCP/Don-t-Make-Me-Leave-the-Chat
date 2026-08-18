@@ -65,6 +65,7 @@ pre code{background:none;padding:0;font-size:inherit;word-break:normal}
 .provenance code{font-size:11px;text-transform:none;letter-spacing:0;
   background:none;padding:0;color:var(--muted)}
 .provenance.captured{color:var(--good)}
+.provenance.historical{color:var(--accent)}
 .provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
@@ -175,8 +176,8 @@ node gallery/serve.js</code></pre>
 <h2 id="conventions">Conventions</h2>
 <p>Figures numbered <code>1-1</code>, <code>1-2</code> and so on are captured from the gallery. The figure caption names the tool that produced them, and Appendix D maps every one to its scene and the command that regenerates it.</p>
 <p>Hand-drawn figures make one argument each and are drawn by a script in <code>figures-src/</code>.</p>
-<p>Every listing says where it came from, because a book that claims its code runs should be checkable on that claim. A block with no tag is <strong>extracted</strong>: it appears verbatim in the repository, and <code>tools/check_listings.py</code> fails the build if it stops doing so. A block tagged <em>captured output</em> is the real result of the command named beside it. A block tagged <em>illustrative</em> is a shape rather than a file: a wire message, a sketch, or in one case a deliberately fictional registry listing.</p>
-<p>Of the 41 listings in this book, 11 are extracted, 11 are captured, and 19 are illustrative. Writing that checker found two listings that had been quietly paraphrased and presented as extracted, which is exactly the sort of thing it exists to catch.</p>
+<p>Every listing says where it came from, because a book that claims its code runs should be checkable on that claim. A block with no tag is <strong>extracted</strong>: it appears verbatim in the repository, and <code>tools/check_listings.py</code> fails the build if it stops doing so. A block tagged <em>captured output</em> is the real result of the command named beside it, and <code>tools/check_captured.py</code> re-runs that command and fails if the output has drifted. A block tagged <em>recorded output</em> was real once, from a state the repository has moved past, and is quoted because the past state is the point. A block tagged <em>illustrative</em> is a shape rather than a file: a wire message, a sketch, or in one case a deliberately fictional registry listing.</p>
+<p>Writing those checkers found two listings that had been quietly paraphrased and presented as extracted, six more that were mislabelled, and one number quoted as live evidence that had gone stale the moment the gallery grew an app. All of which is the sort of thing they exist to catch.</p>
 <p>If an extracted listing looks too short to be real, it is real, and it is short because the gallery is small on purpose.</p>
 
 <div class="pager"><a href="preface.html"><span class="dir">Previous</span>Preface</a><a href="ch01.html" style="text-align:right"><span class="dir">Next</span>1. Don&#x27;t Make Me Leave the Chat</a></div>

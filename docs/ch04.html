@@ -65,6 +65,7 @@ pre code{background:none;padding:0;font-size:inherit;word-break:normal}
 .provenance code{font-size:11px;text-transform:none;letter-spacing:0;
   background:none;padding:0;color:var(--muted)}
 .provenance.captured{color:var(--good)}
+.provenance.historical{color:var(--accent)}
 .provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
@@ -168,7 +169,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>All of it is available to you, and the mechanism is completely unglamorous: put the fields in your input schema, describe them, and the model fills them in when it calls you. That last clause is the part people miss. <strong>A field the model can fill is a field the user never sees.</strong> Your input schema is not a validation artefact bolted on at the end. It is the list of questions you are choosing not to ask, and writing it is a design activity that happens to produce JSON.</p>
 <p>Compare the two expense tools in the gallery. The before version declares <code>inputSchema: { type: "object", properties: {} }</code>. No inputs, so the model passes nothing, so the app knows nothing, so the app asks for everything: nine fields, in a chat, for a $62 coffee. That empty object is not a neutral default. It is the decision to interrogate the user, made accidentally, in a file nobody reviewed.</p>
 <p>The after version declares five properties:</p>
-<p class="provenance captured">Captured output from <code>tools/list</code></p><pre class="javascript"><code>inputSchema: {
+<pre class="javascript"><code>inputSchema: {
   type: &quot;object&quot;,
   properties: {
     merchant: { type: &quot;string&quot;, description: &quot;Who was paid.&quot; },

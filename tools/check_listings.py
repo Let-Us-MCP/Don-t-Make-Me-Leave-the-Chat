@@ -11,8 +11,12 @@ the rest.
 So every fenced block must be one of three things, and must say which:
 
   extracted   it appears verbatim in gallery/ or tools/. Nothing to declare.
-  captured    it is real output from a real command. Declare with a preceding
-              line ``<!-- listing: captured from `<command>` -->``
+  captured    it is real output from a real command, and still true. Declare
+              with ``<!-- listing: captured from `<command>` -->``, and
+              `tools/check_captured.py` re-runs the command and diffs it.
+  historical  it was real output once, from a state the repository has moved
+              past, and it is quoted because the past state is the point.
+              Declare with ``<!-- listing: historical from `<command>` -->``
   illustrative  it is a shape rather than a file: wire JSON, a sketch, an
               example listing. Declare with ``<!-- listing: illustrative -->``
 
@@ -86,7 +90,7 @@ def main() -> int:
     args = ap.parse_args()
 
     src = normalise(corpus())
-    counts = {"extracted": 0, "captured": 0, "illustrative": 0}
+    counts = {"extracted": 0, "captured": 0, "historical": 0, "illustrative": 0}
     problems = []
 
     files = sorted(
@@ -111,7 +115,7 @@ def main() -> int:
                         f"drop the label and let it be extracted")
                 continue
 
-            if decl in ("captured", "illustrative"):
+            if decl in ("captured", "historical", "illustrative"):
                 counts[decl] += 1
                 continue
 
@@ -129,8 +133,8 @@ def main() -> int:
 
     total = sum(counts.values()) + len(problems)
     print(f"{total} listings: {counts['extracted']} extracted, "
-          f"{counts['captured']} captured, {counts['illustrative']} illustrative, "
-          f"{len(problems)} undeclared")
+          f"{counts['captured']} captured, {counts['historical']} historical, "
+          f"{counts['illustrative']} illustrative, {len(problems)} undeclared")
     for p in problems:
         print(f"  {p}")
 

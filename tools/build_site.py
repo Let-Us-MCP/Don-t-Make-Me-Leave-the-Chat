@@ -102,7 +102,7 @@ def pandoc(markdown: str) -> str:
 # claims its code comes from the gallery, and a reader should be able to see
 # which listings are extracted, which are real output, and which are sketches.
 LISTING_RE = re.compile(
-    r"<!--\s*listing:\s*(?P<kind>captured|illustrative)(?P<rest>[^>]*?)-->\s*"
+    r"<!--\s*listing:\s*(?P<kind>captured|historical|illustrative)(?P<rest>[^>]*?)-->\s*"
     r"(?P<pre><(?:pre|div)\b)",
     re.S,
 )
@@ -143,6 +143,9 @@ def transform(body: str) -> str:
         rest = re.sub(r"`([^`]+)`", r"<code>\1</code>", rest)
         if kind == "captured":
             text = "Captured output" + (" " + rest if rest else "")
+        elif kind == "historical":
+            text = ("Recorded output" + (" " + rest if rest else "")
+                    + ", from a state this repository has moved past")
         else:
             text = "Illustrative, not from the gallery"
         return (f'<p class="provenance {kind}">{text}</p>' + m.group("pre"))
@@ -214,6 +217,7 @@ pre code{background:none;padding:0;font-size:inherit;word-break:normal}
 .provenance code{font-size:11px;text-transform:none;letter-spacing:0;
   background:none;padding:0;color:var(--muted)}
 .provenance.captured{color:var(--good)}
+.provenance.historical{color:var(--accent)}
 .provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}

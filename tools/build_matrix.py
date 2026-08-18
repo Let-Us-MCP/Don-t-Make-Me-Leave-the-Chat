@@ -68,7 +68,7 @@ node gallery/probe/probe.js http://localhost:8931/mcp
 The probe reports whether the server declares the extension, which tools carry a
 `ui://` resource, what each app is allowed to reach over the network, and, most
 usefully, how many of your apps return a text answer good enough for a host that
-does not render apps at all. On the gallery it says 8 of 16, and the 8 that fail
+does not render apps at all. On the gallery it says 8 of 17, and the 9 that fail
 are exactly the book's deliberately over-built "before" exhibits.
 
 That last number is the one to watch. It is the fallback ladder from Chapter 12,

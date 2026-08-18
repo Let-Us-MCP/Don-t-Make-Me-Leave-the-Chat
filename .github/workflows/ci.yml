@@ -26,6 +26,9 @@ jobs:
       - name: Model-as-user checks
         run: node gallery/evals/run.js --all
 
+      - name: Captured output in the book still matches its command
+        run: python3 tools/check_captured.py
+
       - name: The server answers over stdio
         run: |
           printf '%s\n' \

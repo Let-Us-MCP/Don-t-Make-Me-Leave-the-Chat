@@ -65,6 +65,7 @@ pre code{background:none;padding:0;font-size:inherit;word-break:normal}
 .provenance code{font-size:11px;text-transform:none;letter-spacing:0;
   background:none;padding:0;color:var(--muted)}
 .provenance.captured{color:var(--good)}
+.provenance.historical{color:var(--accent)}
 .provenance.illustrative{color:var(--warm)}
 aside.law{border-left:4px solid var(--accent);background:var(--accent-soft);
   padding:16px 20px;margin:1.8em 0;border-radius:0 8px 8px 0}
@@ -196,11 +197,11 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>The gallery’s probe measures this, because it is measurable.</p>
 <p class="provenance captured">Captured output from <code>node gallery/probe/probe.js</code></p><pre><code>$ node gallery/probe/probe.js http://localhost:8931/mcp
 io.modelcontextprotocol/ui  declared
-tools         21 (16 carry a ui:// resource)
+tools         22 (17 carry a ui:// resource)
 
-8/16 apps return a text answer good enough for a host that does not
+8/17 apps return a text answer good enough for a host that does not
 render apps.</code></pre>
-<p>Eight out of sixteen, and the eight that fail are exactly the book’s deliberately over-built “before” exhibits, which is not a coincidence. The same instinct that produces a kitchen-sink widget produces a <code>content</code> string reading “Loan analytics suite opened.”</p>
+<p>Eight out of seventeen, and the nine that fail are exactly the book’s deliberately over-built “before” exhibits, which is not a coincidence. The same instinct that produces a kitchen-sink widget produces a <code>content</code> string reading “Loan analytics suite opened.”</p>
 <p>Three tests tell you whether a text rung carries its weight. Does it contain the answer itself, and not a description of where the answer is? Could the model act on it three turns later, which means names, numbers, and identifiers? And does it say what the human can do next, the way “the user can change the horizon in the app” tells the model what to offer if the app never rendered?</p>
 <h3 id="writing-the-string">Writing the string</h3>
 <p>Since the text rung is a product, it deserves a paragraph on how to write it, because “put the answer in it” turns out to be harder advice to follow than it sounds.</p>
