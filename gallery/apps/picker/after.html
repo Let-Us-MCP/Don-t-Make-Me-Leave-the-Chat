@@ -25,6 +25,20 @@
   var flights = [];
 
   function render() {
+    /* An empty result is a true answer, not a failure, so it gets the same
+     * three levels as any other render: verdict, reason, way forward. */
+    if (!flights.length) {
+      document.getElementById("opts").innerHTML =
+        '<p class="muted small" style="margin:6px 0 0">No nonstops on this date. ' +
+        'There are one-stops from $268, and nonstops the day after.</p>';
+      app.setContext(
+        "No nonstop flights on that date. One-stops exist from $268, and " +
+          "nonstops are available the following day.",
+        { flights: [], alternatives: ["one-stop", "next-day nonstop"] }
+      );
+      app.reportSize();
+      return;
+    }
     document.getElementById("opts").innerHTML = flights.map(function (f, i) {
       var tag = f.cheapest ? '<span class="pill good">cheapest</span>'
               : f.fastest ? '<span class="pill flat">fastest</span>' : "";
@@ -60,12 +74,36 @@
   });
 
   app.ontoolresult = function (result) {
+    if (result.isError) {
+      document.getElementById("title").textContent = "Could not reach the airline";
+      document.getElementById("sub").textContent =
+        (result.content || []).map(function (c) { return c.text; }).join(" ");
+      document.getElementById("opts").innerHTML =
+        '<p class="muted small" style="margin:6px 0 0">Ask me to try again, ' +
+        'or pick a different date.</p>';
+      app.reportSize();
+      return;
+    }
     var d = result.structuredContent || {};
     flights = d.flights || [];
     if (d.summary) document.getElementById("sub").textContent = d.summary;
     if (d.title) document.getElementById("title").textContent = d.title;
     render();
   };
+  /* Draw everything the arguments already say, before the result exists. */
+  app.ontoolinput = function (params) {
+    var a = params.arguments || {};
+    document.getElementById("title").textContent = "Looking for nonstops, " + (a.date || "");
+    document.getElementById("sub").textContent =
+      (a.origin || "") + " to " + (a.destination || "") + ", " +
+      (a.passengers || 1) + " passenger, " + (a.cabin || "economy") + ".";
+    document.getElementById("opts").innerHTML =
+      '<div class="opt"><span class="skeleton" style="width:60%"></span></div>' +
+      '<div class="opt"><span class="skeleton" style="width:52%"></span></div>' +
+      '<div class="opt"><span class="skeleton" style="width:56%"></span></div>';
+    app.reportSize();
+  };
+
   app.connect();
 </script>
 </body></html>

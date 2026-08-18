@@ -69,6 +69,7 @@ the argument to the camera.
 | 2-2 | `canvas-after` | `allocate_budget` | The same interaction, written back |
 | 3-1 | `dash-before` | `ops_overview` | Twelve tiles, no verdict |
 | 3-2 | `dash-after` | `service_status` | Verdict, reason, three numbers |
+| 3-3 | `states` | `pick_flight` | Skeleton, answer, empty, and failed |
 | 4-1 | `form-before` | `new_expense` | Nine fields, seven already answered |
 | 4-2 | `form-after` | `confirm_expense` | One question, four facts shown |
 | 5-1 | `picker-before` | `search_flights` | A web page wearing a chat costume |
@@ -92,6 +93,11 @@ The drawn figures live in `figures-src/`. Cartoons are `figures-src/xkcd/*.py`,
 mechanism diagrams are `figures-src/diagrams/*.py`, and the cover is
 `figures-src/cover.py`. All of them take an output path as their one argument,
 so any of them runs on its own.
+
+Two of those scenes render four columns rather than one. Figure 3-3 varies the
+tool arguments per column, using two fixture dates that exist so the empty and
+failed states can be photographed rather than described: `2026-12-25` returns no
+flights and `2026-01-01` throws.
 
 ## How the capability ladder works
 

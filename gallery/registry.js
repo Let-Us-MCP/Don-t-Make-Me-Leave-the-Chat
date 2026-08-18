@@ -152,6 +152,28 @@ export const APPS = [
       },
     },
     run({ origin, destination, date, cabin = "economy", passengers = 1 }) {
+      /* Two fixture dates exist so the book can photograph the states most
+       * widgets never design: one with no results, one that fails. */
+      if (date === "2026-12-25") {
+        return {
+          content: [{
+            type: "text",
+            text: `No nonstops from ${origin} to ${destination} on ${date}. ` +
+                  `One-stops start at $268, and nonstops resume the next day.`,
+          }],
+          structuredContent: {
+            title: `No nonstops, ${date}`,
+            summary: `${origin} to ${destination}, ${passengers} passenger, ${cabin}.`,
+            flights: [],
+          },
+        };
+      }
+      if (date === "2026-01-01") {
+        throw new Error(
+          `The airline's schedule service did not answer. Nothing was booked. ` +
+          `Ask again in a minute, or try a different date.`
+        );
+      }
       const summary =
         `${origin} to ${destination}, ${passengers} passenger${passengers > 1 ? "s" : ""}, ${cabin}.`;
       return {

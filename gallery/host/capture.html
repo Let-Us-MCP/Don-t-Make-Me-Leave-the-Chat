@@ -133,7 +133,7 @@ async function runLadder() {
 
     if (rung.textOnly) {
       const r = await new MiniHost({ transcript: document.createElement("div") })
-        .rpc("tools/call", { name: scene.call, arguments: scene.args || {} });
+        .rpc("tools/call", { name: scene.call, arguments: rung.args || scene.args || {} });
       frame.textContent = (r.content || []).map((c) => c.text).join("\n");
       continue;
     }
@@ -143,7 +143,7 @@ async function runLadder() {
       capabilities: rung.capabilities,
       onContext: function () {},
     });
-    await h.render(scene.call, scene.args || {},
+    await h.render(scene.call, rung.args || scene.args || {},
                    { height: rung.height || 210, freeze: rung.freeze });
   }
   await new Promise((r) => setTimeout(r, 700));

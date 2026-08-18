@@ -269,4 +269,35 @@ export const SCENES = [
       },
     ],
   },
+  {
+    id: "states", figure: "3-3", group: "Chapter 3", variant: "after",
+    title: "The four states of one widget",
+    call: "pick_flight",
+    args: { origin: "SFO", destination: "JFK", date: "2026-08-20" },
+    rungs: [
+      {
+        label: "Skeleton",
+        note: "Arguments have arrived, the result has not. Drawn from what is already known.",
+        freeze: true,
+        height: 190,
+      },
+      {
+        label: "Answer",
+        note: "The happy state, and the only one most teams design.",
+        height: 250,
+      },
+      {
+        label: "Empty",
+        note: "A true answer of none. Not an error, and it names the way forward.",
+        args: { origin: "SFO", destination: "JFK", date: "2026-12-25" },
+        height: 170,
+      },
+      {
+        label: "Failed",
+        note: "Says what broke, that nothing happened, and what to say next.",
+        args: { origin: "SFO", destination: "JFK", date: "2026-01-01" },
+        height: 170,
+      },
+    ],
+  },
 ];
