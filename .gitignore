@@ -33,3 +33,13 @@ npm-debug.log*
 
 # Local Claude Code settings
 .claude/settings.local.json
+
+# Credentials. Never committed, whatever they are called.
+*.conf
+conf
+conf.*
+.env
+.env.*
+*.key
+*secret*
+!gallery/probe/hosts.json

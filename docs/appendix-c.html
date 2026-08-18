@@ -294,6 +294,13 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p>The first version of this harness ran <code>claude -p</code> from the repository root. The model under test read <code>gallery/evals/prompts.json</code>, worked out that it was being scored, and said so in its answer: the probe had been appended to its message, so it called the tool knowing which call was the graded one, which made the pass evidence of nothing.</p>
 <p>It was right, and the harness was wrong. An eval whose subject can read the answer key measures file access rather than trigger phrasing. The runner now executes from a scratch directory containing nothing but an <code>.mcp.json</code> pointing at the server, so the subject gets the tools and no context about the test.</p>
 <p>If you build one of these, check what your subject can see. Ours could see everything, because it ran where the repository was, which is the most natural and most wrong place to put it.</p>
+<h2 id="running-it-against-a-second-model">Running it against a second model</h2>
+<p>The suite is data, so it can be pointed at more than one model. The gallery ships two runners over the same <code>prompts.json</code>.</p>
+<p><code>gallery/evals/model.mjs</code> drives Claude Code, which is a host rather than an API, so it exercises the real path a reader is likely to ship on. Its weakness is that Claude Code’s JSON output does not enumerate tool calls, so the runner has to ask the model to report what it called, and a self-report is weaker evidence than a trace.</p>
+<p><code>gallery/evals/openai.mjs</code> sends the same prompts to the OpenAI API with the gallery’s tools converted to function definitions. The tool choice comes back in the response, so nothing is self-reported. It reads the tool list locally over stdio, so no tunnel and no public URL are involved, and it picks the cheapest chat model the key can actually see rather than trusting a price table baked into the script.</p>
+<p class="provenance illustrative">Illustrative, not from the gallery</p><pre class="bash"><code>OPENAI_CONF=/path/to/your.conf node gallery/evals/openai.mjs --list-models
+OPENAI_CONF=/path/to/your.conf node gallery/evals/openai.mjs</code></pre>
+<p>Running both is worth the few dollars for one reason. A description that scores well on one model family and badly on another is tuned rather than clear, and you cannot tell which you have written until you try the second one.</p>
 <h2 id="the-triage">The triage</h2>
 <p>In order, and resist reordering it:</p>
 <ol type="1">

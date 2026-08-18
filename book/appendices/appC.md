@@ -162,6 +162,34 @@ If you build one of these, check what your subject can see. Ours could see
 everything, because it ran where the repository was, which is the most natural
 and most wrong place to put it.
 
+## Running it against a second model
+
+The suite is data, so it can be pointed at more than one model. The gallery
+ships two runners over the same `prompts.json`.
+
+`gallery/evals/model.mjs` drives Claude Code, which is a host rather than an
+API, so it exercises the real path a reader is likely to ship on. Its weakness
+is that Claude Code's JSON output does not enumerate tool calls, so the runner
+has to ask the model to report what it called, and a self-report is weaker
+evidence than a trace.
+
+`gallery/evals/openai.mjs` sends the same prompts to the OpenAI API with the
+gallery's tools converted to function definitions. The tool choice comes back in
+the response, so nothing is self-reported. It reads the tool list locally over
+stdio, so no tunnel and no public URL are involved, and it picks the cheapest
+chat model the key can actually see rather than trusting a price table baked
+into the script.
+
+<!-- listing: illustrative -->
+```bash
+OPENAI_CONF=/path/to/your.conf node gallery/evals/openai.mjs --list-models
+OPENAI_CONF=/path/to/your.conf node gallery/evals/openai.mjs
+```
+
+Running both is worth the few dollars for one reason. A description that scores
+well on one model family and badly on another is tuned rather than clear, and
+you cannot tell which you have written until you try the second one.
+
 ## The triage
 
 In order, and resist reordering it:
