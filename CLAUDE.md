@@ -198,6 +198,21 @@ Legend: `[ ]` not started, `[~]` drafted, `[x]` drafted + linted + built
   six before the commit. It skips fenced blocks, because captured output is a
   record of a moment and is allowed to disagree with the present.
 
+- **The cross-model run produced the book's best finding.** The same thirty
+  prompts against Claude Code and gpt-5-nano scored 15/15 and 13/15 on
+  invocation, 8/9 and 9/9 on refusal. Four prompts got opposite verdicts and one
+  failed on both, which is the separation that makes a second model worth the
+  few dollars: a failure surviving two families is a description bug, a failure
+  on one is tuning. Trying to fix the shared bug traded invocation against
+  refusal in the same direction on both models for every phrasing, which is not
+  a tuning problem: `compare_rates_text` and `compare_rates` do one job and a
+  sentence cannot separate them. They exist as Chapter 1 exhibits; a real server
+  would ship one. Written up in Chapter 5, Chapter 12, and Appendix C.
+
+- **A CI job hung for six hours** on `apt-get install nodejs` with its output
+  redirected, so nothing showed why. Replaced with `setup-node`, and every job
+  now carries `timeout-minutes: 10`.
+
 ## Open items
 - No human usability sessions were run for this edition. Chapter 11 describes
   the method and claims no findings.
@@ -208,11 +223,17 @@ Legend: `[ ]` not started, `[~]` drafted, `[x]` drafted + linted + built
   The outline claimed the framing book was shorter than 28-32k, which the
   measurement disproves. Coverage is complete against the outline, so the gap is
   compression instead of omission, but a fourth pass adding worked examples
-  would close it honestly. Currently 34,154 against 43,250, a gap of 21%.
+  would close it honestly. Currently 38,605 against 43,250, a gap of 11%.
 - Chapter 3 runs 2,897 words against a 2,000 to 2,500 target. It is coherent
   (everything in it is about what the human experiences) and under the 3,200
   ceiling, so it is being left alone rather than split into a fourteenth chapter
   that would renumber thirty cross-references.
-- Chapters 6 and 13 still carry no annotated render.
+- Every chapter now carries at least one annotated render.
+- No render has been captured from an iframe-capable shipping host. The evals
+  ran against Claude Code, which is real and is a terminal. Closing this needs a
+  Claude or ChatGPT account plus a tunnel to the gallery, which is an account
+  task rather than a code task.
+- `find_clause` still renders a viewer when asked to draft an email, on Claude
+  but not on gpt-5-nano. Left as a documented tuning difference.
 - Appendix B's host rows come from the MCP project's published matrix, not from
   tests run here. Stated in the appendix and in `VERIFICATION.md`.
