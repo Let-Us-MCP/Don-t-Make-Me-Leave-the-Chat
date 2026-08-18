@@ -206,6 +206,12 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 </tbody>
 </table></div>
 <p>The pattern is that decisions and outcomes go to the context while presentation stays in the widget. When you are unsure about a particular fact, the question that resolves it is whether a person narrating the session out loud would have mentioned it.</p>
+<h2 id="preferences-and-the-storage-you-do-not-have">Preferences, and the storage you do not have</h2>
+<p>A related question with a shorter answer. Where does your app keep the user’s preference for compact rows, or metric units, or the columns they always open?</p>
+<p>Not in the frame, because the frame is transient and Chapter 7 is about that. Not in the host’s storage, because the sandbox exists precisely to keep you out of it. Which leaves two places, and the choice is a design decision rather than a technical one.</p>
+<p>On your server, keyed to whatever identity your authorisation already established. This is right for preferences that are genuinely the user’s and should follow them: units, locale, default views. It costs a round trip and it works everywhere.</p>
+<p>Or in the conversation, by writing the preference back with <code>ui/set-context</code> and letting the model pass it as an argument next time. This is right for preferences that are really about <em>this task</em>: the horizon somebody chose, the service they were looking at. It costs nothing, survives exactly as long as the conversation does, and it is why Chapter 7 insists that anything worth returning to be expressible as an argument.</p>
+<p>The failure mode is choosing the first when you meant the second. An app that persists “compare over three years” to a server profile has made a permanent decision out of a passing one, and the next conversation starts wrong.</p>
 <h2 id="the-problem-that-is-genuinely-new">The problem that is genuinely new</h2>
 <p>Now the part with no web analogue at all. Between your render and the user’s next glance at it, the model can act.</p>
 <p>It can call your tool again with different arguments. It can call a completely different tool that changes the same underlying thing. It can do three of those in a row because the user asked it to, in one sentence, while your widget sat there. And your widget knows about none of it, because your widget is a static document in a sandboxed frame that was handed one result and then left alone.</p>

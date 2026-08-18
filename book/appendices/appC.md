@@ -116,6 +116,52 @@ matches what the widget showed.
 
 Ten prompts, three runs, one app: a few dollars and about four minutes.
 
+## Wiring it into CI
+
+The static checks belong on every commit, because the things they catch are
+edits somebody makes at five o'clock.
+
+```yaml
+- name: Every app parses and connects
+  run: node tools/check_apps.mjs
+
+- name: Model-as-user checks
+  run: node gallery/evals/run.js --all
+```
+
+Two jobs, no dependencies, about twenty seconds, and what they buy is that the
+class of bug which is invisible in review stops reaching main. The invisible one
+is worth naming: a mismatched quote in one of the gallery's apps meant its script
+never ran, so it never called `ui/initialize`, so the host waited forever and the
+widget rendered as an empty box. No error appeared anywhere, not in the server
+log, not in the host, not in a test, because a syntax error inside a sandboxed
+iframe is silence. `check_apps.mjs` exists because of that afternoon and it now
+parses every app's script before anything else runs.
+
+The model-in-the-loop suite does not belong on every commit, because it costs
+money and it is non-deterministic. Run it nightly, and on any change to a tool
+description, which is where invocation regressions come from and where nobody
+thinks to look.
+
+## Do not let the eval grade itself
+
+One more finding, and it is a methodological one worth inheriting.
+
+The first version of this harness ran `claude -p` from the repository root. The
+model under test read `gallery/evals/prompts.json`, worked out that it was being
+scored, and said so in its answer: the probe had been appended to its message,
+so it called the tool knowing which call was the graded one, which made the pass
+evidence of nothing.
+
+It was right, and the harness was wrong. An eval whose subject can read the
+answer key measures file access rather than trigger phrasing. The runner now
+executes from a scratch directory containing nothing but an `.mcp.json` pointing
+at the server, so the subject gets the tools and no context about the test.
+
+If you build one of these, check what your subject can see. Ours could see
+everything, because it ran where the repository was, which is the most natural
+and most wrong place to put it.
+
 ## The triage
 
 In order, and resist reordering it:

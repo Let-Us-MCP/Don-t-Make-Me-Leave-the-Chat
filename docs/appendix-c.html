@@ -280,6 +280,20 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
   --output-format json</code></pre>
 <p>Read <code>num_turns</code> and the tool calls out of the JSON. An invocation check is whether your tool appears. A readback check is whether the follow-up answer matches what the widget showed.</p>
 <p>Ten prompts, three runs, one app: a few dollars and about four minutes.</p>
+<h2 id="wiring-it-into-ci">Wiring it into CI</h2>
+<p>The static checks belong on every commit, because the things they catch are edits somebody makes at five o’clock.</p>
+<pre class="yaml"><code>- name: Every app parses and connects
+  run: node tools/check_apps.mjs
+
+- name: Model-as-user checks
+  run: node gallery/evals/run.js --all</code></pre>
+<p>Two jobs, no dependencies, about twenty seconds, and what they buy is that the class of bug which is invisible in review stops reaching main. The invisible one is worth naming: a mismatched quote in one of the gallery’s apps meant its script never ran, so it never called <code>ui/initialize</code>, so the host waited forever and the widget rendered as an empty box. No error appeared anywhere, not in the server log, not in the host, not in a test, because a syntax error inside a sandboxed iframe is silence. <code>check_apps.mjs</code> exists because of that afternoon and it now parses every app’s script before anything else runs.</p>
+<p>The model-in-the-loop suite does not belong on every commit, because it costs money and it is non-deterministic. Run it nightly, and on any change to a tool description, which is where invocation regressions come from and where nobody thinks to look.</p>
+<h2 id="do-not-let-the-eval-grade-itself">Do not let the eval grade itself</h2>
+<p>One more finding, and it is a methodological one worth inheriting.</p>
+<p>The first version of this harness ran <code>claude -p</code> from the repository root. The model under test read <code>gallery/evals/prompts.json</code>, worked out that it was being scored, and said so in its answer: the probe had been appended to its message, so it called the tool knowing which call was the graded one, which made the pass evidence of nothing.</p>
+<p>It was right, and the harness was wrong. An eval whose subject can read the answer key measures file access rather than trigger phrasing. The runner now executes from a scratch directory containing nothing but an <code>.mcp.json</code> pointing at the server, so the subject gets the tools and no context about the test.</p>
+<p>If you build one of these, check what your subject can see. Ours could see everything, because it ran where the repository was, which is the most natural and most wrong place to put it.</p>
 <h2 id="the-triage">The triage</h2>
 <p>In order, and resist reordering it:</p>
 <ol type="1">
