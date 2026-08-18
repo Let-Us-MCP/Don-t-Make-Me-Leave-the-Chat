@@ -222,10 +222,8 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <p><strong>The stakes justify confirmation.</strong> “Yes, delete the production database” is a question worth asking even though the intent is clear, because the cost of being wrong is unbounded. Chapter 9 is about how to ask it well.</p>
 <p><strong>The user is exploring.</strong> A slider that re-ranks, a filter that narrows. Nothing here is being re-asked, because the user is generating new information by playing with it. This is the case that earned the slider in Chapter 1.</p>
 <p>The test that separates those from the violations: <em>if the user answered this already, would my widget notice?</em> If the answer is no, you are not asking. You are interrogating.</p>
-<h2 id="the-elicitation-escape-hatch">The elicitation escape hatch</h2>
-<p>There is one more option, and it is worth knowing before you build a form at all.</p>
-<p>Core MCP already has a way to ask the user a structured question without any UI of your own. The host renders it, in its own style, with its own accessibility and its own consent handling. You provide a schema, you get an answer.</p>
-<p>If your widget is a form and nothing else, that mechanism may beat it. It is faster to build, it is consistent with every other prompt the user has seen, and it works in hosts that do not render apps at all. Chapter 9 opens with the case where it wins, because it wins more often than app developers like to admit.</p>
+<h2 id="the-escape-hatch-worth-knowing-about">The escape hatch worth knowing about</h2>
+<p>Before you build a form at all, know that core MCP can ask a structured question for you, with no widget involved. Chapter 9 opens on that option, because it wins more often than app developers like to admit.</p>
 <h2 id="what-to-remember">What to remember</h2>
 <p>The conversation is a database and you have read access. Put fields in your schema so the model can fill them. Show what you assumed, say where it came from, make the correction one click away and closed by default. Every control you add is a consent prompt you might have added, and consent prompts are a shared resource you are spending on somebody else’s behalf.</p>
 <p>Next chapter: what happens when you keep asking these questions honestly, which is that most of your widget disappears.</p>

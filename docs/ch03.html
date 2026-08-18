@@ -176,7 +176,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:2.5em 0}
 <h2 id="data-arrives-in-pieces">Data arrives in pieces</h2>
 <p>Here is the first complication that is genuinely new.</p>
 <p>On the web, your page loads and then it renders. In this medium the render happens first. The host has prefetched your template and put it on screen while the tool call is still in flight. Then the arguments arrive. Then, some time later, the result arrives.</p>
-<p>That is not an edge case. That is the normal sequence, described in Chapter 6 and drawn in Figure 6-1. Your app’s first state is <em>no data</em>, and its second state is <em>some data</em>, and both of those are states a user will see.</p>
+<p>That is not an edge case. That is the normal sequence, described in Chapter 6 and drawn there. Your app’s first state is <em>no data</em>, and its second state is <em>some data</em>, and both of those are states a user will see.</p>
 <p>Which means the skeleton is not a nicety. It is a screen your users will look at, and it should be designed rather than defaulted.</p>
 <p>A good skeleton in this medium does one thing a web skeleton does not: it uses the arguments. By the time you are drawing the skeleton you already know the tool was called with <code>origin: "SFO"</code>, <code>destination: "JFK"</code>, <code>date: "2026-08-20"</code>. Draw the title. Draw the route. Draw the three grey rows where the flights will go. The user reads the header while the data lands and the perceived wait is zero, because they were busy.</p>
 <p>The version that shows a spinner over an empty box has thrown away information it already had.</p>
